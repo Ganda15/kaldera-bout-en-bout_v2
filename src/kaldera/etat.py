@@ -52,3 +52,8 @@ class EtatDemande:
         self.sections[section] = resultat
         self.trace.append({"agent": agent, "ecrit": [section], "action": action,
                            "duree_ms": round(duree_ms, 2), "statut": statut})
+
+    def noter_echec(self, agent: str, action: str, duree_ms: float) -> None:
+        """Un agent a échoué sans rendre de résultat : une ligne de trace, aucune section écrite."""
+        self.trace.append({"agent": agent, "ecrit": [], "action": action,
+                           "duree_ms": round(duree_ms, 2), "statut": "echec"})
