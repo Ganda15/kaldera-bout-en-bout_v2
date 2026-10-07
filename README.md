@@ -9,6 +9,8 @@ agent-à-agent (A2A).
 
 Le dossier de conception (équipe d'agents, orchestration, mémoire partagée, liaison A2A, mode dégradé et plan d'épreuve) est dans [`conception/`](conception/README.md).
 
+Livrable de conception, en un seul document : [`livrable/dossier-de-conception.pdf`](livrable/dossier-de-conception.pdf) (source : [`livrable/dossier-de-conception.md`](livrable/dossier-de-conception.md)).
+
 ## Features
 
 - Traitement d'une demande ou d'un lot de demandes jusqu'à une fiche de décision

@@ -40,7 +40,7 @@ Cible : 56/56.
 - [ ] Agent « Lecteur de pièces » : entrées définies (facture PDF, photo JPG, contrat PDF), sortie au format de la spec § 3, sortie validée par un schéma ; un LLM lit, il ne décide jamais. Sinon : écrit comme un choix justifié dans le dossier.
 
 ### Phase 4 : livrables (09/10 après-midi)
-- [ ] PDF unique du dossier de conception, court : les trois vues d'ensemble et une page par décision
+- [x] PDF unique du dossier de conception (07/10) : `livrable/dossier-de-conception.pdf`, 20 pages, 6 schémas, table des matières vérifiée ; validation formelle du formateur à obtenir
 - [ ] Preuve des tests d'acceptance (sortie pytest collée)
 - [ ] Oral : le besoin du client, nos choix, ce qu'on a retiré et pourquoi
 - [ ] Journal Obsidian
