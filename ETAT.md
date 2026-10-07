@@ -2,7 +2,7 @@
 
 ## ▶️ Prochaine action
 
-Étape 1.5 : mémoire `etat.py` : tests de la table des droits (écriture hors section refusée, `pieces` réécrite, autres sections une seule fois, ligne de trace), résultats d'agents typés.
+Étape 1.6 : Coordination complète : boucle de complément, même état vu deux fois, dernière étape réservée, règle 4 avec le mode dégradé, filet de sécurité, registre des références appelées. Le débrief du formateur passe avant.
 
 ## Mesures
 
@@ -16,6 +16,7 @@
 | 07/10/2026 | 3.11.15 | étape 1.2 : `.venv\Scripts\python.exe -m pytest tests/acceptance -q` | **38 passed, 18 failed** ; chantier 1 : 38/40 (restent NOM-07 et la borne BCL-01) ; NOM-02 en 2 étapes. Attention : les 28 contrôles « issue motivée » passent en partie parce que la règle 4 manque encore |
 | 07/10/2026 | 3.11.15 | étape 1.3 : `.venv\Scripts\python.exe -m pytest tests/unit -q` | rouge d'abord : 6 failed, 13 passed ; puis **23 passed**. Défaut réel trouvé et corrigé : F4 déclenché à 20 % pile (1 234,50 / 1 481,40), calcul passé en centimes entiers (commit `1882c91`) ; acceptance inchangée, 38/56 |
 | 07/10/2026 | 3.11.15 | étape 1.4 : `.venv\Scripts\python.exe -m pytest tests/unit -q` | rouge d'abord (ImportError, `demander_complement` absente), puis **49 passed** ; acceptance inchangée 38/56, la boucle de complément arrive avec la Coordination (1.6) ; commit `4027d8d` |
+| 07/10/2026 | 3.11.15 | étape 1.5 : `.venv\Scripts\python.exe -m pytest tests/unit -q` | rouge d'abord : 3 failed, 9 passed ; puis **61 passed** ; acceptance inchangée 38/56 ; commit `771802c` |
 
 `pyproject.toml` exige Python `>=3.11,<3.12` : seule une mesure sous 3.11 vaut preuve.
 
@@ -56,7 +57,7 @@ Installation (07/10) : le Python 3.11 installé est géré par `uv` et refuse `p
 | 1.2 ✅ | **une demande de bout en bout** (NOM-01) : agents minimaux, état, Coordination minimale, fiche § 11, trace | test d'acceptance NOM-01 | NOM-01 vert | B (squelettes de `etat.py` et `coordination.py`) |
 | 1.3 ✅ | règles : constantes de `regles.py` vérifiées contre la spec § 4 à 10, ajout des 1 500 € ; **tests de frontière** : F1 4 999,99 / 5 000 ; F2 89 / 90 jours ; F3 2 / 3 sinistres ; F4 20 % pile / au-delà ; 1 500 / 1 500,01 ; 10 000 / 10 000,01 | un test par seuil | unitaires verts | A |
 | 1.4 ✅ | les quatre agents complets : Éligibilité (NOM-02, 03, 04, 10, 11), Pièces et complément (NOM-07, BCL-01), Estimation et plafond (NOM-05), Anti-fraude (F1 à F4, AF-06) avec un partenaire bouchon « indisponible ». Calculs des indicateurs purs ; l'appel réseau sera isolé dans le client (chantier 2) | un test par cas cité | unitaires verts | A |
-| 1.5 | mémoire `etat.py` : table des droits, `pieces` seule réécrite, résultats d'agents typés (Pydantic) | écriture hors section refusée ; ligne de trace `agent` + `ecrit` | unitaires verts | B |
+| 1.5 ✅ | mémoire `etat.py` : table des droits, `pieces` seule réécrite, résultats d'agents typés (dataclasses figées et contrôle du type ; Pydantic gardé pour les données externes du partenaire, 2.3) | écriture hors section refusée ; ligne de trace `agent` + `ecrit` | unitaires verts | B |
 | 1.6 | Coordination complète : Éligibilité **puis** Pièces avec court-circuit ; compléments ; même état vu deux fois ; dernière étape réservée à l'issue ; règles du § 10 **avec le mode dégradé du § 9** (sur l'« indisponible » du bouchon) ; **filet de sécurité** (exception imprévue donne `gestionnaire`, « erreur interne », trace partielle) ; **registre des références appelées, à l'échelle du processus, protégé par un verrou** | NOM-07, NOM-02 (2 étapes), NOM-05, BCL-01 ; exception forcée ; avis indisponible à 950 € et à 6 900 € ; avis `faible` au-delà de 10 000 € reste en escalade `gestionnaire` | nominaux 11/11, BCL-01 vert | B |
 | 1.7 | `traiter_demande`, `traiter_lot` en concurrence, métriques calculées depuis la trace ; chaque demande tient son propre délai de l'intérieur (un fil d'exécution ne s'arrête pas seul) | une demande lente ne retarde pas les autres ; fiches dans l'ordre ; un résultat tardif ne modifie pas une issue ; latence moyenne et échecs calculés justes | **40/40** | A |
 | 1.8 | suppression de `orchestrateur.py` et `agent_generaliste.py` ; **premier échange HTTP construit à la main** (message de 7 champs envoyé au partenaire simulé) | tout reste vert | 40/40, réponse reçue, commit | A |
