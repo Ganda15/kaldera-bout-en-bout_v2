@@ -14,9 +14,9 @@ from typing import Any
 
 from ..regles import (
     ANCIENNETE_SENSIBLE_JOURS,
-    ECART_DECLARATION_MAX,
     FREQUENCE_SENSIBLE,
     SEUIL_MONTANT_FRAUDE,
+    ecart_declaration_depasse,
     jours_entre,
 )
 
@@ -54,7 +54,7 @@ def evaluer_risque(
         indicateurs.append("F2")
     if sinistres_12_mois >= FREQUENCE_SENSIBLE:
         indicateurs.append("F3")
-    if montant_declare > montant_justifie * (1 + ECART_DECLARATION_MAX):
+    if ecart_declaration_depasse(montant_declare, montant_justifie):
         indicateurs.append("F4")
     if not indicateurs:
         return AvisFraude(statut="non_requis")

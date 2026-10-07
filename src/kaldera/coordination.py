@@ -15,7 +15,7 @@ from .agents.eligibilite import verifier_eligibilite
 from .agents.estimation import estimer
 from .agents.pieces import verifier_pieces
 from .etat import EtatDemande
-from .regles import SEUIL_DELEGATION
+from .regles import depasse_seuil_delegation
 
 
 def _deleguer(etat: EtatDemande, agent: str, fonction: Callable[..., Any], **entrees: Any) -> Any:
@@ -75,7 +75,7 @@ def traiter(demande: dict[str, Any]) -> dict[str, Any]:
               montant_justifie=estimation.montant_justifie)
     # Règle 4 (avis modéré, élevé, indisponible) : étape 1.6.
 
-    if estimation.montant_estime > SEUIL_DELEGATION:  # règle 5
+    if depasse_seuil_delegation(estimation.montant_estime):  # règle 5
         return _conclure(etat, "Seuil de délégation dépassé", file="gestionnaire")
     return _conclure(etat, "Demande acceptée", decision="acceptee",  # règle 6
                      montant=estimation.montant_estime)
