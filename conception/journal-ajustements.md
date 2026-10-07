@@ -4,7 +4,7 @@ Chaque ajustement de l'orchestration (borne, frontière ou routage) y est consig
 
 | # | Date | Origine | Signal observé | Élément ajusté | Avant | Après | Résultat du rejeu | Commit |
 |---|---|---|---|---|---|---|---|---|
-| 1 | 07/10/2026 | revue de conception, avant tout code | Éligibilité et Pièces sont deux contrôles en code, dans le même processus, d'environ une milliseconde chacun : les lancer en parallèle n'apporte aucun gain mesurable et ajoute des fils d'exécution. Le parallélisme utile est entre les demandes d'un lot (§ 12), conservé | routage | Éligibilité et Pièces en parallèle | Éligibilité, puis Pièces, en séquence ; court-circuit : une demande non éligible est refusée sans contrôle des pièces | à mesurer à l'étape 1.5 (NOM-02 : 2 étapes au lieu de 3) | à venir |
+| 1 | 07/10/2026 | revue de conception, avant tout code | Éligibilité et Pièces sont deux contrôles en code, sans réseau, dans le même processus : les lancer en parallèle ajoute des fils d'exécution pour un gain de temps attendu négligeable (durées à mesurer à l'étape 1.5). Le parallélisme utile est entre les demandes d'un lot (§ 12), conservé | routage | Éligibilité et Pièces en parallèle | Éligibilité, puis Pièces, en séquence ; court-circuit : une demande non éligible est refusée sans contrôle des pièces | à mesurer à l'étape 1.5 (NOM-02 : 2 étapes au lieu de 3) | à venir |
 
 ## Effets sur le dossier de conception
 
