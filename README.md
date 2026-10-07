@@ -5,6 +5,10 @@ contrôle d'éligibilité, vérification des pièces justificatives, estimation 
 montant et consultation d'un service anti-fraude partenaire selon le protocole
 agent-à-agent (A2A).
 
+## Conception
+
+Le dossier de conception (équipe d'agents, orchestration, mémoire partagée, liaison A2A, mode dégradé et plan d'épreuve) est dans [`conception/`](conception/README.md).
+
 ## Features
 
 - Traitement d'une demande ou d'un lot de demandes jusqu'à une fiche de décision
