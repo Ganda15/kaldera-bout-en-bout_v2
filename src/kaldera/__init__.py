@@ -6,7 +6,7 @@ from time import perf_counter
 from typing import Any
 
 from .bornes import bornes
-from .orchestrateur import Orchestrateur
+from .coordination import traiter
 
 __all__ = ["bornes", "traiter_demande", "traiter_lot"]
 
@@ -15,7 +15,7 @@ def traiter_demande(
     demande: dict[str, Any], *, partenaire_url: str | None = None
 ) -> dict[str, Any]:
     """Traite une demande et retourne sa fiche de décision."""
-    return Orchestrateur(partenaire_url).traiter(demande)
+    return traiter(demande)
 
 
 def traiter_lot(
