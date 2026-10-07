@@ -5,9 +5,10 @@ from __future__ import annotations
 from time import perf_counter
 from typing import Any
 
+from .bornes import bornes
 from .orchestrateur import Orchestrateur
 
-__all__ = ["traiter_demande", "traiter_lot"]
+__all__ = ["bornes", "traiter_demande", "traiter_lot"]
 
 
 def traiter_demande(

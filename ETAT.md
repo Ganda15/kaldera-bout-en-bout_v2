@@ -2,7 +2,7 @@
 
 ## ▶️ Prochaine action
 
-Étape 1.1 : `bornes()` (8 étapes, 10 s, 2 compléments, 3 s, 1 s, réserve de la fiche), test rouge d'abord.
+Étape 1.2 : une demande de bout en bout (NOM-01) : agents minimaux, squelettes de `etat.py` et `coordination.py` (mode B, Era tape), fiche § 11, trace.
 
 ## Mesures
 
@@ -12,6 +12,7 @@
 | 07/10/2026 | 3.14 | `C:\Python314\python.exe -m ruff check .` | All checks passed! |
 | 07/10/2026 | **3.11.15, référence** | `.venv\Scripts\python.exe -m pytest tests/acceptance -q` sur le code de départ | **11 passed, 45 failed (56 tests)** |
 | 07/10/2026 | 3.11.15 | `.venv\Scripts\python.exe -m ruff check .` (ruff 0.9.10) | All checks passed! |
+| 07/10/2026 | 3.11.15 | étape 1.1 : `.venv\Scripts\python.exe -m pytest tests/unit -q` | 4 passed (rouge vu avant : `module 'kaldera' has no attribute 'bornes'`) ; acceptance inchangée, 11/56 |
 
 `pyproject.toml` exige Python `>=3.11,<3.12` : seule une mesure sous 3.11 vaut preuve.
 
@@ -48,7 +49,7 @@ Installation (07/10) : le Python 3.11 installé est géré par `uv` et refuse `p
 | Étape | Quoi | Test rouge d'abord | Preuve | Mode |
 |---|---|---|---|---|
 | 1.0 ✅ | dépendances sous Python 3.11 ; point de départ mesuré sous 3.11 ; dossiers `agents/`, `a2a/`, `tests/unit/` (sans `conftest.py`) | aucun | 11/56 sous 3.11, `ruff` propre | A |
-| 1.1 | `bornes()` : 8 étapes, 10 s, 2 compléments, 3 s, 1 s, réserve pour produire la fiche | clés présentes, `duree_max_s` ≤ 10 | unitaire vert | A |
+| 1.1 ✅ | `bornes()` : 8 étapes, 10 s, 2 compléments, 3 s, 1 s, réserve pour produire la fiche | clés présentes, `duree_max_s` ≤ 10 | unitaire vert | A |
 | 1.2 | **une demande de bout en bout** (NOM-01) : agents minimaux, état, Coordination minimale, fiche § 11, trace | test d'acceptance NOM-01 | NOM-01 vert | B (squelettes de `etat.py` et `coordination.py`) |
 | 1.3 | règles : constantes de `regles.py` vérifiées contre la spec § 4 à 10, ajout des 1 500 € ; **tests de frontière** : F1 4 999,99 / 5 000 ; F2 89 / 90 jours ; F3 2 / 3 sinistres ; F4 20 % pile / au-delà ; 1 500 / 1 500,01 ; 10 000 / 10 000,01 | un test par seuil | unitaires verts | A |
 | 1.4 | les quatre agents complets : Éligibilité (NOM-02, 03, 04, 10, 11), Pièces et complément (NOM-07, BCL-01), Estimation et plafond (NOM-05), Anti-fraude (F1 à F4, AF-06) avec un partenaire bouchon « indisponible ». Calculs des indicateurs purs ; l'appel réseau sera isolé dans le client (chantier 2) | un test par cas cité | unitaires verts | A |
