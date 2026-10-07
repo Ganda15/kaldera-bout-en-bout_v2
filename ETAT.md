@@ -2,7 +2,7 @@
 
 ## ▶️ Prochaine action
 
-Étape 1.3 : règles et tests de frontière (F1 4 999,99 / 5 000 ; F2 89 / 90 jours ; F3 2 / 3 ; F4 20 % pile / au-delà ; 1 500 / 1 500,01 ; 10 000 / 10 000,01), ajout des 1 500 € dans `regles.py`.
+Étape 1.4 : les quatre agents complets (Pièces : demande de complément, NOM-07 et BCL-01), avec un test par cas cité.
 
 ## Mesures
 
@@ -14,6 +14,7 @@
 | 07/10/2026 | 3.11.15 | `.venv\Scripts\python.exe -m ruff check .` (ruff 0.9.10) | All checks passed! |
 | 07/10/2026 | 3.11.15 | étape 1.1 : `.venv\Scripts\python.exe -m pytest tests/unit -q` | 4 passed (rouge vu avant : `module 'kaldera' has no attribute 'bornes'`) ; acceptance inchangée, 11/56 |
 | 07/10/2026 | 3.11.15 | étape 1.2 : `.venv\Scripts\python.exe -m pytest tests/acceptance -q` | **38 passed, 18 failed** ; chantier 1 : 38/40 (restent NOM-07 et la borne BCL-01) ; NOM-02 en 2 étapes. Attention : les 28 contrôles « issue motivée » passent en partie parce que la règle 4 manque encore |
+| 07/10/2026 | 3.11.15 | étape 1.3 : `.venv\Scripts\python.exe -m pytest tests/unit -q` | rouge d'abord : 6 failed, 13 passed ; puis **23 passed**. Défaut réel trouvé et corrigé : F4 déclenché à 20 % pile (1 234,50 / 1 481,40), calcul passé en centimes entiers (commit `1882c91`) ; acceptance inchangée, 38/56 |
 
 `pyproject.toml` exige Python `>=3.11,<3.12` : seule une mesure sous 3.11 vaut preuve.
 
@@ -52,7 +53,7 @@ Installation (07/10) : le Python 3.11 installé est géré par `uv` et refuse `p
 | 1.0 ✅ | dépendances sous Python 3.11 ; point de départ mesuré sous 3.11 ; dossiers `agents/`, `a2a/`, `tests/unit/` (sans `conftest.py`) | aucun | 11/56 sous 3.11, `ruff` propre | A |
 | 1.1 ✅ | `bornes()` : 8 étapes, 10 s, 2 compléments, 3 s, 1 s, réserve pour produire la fiche | clés présentes, `duree_max_s` ≤ 10 | unitaire vert | A |
 | 1.2 ✅ | **une demande de bout en bout** (NOM-01) : agents minimaux, état, Coordination minimale, fiche § 11, trace | test d'acceptance NOM-01 | NOM-01 vert | B (squelettes de `etat.py` et `coordination.py`) |
-| 1.3 | règles : constantes de `regles.py` vérifiées contre la spec § 4 à 10, ajout des 1 500 € ; **tests de frontière** : F1 4 999,99 / 5 000 ; F2 89 / 90 jours ; F3 2 / 3 sinistres ; F4 20 % pile / au-delà ; 1 500 / 1 500,01 ; 10 000 / 10 000,01 | un test par seuil | unitaires verts | A |
+| 1.3 ✅ | règles : constantes de `regles.py` vérifiées contre la spec § 4 à 10, ajout des 1 500 € ; **tests de frontière** : F1 4 999,99 / 5 000 ; F2 89 / 90 jours ; F3 2 / 3 sinistres ; F4 20 % pile / au-delà ; 1 500 / 1 500,01 ; 10 000 / 10 000,01 | un test par seuil | unitaires verts | A |
 | 1.4 | les quatre agents complets : Éligibilité (NOM-02, 03, 04, 10, 11), Pièces et complément (NOM-07, BCL-01), Estimation et plafond (NOM-05), Anti-fraude (F1 à F4, AF-06) avec un partenaire bouchon « indisponible ». Calculs des indicateurs purs ; l'appel réseau sera isolé dans le client (chantier 2) | un test par cas cité | unitaires verts | A |
 | 1.5 | mémoire `etat.py` : table des droits, `pieces` seule réécrite, résultats d'agents typés (Pydantic) | écriture hors section refusée ; ligne de trace `agent` + `ecrit` | unitaires verts | B |
 | 1.6 | Coordination complète : Éligibilité **puis** Pièces avec court-circuit ; compléments ; même état vu deux fois ; dernière étape réservée à l'issue ; règles du § 10 **avec le mode dégradé du § 9** (sur l'« indisponible » du bouchon) ; **filet de sécurité** (exception imprévue donne `gestionnaire`, « erreur interne », trace partielle) ; **registre des références appelées, à l'échelle du processus, protégé par un verrou** | NOM-07, NOM-02 (2 étapes), NOM-05, BCL-01 ; exception forcée ; avis indisponible à 950 € et à 6 900 € ; avis `faible` au-delà de 10 000 € reste en escalade `gestionnaire` | nominaux 11/11, BCL-01 vert | B |
