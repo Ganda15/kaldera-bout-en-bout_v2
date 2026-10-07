@@ -2,7 +2,7 @@
 
 ## ▶️ Prochaine action
 
-Étape 1.8 : suppression du code de départ devenu inutile (`orchestrateur.py`, `agent_generaliste.py`), tout reste vert ; puis fin du chantier 1.
+**Chantier 1 terminé (07/10) : 40/40.** Prochaine étape : chantier 2, en commençant par l'échange HTTP construit à la main avec le partenaire simulé (ancien point de 1.8, déplacé au début du chantier 2), puis 2.1 le filtre sortant. Le débrief du formateur (jeudi 08/10, fin de matinée) peut changer l'ordre.
 
 ## Mesures
 
@@ -19,6 +19,7 @@
 | 07/10/2026 | 3.11.15 | étape 1.5 : `.venv\Scripts\python.exe -m pytest tests/unit -q` | rouge d'abord : 3 failed, 9 passed ; puis **61 passed** ; acceptance inchangée 38/56 ; commit `771802c` |
 | 07/10/2026 | 3.11.15 | étape 1.6 : `.venv\Scripts\python.exe -m pytest tests/acceptance -q` | rouge d'abord (ImportError) ; unitaires **78 passed** ; **chantier 1 : 40/40** ; acceptance **40 passed, 16 failed** (les 16 du chantier 2) ; NOM-07 en 6 étapes, BCL-01 arrêtée par « etat_repete » en 4 étapes ; commit `06a5803` |
 | 07/10/2026 | 3.11.15 | étape 1.7 : `.venv\Scripts\python.exe -m pytest tests/unit -q` | rouge d'abord (module absent) ; unitaires **85 passed**, acceptance 40/56, identiques sur 3 exécutions ; lot de 3 dont 2 attendent 0,4 s : **0,40 s en concurrence, 0,80 s à la suite** ; même référence deux fois dans un lot : 1 appel ; commit `06b50e8` |
+| 07/10/2026 | 3.11.15 | étape 1.8 : `.venv\Scripts\python.exe -m pytest tests/acceptance -q` | code de départ supprimé ; unitaires 85 passed ; **chantier 1 : 40/40** ; acceptance 40 passed, 16 failed (les 16 du chantier 2) ; `kaldera.cli` sur NOM-05 : acceptée 3 000 € ; commit `6a213cc` |
 
 `pyproject.toml` exige Python `>=3.11,<3.12` : seule une mesure sous 3.11 vaut preuve.
 
@@ -62,7 +63,7 @@ Installation (07/10) : le Python 3.11 installé est géré par `uv` et refuse `p
 | 1.5 ✅ | mémoire `etat.py` : table des droits, `pieces` seule réécrite, résultats d'agents typés (dataclasses figées et contrôle du type ; Pydantic gardé pour les données externes du partenaire, 2.3) | écriture hors section refusée ; ligne de trace `agent` + `ecrit` | unitaires verts | B |
 | 1.6 ✅ | Coordination complète : Éligibilité **puis** Pièces avec court-circuit ; compléments ; même état vu deux fois ; dernière étape réservée à l'issue ; règles du § 10 **avec le mode dégradé du § 9** (sur l'« indisponible » du bouchon) ; **filet de sécurité** (exception imprévue donne `gestionnaire`, « erreur interne », trace partielle) ; **registre des références appelées, protégé par un verrou, pour une exécution** (journal n° 3) | NOM-07, NOM-02 (2 étapes), NOM-05, BCL-01 ; exception forcée ; avis indisponible à 950 € et à 6 900 € ; avis `faible` au-delà de 10 000 € reste en escalade `gestionnaire` | nominaux 11/11, BCL-01 vert | B |
 | 1.7 ✅ | `traiter_demande`, `traiter_lot` en concurrence, métriques calculées depuis la trace ; chaque demande tient son propre délai de l'intérieur (un fil d'exécution ne s'arrête pas seul) | une demande lente ne retarde pas les autres ; fiches dans l'ordre ; un résultat tardif ne modifie pas une issue ; latence moyenne et échecs calculés justes | **40/40** | A |
-| 1.8 | suppression de `orchestrateur.py` et `agent_generaliste.py` ; **premier échange HTTP construit à la main** (message de 7 champs envoyé au partenaire simulé) | tout reste vert | 40/40, réponse reçue, commit | A |
+| 1.8 ✅ | suppression de `orchestrateur.py` et `agent_generaliste.py` (l'échange HTTP construit à la main passe au début du chantier 2, à la demande d'Era) | tout reste vert | 40/40, commit | A |
 
 Le débrief du formateur (jeudi fin de matinée) passe avant l'étape 1.6.
 
