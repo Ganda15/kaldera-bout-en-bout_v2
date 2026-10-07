@@ -72,6 +72,31 @@ make typecheck  # mypy
 make down       # arrête les services docker
 ```
 
+## Intégration continue
+
+Fichier : `.github/workflows/tests.yml`, exécuté par GitHub Actions.
+
+| | |
+|---|---|
+| Déclencheurs | chaque push sur `main`, chaque pull request, et à la main (onglet Actions, « Run workflow ») |
+| Environnement | Ubuntu, Python 3.11 (version exigée par `pyproject.toml`), cache pip |
+| Étapes | 1. récupération du code ; 2. installation : `pip install -e . --group dev` ; 3. style : `ruff check .` ; 4. tests unitaires : `pytest tests/unit` ; 5. tests d'acceptance du chantier 1 : `pytest tests/acceptance/test_equipe_orchestration.py` |
+| Résultat | une coche verte ou une croix rouge sur chaque commit, détail dans l'onglet Actions du dépôt |
+
+Les tests du chantier 2 (`tests/acceptance/test_collaboration_a2a.py`) rejoindront la chaîne quand le client A2A sera branché : aujourd'hui ils échouent par construction, le partenaire étant un bouchon.
+
+Reproduire la chaîne en local (Windows, PowerShell, depuis la racine du dépôt) :
+
+```powershell
+py -V:Astral/CPython3.11.15 -m venv .venv
+.venv\Scripts\python.exe -m pip install --upgrade pip
+.venv\Scripts\python.exe -m pip install -e . --group dev
+.venv\Scripts\python.exe -m ruff check .
+.venv\Scripts\python.exe -m pytest tests/unit tests/acceptance/test_equipe_orchestration.py -q
+```
+
+Tester la chaîne elle-même : pousser un commit sur `main`, ou lancer « Run workflow » dans l'onglet Actions, puis vérifier que les cinq étapes sont vertes.
+
 ## Known issues
 
 - Les échanges avec le service anti-fraude n'ont pas été revalidés depuis la
