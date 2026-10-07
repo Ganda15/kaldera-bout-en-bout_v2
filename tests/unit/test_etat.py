@@ -32,7 +32,7 @@ def test_le_resultat_va_dans_la_section_de_son_agent_avec_une_ligne_de_trace() -
     etat.ranger("antifraude", AvisFraude(statut="non_requis"), "evaluer_risque", 0.4)
     assert etat.sections == {"avis_fraude": AvisFraude(statut="non_requis")}
     assert etat.trace == [{"agent": "antifraude", "ecrit": ["avis_fraude"], "action": "evaluer_risque",
-                           "duree_ms": 0.4, "statut": "ok"}]
+                           "duree_ms": 0.4, "statut": "ok", "appel_externe": False}]
 
 
 def test_un_agent_inconnu_est_refuse() -> None:

@@ -74,7 +74,8 @@ class _Parcours:
             self.etat.noter_echec(agent, fonction.__name__, (perf_counter() - debut) * 1000)
             raise
         statut = "echec" if getattr(resultat, "statut", None) == "indisponible" else "ok"
-        self.etat.ranger(agent, resultat, fonction.__name__, (perf_counter() - debut) * 1000, statut)
+        self.etat.ranger(agent, resultat, fonction.__name__, (perf_counter() - debut) * 1000, statut,
+                         appel_externe=getattr(resultat, "appel_externe", False))
         return resultat
 
     def conclure(self, motif: str, *, decision: str | None = None, montant: float | None = None,
