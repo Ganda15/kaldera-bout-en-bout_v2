@@ -52,11 +52,11 @@ Les règles de travail et les pièges de la machine sont dans `C:\Users\kanda\.c
 - **Un test échoue** : `superpowers:systematic-debugging`, enquêter avant de corriger.
 - **Doute sur une règle métier** : citer la ligne de `docs/specs_metier.md` ; si elle ne tranche pas, `INCONNU` et une question à Era.
 - **La conception et un test se contredisent** : le test et `interface.md` font foi ; consigner l'écart dans `conception/journal-ajustements.md`.
-- **Un binaire refusé par Smart App Control** : Docker ou Python 3.11 (`py -V:Astral/CPython3.11.15`). Jamais toucher à un réglage de sécurité.
+- **Un binaire refusé par Smart App Control** : Docker `python:3.11`. Jamais toucher à un réglage de sécurité.
 
 ## 6. Stack et dossiers
 
-- Python (tests lancés avec `C:\Python314\python.exe`, le projet vise 3.11), httpx, pydantic, FastAPI pour le partenaire simulé. Sans LangGraph.
+- Python 3.11, dans l'environnement `.venv` (exigé par `pyproject.toml`) ; httpx, pydantic, FastAPI pour le partenaire simulé. Sans LangGraph.
 - `src/kaldera/` : l'équipe (Coordination, agents, état de la demande, client A2A).
 - `external_agent/` : partenaire anti-fraude simulé, fourni. `scripts/partner_ctl.py` : son pilote, fourni.
 - `tests/acceptance/` : suite d'acceptance, fournie. `tests/unit/` : nos tests unitaires.
@@ -68,14 +68,16 @@ Les règles de travail et les pièges de la machine sont dans `C:\Users\kanda\.c
 cd C:\Users\kanda\Desktop\Kaldera\kaldera-bout-en-bout_v2
 ```
 ```powershell
-C:\Python314\python.exe -m pytest -q
+.venv\Scripts\python.exe -m pytest -q
 ```
 ```powershell
-C:\Python314\python.exe -m ruff check .
+.venv\Scripts\python.exe -m ruff check .
 ```
 ```powershell
-C:\Python314\python.exe -m external_agent --port 8100
+.venv\Scripts\python.exe -m external_agent --port 8100
 ```
+
+L'environnement `.venv` (Python 3.11, ignoré par Git) se recrée par : `py -V:Astral/CPython3.11.15 -m venv .venv`, puis `.venv\Scripts\python.exe -m pip install --upgrade pip`, puis `.venv\Scripts\python.exe -m pip install -e . --group dev`.
 
 ## 8. Skills de ce projet
 

@@ -2,7 +2,7 @@
 
 ## ▶️ Prochaine action
 
-Étape 1.0 : installer les dépendances pour Python 3.11 (`py -V:Astral/CPython3.11.15 -m pip install --user -e . --group dev`, repli : Docker `python:3.11`), puis mesurer le point de départ sous 3.11.
+Étape 1.1 : `bornes()` (8 étapes, 10 s, 2 compléments, 3 s, 1 s, réserve de la fiche), test rouge d'abord.
 
 ## Mesures
 
@@ -10,9 +10,12 @@
 |---|---|---|---|
 | 07/10/2026 | 3.14 (historique, hors version exigée) | `C:\Python314\python.exe -m pytest tests/acceptance -q` sur le code de départ | 11 passed, 45 failed (56 tests) |
 | 07/10/2026 | 3.14 | `C:\Python314\python.exe -m ruff check .` | All checks passed! |
-| à mesurer (1.0) | **3.11, référence** | `py -V:Astral/CPython3.11.15 -m pytest tests/acceptance -q` | |
+| 07/10/2026 | **3.11.15, référence** | `.venv\Scripts\python.exe -m pytest tests/acceptance -q` sur le code de départ | **11 passed, 45 failed (56 tests)** |
+| 07/10/2026 | 3.11.15 | `.venv\Scripts\python.exe -m ruff check .` (ruff 0.9.10) | All checks passed! |
 
 `pyproject.toml` exige Python `>=3.11,<3.12` : seule une mesure sous 3.11 vaut preuve.
+
+Installation (07/10) : le Python 3.11 installé est géré par `uv` et refuse `pip install --user` (PEP 668, « externally-managed-environment »). Procédure retenue : un environnement virtuel `.venv` (ignoré par Git), que Smart App Control laisse s'exécuter : `py -V:Astral/CPython3.11.15 -m venv .venv`, puis `.venv\Scripts\python.exe -m pip install --upgrade pip`, puis `.venv\Scripts\python.exe -m pip install -e . --group dev`.
 
 ## Ce que mesurent les tests d'acceptance
 
@@ -44,7 +47,7 @@
 
 | Étape | Quoi | Test rouge d'abord | Preuve | Mode |
 |---|---|---|---|---|
-| 1.0 | dépendances sous Python 3.11 ; point de départ mesuré sous 3.11 ; dossiers `agents/`, `a2a/`, `tests/unit/` (sans `conftest.py`) | aucun | mesure 3.11 dans le tableau, `ruff` propre | A |
+| 1.0 ✅ | dépendances sous Python 3.11 ; point de départ mesuré sous 3.11 ; dossiers `agents/`, `a2a/`, `tests/unit/` (sans `conftest.py`) | aucun | 11/56 sous 3.11, `ruff` propre | A |
 | 1.1 | `bornes()` : 8 étapes, 10 s, 2 compléments, 3 s, 1 s, réserve pour produire la fiche | clés présentes, `duree_max_s` ≤ 10 | unitaire vert | A |
 | 1.2 | **une demande de bout en bout** (NOM-01) : agents minimaux, état, Coordination minimale, fiche § 11, trace | test d'acceptance NOM-01 | NOM-01 vert | B (squelettes de `etat.py` et `coordination.py`) |
 | 1.3 | règles : constantes de `regles.py` vérifiées contre la spec § 4 à 10, ajout des 1 500 € ; **tests de frontière** : F1 4 999,99 / 5 000 ; F2 89 / 90 jours ; F3 2 / 3 sinistres ; F4 20 % pile / au-delà ; 1 500 / 1 500,01 ; 10 000 / 10 000,01 | un test par seuil | unitaires verts | A |
