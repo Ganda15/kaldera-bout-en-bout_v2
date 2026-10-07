@@ -20,6 +20,7 @@
 | 07/10/2026 | 3.11.15 | étape 1.6 : `.venv\Scripts\python.exe -m pytest tests/acceptance -q` | rouge d'abord (ImportError) ; unitaires **78 passed** ; **chantier 1 : 40/40** ; acceptance **40 passed, 16 failed** (les 16 du chantier 2) ; NOM-07 en 6 étapes, BCL-01 arrêtée par « etat_repete » en 4 étapes ; commit `06a5803` |
 | 07/10/2026 | 3.11.15 | étape 1.7 : `.venv\Scripts\python.exe -m pytest tests/unit -q` | rouge d'abord (module absent) ; unitaires **85 passed**, acceptance 40/56, identiques sur 3 exécutions ; lot de 3 dont 2 attendent 0,4 s : **0,40 s en concurrence, 0,80 s à la suite** ; même référence deux fois dans un lot : 1 appel ; commit `06b50e8` |
 | 07/10/2026 | 3.11.15 | étape 1.8 : `.venv\Scripts\python.exe -m pytest tests/acceptance -q` | code de départ supprimé ; unitaires 85 passed ; **chantier 1 : 40/40** ; acceptance 40 passed, 16 failed (les 16 du chantier 2) ; `kaldera.cli` sur NOM-05 : acceptée 3 000 € ; commit `6a213cc` |
+| 07/10/2026 | 3.11 (GitHub Actions) | intégration continue `.github/workflows/tests.yml` (C18) | **verte en 39 s** sur GitHub : ruff propre, 85 unitaires, 40 acceptance du chantier 1 (run 37685836052, commit `5784ad7`) ; les 16 du chantier 2 rejoindront la chaîne à la fin du chantier 2 |
 
 `pyproject.toml` exige Python `>=3.11,<3.12` : seule une mesure sous 3.11 vaut preuve.
 
@@ -108,6 +109,10 @@ Le débrief du formateur (jeudi fin de matinée) passe avant l'étape 1.6.
 5. Le code de départ contredit la spec (plafond refusé au lieu d'être appliqué, appel au partenaire sans délai ni filtre, issue `en_attente`) : pièges volontaires ?
 6. Qu'est-ce qui est évalué vendredi : les tests verts, le code, l'oral ?
 7. Le contrat impose un seul appel par dossier. Une protection valable pendant la vie du processus suffit-elle pour le prototype, ou attendez-vous une protection qui survive à un redémarrage ?
+
+## Compétences du brief
+
+Vérification du 07/10 dans Obsidian : `Projets/Kaldera-v2/Kaldera-v2 - Verification criteres RNCP (2026-10-07).md`. Fait depuis : C18 (chaîne CI). Restent, du plus rentable au moins : C21 (issues à activer par Era, fiche d'incident F4, prochaine correction par pull request) ; C17 et C15 (README d'installation, paragraphe éco-responsable) ; C10 et C8 (chantier 2) ; C14 (user stories) ; C16 (tableau de pilotage, facultatif).
 
 ## Verrous
 
