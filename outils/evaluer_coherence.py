@@ -81,7 +81,7 @@ def _mesurer(reference: str, attendu: dict[str, Any], appeler: Appeler, demandes
     debut = perf_counter()
     chaine = traiter_dossier(dossier, appeler)
     duree_dossier = perf_counter() - debut
-    ligne = next((x for x in chaine["lecture"] if x["agent"] == "coherence"), None)
+    ligne = next((x for x in chaine["lecture"] if x["agent"] == "coherence" and x["statut"] != "non_utilise"), None)
     fiche = chaine["fiche"]
     return {"reference": reference, "attendu": attendu["attendu"], "verdict": seul.verdict, "constats": seul.constats,
             "raison": seul.raison, "duree_coherence_s": round(duree_coherence, 3),

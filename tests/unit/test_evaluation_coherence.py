@@ -63,6 +63,9 @@ def test_un_agent_qui_ne_voit_rien_echoue_et_le_rapport_se_verifie(tmp_path: Pat
     resultats = ev.evaluer(faux, paralleles=4)
     s = resultats["synthese"]
     assert s["dossiers"] == 42 and s["detections"]["justes"] == 0 and s["verdict"] == "échoué"
+    # 8 dossiers concluent avant la cohérence (6 refus d'éligibilité, une pièce jamais déposée, BCL-01) : leur appel
+    # anticipé est noté « non_utilise », il ne compte pas comme une cohérence atteinte
+    assert s["dossiers_ou_la_chaine_atteint_la_coherence"] == 34
     ev.ecrire_rapport(resultats, tmp_path)
     assert ev.verifier(tmp_path) == []
     rapport = tmp_path / "rapport.md"
