@@ -1,0 +1,1666 @@
+{
+ "contexte": {
+  "date": "2026-10-08 10:22",
+  "modele": "gpt-5.4",
+  "commit": "c61bf34",
+  "python": "3.11.15",
+  "lectures_en_parallele": 6,
+  "duree_totale_s": 25.1
+ },
+ "synthese": {
+  "dossiers": 34,
+  "champs": {
+   "contrat.cotisations_a_jour": {
+    "justes": 34,
+    "total": 34,
+    "taux": 1.0
+   },
+   "contrat.date_souscription": {
+    "justes": 34,
+    "total": 34,
+    "taux": 1.0
+   },
+   "contrat.formule": {
+    "justes": 34,
+    "total": 34,
+    "taux": 1.0
+   },
+   "contrat.numero": {
+    "justes": 34,
+    "total": 34,
+    "taux": 1.0
+   },
+   "contrat.statut": {
+    "justes": 34,
+    "total": 34,
+    "taux": 1.0
+   },
+   "factures.montant": {
+    "justes": 33,
+    "total": 33,
+    "taux": 1.0
+   },
+   "pieces.lisible": {
+    "justes": 68,
+    "total": 68,
+    "taux": 1.0
+   }
+  },
+  "decisions_identiques": {
+   "justes": 34,
+   "total": 34
+  },
+  "extractions_impossibles": 0,
+  "appels_modele": {
+   "contrat": {
+    "appels": 34,
+    "moyenne_s": 1.77,
+    "p95_s": 2.35,
+    "max_s": 2.81
+   },
+   "facture": {
+    "appels": 33,
+    "moyenne_s": 2.35,
+    "p95_s": 5.81,
+    "max_s": 6.46
+   }
+  },
+  "seuils": {
+   "champ": 0.95,
+   "decisions": 0.95
+  },
+  "verdict": "réussi"
+ },
+ "details": [
+  {
+   "reference": "KAL-26-0101",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.128
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.572
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0102",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.124
+    },
+    {
+     "schema": "facture",
+     "duree_s": 6.461
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0103",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.352
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.496
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0104",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.327
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.559
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0105",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.153
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.477
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0106",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.091
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.93
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0107",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.391
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.71
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0108",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.513
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.554
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0109",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     1,
+     1
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.107
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.37
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0110",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.634
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.95
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0111",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.711
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.266
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0201",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.578
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.251
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0202",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.183
+    },
+    {
+     "schema": "facture",
+     "duree_s": 5.806
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0203",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.441
+    },
+    {
+     "schema": "facture",
+     "duree_s": 3.35
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0204",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.542
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.156
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0205",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.316
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.349
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0206",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.586
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.939
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0207",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.424
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.864
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0301",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.528
+    },
+    {
+     "schema": "facture",
+     "duree_s": 3.641
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0302",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.151
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.117
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0303",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.814
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.847
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0304",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.684
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.291
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0305",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.306
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.021
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0306",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.531
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.42
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0307",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.494
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.861
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0401",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.485
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.364
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0402",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.338
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.167
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0403",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.734
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.966
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0404",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.36
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.997
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0405",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.494
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.209
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0501",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.43
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.909
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0502",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 2.039
+    },
+    {
+     "schema": "facture",
+     "duree_s": 2.126
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0503",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     2,
+     2
+    ],
+    "factures.montant": [
+     1,
+     1
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.539
+    },
+    {
+     "schema": "facture",
+     "duree_s": 1.697
+    }
+   ],
+   "motif_si_impossible": null
+  },
+  {
+   "reference": "KAL-26-0601",
+   "impossible": false,
+   "decision_identique": true,
+   "champs": {
+    "contrat.numero": [
+     1,
+     1
+    ],
+    "contrat.formule": [
+     1,
+     1
+    ],
+    "contrat.date_souscription": [
+     1,
+     1
+    ],
+    "contrat.statut": [
+     1,
+     1
+    ],
+    "contrat.cotisations_a_jour": [
+     1,
+     1
+    ],
+    "pieces.lisible": [
+     3,
+     3
+    ]
+   },
+   "erreurs": [],
+   "appels": [
+    {
+     "schema": "contrat",
+     "duree_s": 1.535
+    }
+   ],
+   "motif_si_impossible": null
+  }
+ ]
+}

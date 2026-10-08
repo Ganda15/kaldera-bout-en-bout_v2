@@ -31,7 +31,7 @@ from .lecteurs import Appeler, ExtractionImpossible
 PIECE = re.compile(r"^(?:piece-)?(\d+)-(facture|photo|depot_plainte)\.png$")
 
 
-def _fichiers(dossier: Path) -> list[tuple[str, Path]]:
+def lister_images(dossier: Path) -> list[tuple[str, Path]]:
     """Les images d'un dossier, dans l'ordre de leur numéro, avec leur type."""
     trouves = []
     for chemin in dossier.glob("*.png"):
@@ -73,9 +73,9 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
                      f"({declaration['numero_contrat']}) : reprise manuelle")
             return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif)}
         pieces = [lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece)
-                  for type_piece, chemin in _fichiers(dossier)]
+                  for type_piece, chemin in lister_images(dossier)]
         depots = [lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece)
-                  for type_piece, chemin in _fichiers(dossier / "depots")]
+                  for type_piece, chemin in lister_images(dossier / "depots")]
     except ExtractionImpossible as erreur:
         motif = f"Lecture des pièces impossible ({erreur}) : reprise manuelle"
         return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif)}
