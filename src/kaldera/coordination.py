@@ -77,7 +77,8 @@ class _Parcours:
             raise
         statut = "echec" if getattr(resultat, "statut", None) == "indisponible" else "ok"
         self.etat.ranger(agent, resultat, fonction.__name__, (perf_counter() - debut) * 1000, statut,
-                         appel_externe=getattr(resultat, "appel_externe", False))
+                         appel_externe=getattr(resultat, "appel_externe", False),
+                         raison=getattr(resultat, "raison", None))  # un code court à nous, jamais le contenu reçu
         return resultat
 
     def consulter_dans_le_budget(self, **donnees: Any) -> AvisFraude:

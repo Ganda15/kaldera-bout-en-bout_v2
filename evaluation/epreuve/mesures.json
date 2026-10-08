@@ -1,0 +1,508 @@
+{
+  "synthese": {
+    "scenarios": 28,
+    "demandes": 34,
+    "demandes_conformes": 34,
+    "appels_partenaire": 18,
+    "doublons_recus": 0,
+    "max_appels_par_dossier": 1,
+    "trace_max": 6,
+    "date": "2026-10-08 19:20",
+    "bornes": {
+      "etapes_max": 8,
+      "duree_max_s": 10,
+      "complements_max": 2,
+      "appels_partenaire_max": 1,
+      "delai_partenaire_s": 3,
+      "delai_partenaire_min_s": 0.1,
+      "delai_controle_interne_s": 1,
+      "reserve_fiche_s": 0.5
+    }
+  },
+  "scenarios": [
+    {
+      "id": "NOM-01",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 5,
+      "duree_lot_s": 0.0
+    },
+    {
+      "id": "NOM-02",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 2,
+      "duree_lot_s": 0.0
+    },
+    {
+      "id": "NOM-03",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 2,
+      "duree_lot_s": 0.0
+    },
+    {
+      "id": "NOM-04",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 2,
+      "duree_lot_s": 0.0
+    },
+    {
+      "id": "NOM-05",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 5,
+      "duree_lot_s": 0.0
+    },
+    {
+      "id": "NOM-06",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 4,
+      "duree_lot_s": 0.0
+    },
+    {
+      "id": "NOM-07",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 6,
+      "duree_lot_s": 0.001
+    },
+    {
+      "id": "NOM-08",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 5,
+      "duree_lot_s": 0.0
+    },
+    {
+      "id": "NOM-09",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 4,
+      "duree_lot_s": 0.0
+    },
+    {
+      "id": "NOM-10",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 2,
+      "duree_lot_s": 0.0
+    },
+    {
+      "id": "NOM-11",
+      "categorie": "nominal",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 2,
+      "duree_lot_s": 0.001
+    },
+    {
+      "id": "AF-01",
+      "categorie": "antifraude",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 5,
+      "duree_lot_s": 0.086
+    },
+    {
+      "id": "AF-02",
+      "categorie": "antifraude",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 5,
+      "duree_lot_s": 0.092
+    },
+    {
+      "id": "AF-03",
+      "categorie": "antifraude",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 5,
+      "duree_lot_s": 0.093
+    },
+    {
+      "id": "AF-04",
+      "categorie": "antifraude",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 5,
+      "duree_lot_s": 0.1
+    },
+    {
+      "id": "AF-05",
+      "categorie": "antifraude",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 5,
+      "duree_lot_s": 0.074
+    },
+    {
+      "id": "AF-06",
+      "categorie": "antifraude",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 5,
+      "duree_lot_s": 0.091
+    },
+    {
+      "id": "AF-07",
+      "categorie": "antifraude",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 5,
+      "duree_lot_s": 0.09
+    },
+    {
+      "id": "INV-01",
+      "categorie": "invalide",
+      "partenaire": {
+        "mode": "invalide",
+        "variante": "score_hors_bornes"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 1,
+      "raisons": [
+        "schema"
+      ],
+      "trace_max": 5,
+      "duree_lot_s": 0.075
+    },
+    {
+      "id": "INV-02",
+      "categorie": "invalide",
+      "partenaire": {
+        "mode": "invalide",
+        "variante": "niveau_incoherent"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 1,
+      "raisons": [
+        "incoherence"
+      ],
+      "trace_max": 5,
+      "duree_lot_s": 0.074
+    },
+    {
+      "id": "INV-03",
+      "categorie": "invalide",
+      "partenaire": {
+        "mode": "invalide",
+        "variante": "champ_hors_contrat"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 1,
+      "raisons": [
+        "schema"
+      ],
+      "trace_max": 5,
+      "duree_lot_s": 0.074
+    },
+    {
+      "id": "INV-04",
+      "categorie": "invalide",
+      "partenaire": {
+        "mode": "invalide",
+        "variante": "reference_differente"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 1,
+      "raisons": [
+        "incoherence"
+      ],
+      "trace_max": 5,
+      "duree_lot_s": 0.09
+    },
+    {
+      "id": "INV-05",
+      "categorie": "invalide",
+      "partenaire": {
+        "mode": "invalide",
+        "variante": "champ_absent"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 1,
+      "raisons": [
+        "schema"
+      ],
+      "trace_max": 5,
+      "duree_lot_s": 0.072
+    },
+    {
+      "id": "INV-06",
+      "categorie": "invalide",
+      "partenaire": {
+        "mode": "invalide",
+        "variante": "non_json"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 1,
+      "raisons": [
+        "reponse_non_json"
+      ],
+      "trace_max": 5,
+      "duree_lot_s": 0.077
+    },
+    {
+      "id": "INV-07",
+      "categorie": "invalide",
+      "partenaire": {
+        "mode": "invalide",
+        "variante": "enveloppe_invalide"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 1,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 1,
+      "raisons": [
+        "enveloppe_invalide"
+      ],
+      "trace_max": 5,
+      "duree_lot_s": 0.075
+    },
+    {
+      "id": "PAN-01",
+      "categorie": "panne",
+      "partenaire": {
+        "mode": "panne"
+      },
+      "demandes": 5,
+      "conformes": 5,
+      "appels_partenaire": 2,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 2,
+      "raisons": [
+        "http_503",
+        "http_503"
+      ],
+      "trace_max": 6,
+      "duree_lot_s": 0.014,
+      "rejeux": 5,
+      "duree_lot_min_s": 0.012,
+      "duree_lot_max_s": 0.016,
+      "conformes_tous_rejeux": true
+    },
+    {
+      "id": "PAN-02",
+      "categorie": "panne",
+      "partenaire": {
+        "mode": "lent",
+        "delai_s": 5.0
+      },
+      "demandes": 3,
+      "conformes": 3,
+      "appels_partenaire": 2,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 1,
+      "echecs": 2,
+      "raisons": [
+        "delai_depasse",
+        "delai_depasse"
+      ],
+      "trace_max": 5,
+      "duree_lot_s": 3.032,
+      "rejeux": 5,
+      "duree_lot_min_s": 3.021,
+      "duree_lot_max_s": 3.033,
+      "conformes_tous_rejeux": true
+    },
+    {
+      "id": "BCL-01",
+      "categorie": "boucle",
+      "partenaire": {
+        "mode": "normal"
+      },
+      "demandes": 1,
+      "conformes": 1,
+      "appels_partenaire": 0,
+      "doublons_recus": 0,
+      "max_appels_par_dossier": 0,
+      "echecs": 0,
+      "raisons": [],
+      "trace_max": 4,
+      "duree_lot_s": 0.0
+    }
+  ]
+}

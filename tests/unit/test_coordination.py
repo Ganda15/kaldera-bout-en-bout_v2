@@ -204,3 +204,14 @@ def test_sans_indicateur_la_demande_n_est_jamais_marquee_degradee() -> None:
     vus: list[float | None] = []
     fiche = traiter(DEMANDES["KAL-26-0101"], consulter=partenaire(None))  # NOM-01 : aucun indicateur
     assert (fiche["decision"], fiche["mode_degrade"], vus) == ("acceptee", False, [])
+
+
+def test_la_trace_garde_la_raison_d_un_avis_indisponible_jamais_le_contenu() -> None:
+    def ecarte(**_donnees: Any) -> AvisFraude:
+        return AvisFraude(statut="indisponible", raison="schema", appel_externe=True)
+
+    fiche = traiter(DEMANDES["KAL-26-0502"], consulter=ecarte)
+    (ligne,) = [x for x in fiche["trace"] if x["agent"] == "antifraude"]
+    assert (ligne["statut"], ligne["raison"], ligne["appel_externe"]) == ("echec", "schema", True)
+    autres = [x for x in fiche["trace"] if x["agent"] != "antifraude"]
+    assert all(x.get("raison") is None for x in autres)

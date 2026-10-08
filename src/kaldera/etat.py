@@ -40,7 +40,7 @@ class EtatDemande:
     trace: list[dict[str, Any]] = field(default_factory=list)
 
     def ranger(self, agent: str, resultat: Any, action: str, duree_ms: float,
-               statut: str = "ok", appel_externe: bool = False) -> None:
+               statut: str = "ok", appel_externe: bool = False, raison: str | None = None) -> None:
         """Range le résultat d'un agent dans SA section et ajoute une ligne de trace."""
         section = SECTION_DE.get(agent)
         if section is None:
@@ -52,9 +52,10 @@ class EtatDemande:
         self.sections[section] = resultat
         self.trace.append({"agent": agent, "ecrit": [section], "action": action,
                            "duree_ms": round(duree_ms, 2), "statut": statut,
-                           "appel_externe": appel_externe})
+                           "appel_externe": appel_externe, "raison": raison})
 
     def noter_echec(self, agent: str, action: str, duree_ms: float) -> None:
         """Un agent a échoué sans rendre de résultat : une ligne de trace, aucune section écrite."""
         self.trace.append({"agent": agent, "ecrit": [], "action": action,
-                           "duree_ms": round(duree_ms, 2), "statut": "echec", "appel_externe": False})
+                           "duree_ms": round(duree_ms, 2), "statut": "echec", "appel_externe": False,
+                           "raison": None})
