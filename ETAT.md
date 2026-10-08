@@ -102,13 +102,16 @@ Le débrief du formateur (jeudi fin de matinée) passe avant l'étape 1.6.
 
 ## Questions pour le débrief
 
-1. Le code de départ peut-il être supprimé, du moment que `interface.md` et les tests d'acceptance sont respectés ?
-2. Les entrées peuvent être redéfinies (PDF, JPG) : peut-on garder le JSON de la spec § 3 comme format interne, avec un agent de lecture devant ?
-3. Un LLM est-il attendu dans les agents, ou des agents en code déterministe suffisent-ils ?
-4. Des identifiants Azure seront-ils fournis pour Kimi ?
-5. Le code de départ contredit la spec (plafond refusé au lieu d'être appliqué, appel au partenaire sans délai ni filtre, issue `en_attente`) : pièges volontaires ?
-6. Qu'est-ce qui est évalué vendredi : les tests verts, le code, l'oral ?
-7. Le contrat impose un seul appel par dossier. Une protection valable pendant la vie du processus suffit-elle pour le prototype, ou attendez-vous une protection qui survive à un redémarrage ?
+Numérotation stable (le journal des ajustements cite la question 7). Chaque question porte son chantier.
+
+1. (chantier 1) Le code de départ peut-il être supprimé, du moment que `interface.md` et les tests d'acceptance sont respectés ?
+2. (chantier 1) Les entrées peuvent être redéfinies (PDF, JPG) : peut-on garder le JSON de la spec § 3 comme format interne, avec un agent de lecture devant ?
+3. (chantier 1) Un LLM est-il attendu dans les agents, ou des agents en code déterministe suffisent-ils ?
+4. (chantier 2 et phase 3) Des identifiants Azure seront-ils fournis pour Kimi ?
+5. (chantier 1) Le code de départ contredit la spec (plafond refusé au lieu d'être appliqué, appel au partenaire sans délai ni filtre, issue `en_attente`) : pièges volontaires ?
+6. (les deux chantiers) Qu'est-ce qui est évalué vendredi : les tests verts, le code, l'oral ?
+7. (chantier 2) Le contrat impose un seul appel par dossier. Une protection valable pendant la vie du processus suffit-elle pour le prototype, ou attendez-vous une protection qui survive à un redémarrage ?
+8. (chantier 1) De vrais fichiers en entrée (factures PDF, photos JPG, éventuellement vidéos) sont-ils attendus, ou l'entrée JSON déjà décrite par la spec § 3 (`type`, `lisible`, `montant`) suffit-elle pour ce brief ? Si de vrais fichiers sont attendus : un agent de lecture en amont de l'agent Pièces, qui lit sans jamais décider ; l'éligibilité reste vérifiée sur le système de gestion des contrats de l'assureur, jamais sur un document envoyé par le client.
 
 ## Compétences du brief
 
