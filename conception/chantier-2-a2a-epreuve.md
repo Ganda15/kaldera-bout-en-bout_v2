@@ -58,11 +58,11 @@ Les questions se posent dans l'ordre, et chaque réponse élimine une option (vo
 | Q0 | Un avis de fraude interne pourrait-il remplacer le partenaire ? | Non : « l'avis de fraude est émis par le partenaire, jamais en interne » (§ 2) | Écarte : un avis interne. Kaldera ne fait que décider s'il faut demander l'avis (indicateurs F1 à F4) |
 | Q1 | Le partenaire peut-il recevoir toutes les données de la demande ? | Non : sept champs exactement (contrat § 2) | Retient : un message neuf construit à partir d'une liste blanche, validé contre un schéma strict avant l'envoi [E3] |
 | Q2 | Comment appeler le partenaire ? | Un seul `message/send`, qui rend une tâche terminée (contrat § 1, § 3) | Écarte : l'envoi sans attente suivi de lectures d'état et d'une annulation ; le contrat n'en prévoit pas, et chaque appel compte. Retient : un appel unique, abandonné à 3 s |
-| Q3 | Peut-on relancer un appel en échec ? | Non, jamais (contrat § 6) | Écarte : toute relance. Ajoute : le marqueur d'appel du chantier 1, pour qu'une reprise après incident ne rappelle jamais le partenaire |
+| Q3 | Peut-on relancer un appel en échec ? | Non, jamais (contrat § 6) | Écarte : toute relance. Ajoute : le registre des appels, qui bloque un second appel dans une même exécution (demande ou lot) ; après un redémarrage, non couvert : limite écrite (journal, entrées 2 et 3) |
 | Q4 | Une réponse bien formée est-elle forcément exploitable ? | Non : le partenaire peut répondre hors contrat | Ajoute : une validation à cinq niveaux ; toute réponse non conforme est écartée, jamais recopiée [E4] |
 | Q5 | Que devient la demande sans avis exploitable ? | La règle du § 9 | Retient : une seule règle pour toutes les causes (délai, erreur, réponse écartée) : 1 500 € ou moins, la demande continue en mode dégradé ; au-delà, escalade `cellule_fraude` [E5] |
 
-Liaison retenue : un seul point de sortie (l'agent Anti-fraude), un filtre en liste blanche, un appel `message/send` unique abandonné à 3 s, aucune relance, une validation à cinq niveaux et une règle de mode dégradé unique.
+Liaison retenue : un seul point de sortie (l'agent Anti-fraude), un filtre en liste blanche, un appel `message/send` unique, au plus 3 s et jamais au-delà du temps restant de la demande, aucune relance, une validation à cinq niveaux et une règle de mode dégradé unique.
 
 La tension à arbitrer : une validation stricte écarte davantage de réponses et sollicite plus souvent le mode dégradé ; une validation souple laisse passer des réponses douteuses. Le contrat tranche : une réponse non conforme « doit être écartée par le client, jamais exploitée » (contrat § 3). La continuité de service vient du mode dégradé.
 
@@ -316,7 +316,7 @@ Comptés dans `eval/scenarios.jsonl` (34 demandes). Un écart sur l'un de ces to
 | département de la Corse et de l'outre-mer | `2A`, `2B`, trois chiffres |
 | réponses 401, 503, `-32602`, `-32029` | indisponible, alerte quand il le faut, un seul appel |
 | tâche à l'état non terminé, ou sans partie `data` | réponse écartée au niveau 3 |
-| reprise avec marqueur d'appel et sans avis | avis indisponible, aucun nouvel appel |
+| même référence deux fois dans une exécution (registre des appels) | avis indisponible, aucun nouvel appel |
 | ensemble des 28 scénarios | jamais plus d'un appel par dossier, 18 au total |
 
 ### Ce que le plan d'épreuve ne couvre pas
@@ -415,9 +415,13 @@ Une question métier (Q0), puis cinq questions de conception posées dans l'ordr
 
 ### 5. L'échange A2A, le filtre, la validation et le chemin de mode dégradé
 
-Un seul point de sortie vers le partenaire ; la Coordination, seule à lire l'état, passe huit données à l'agent Anti-fraude et range son résultat ; sept champs exactement ; un appel unique abandonné à 3 s ; une validation à cinq niveaux ; sans avis exploitable, la règle du § 9. Fichiers : [schema-5-echange-a2a.drawio](schemas/schema-5-echange-a2a.drawio), [PNG](schemas/schema-5-echange-a2a.png).
+Un seul point de sortie vers le partenaire ; la Coordination, seule à lire l'état, passe huit données à l'agent Anti-fraude et range son résultat ; sept champs exactement ; un appel unique, au plus 3 s dans le temps restant, aucun appel s'il reste moins de 0,1 s ; une validation à cinq niveaux ; sans avis exploitable, la règle du § 9. Fichiers : [schema-5-echange-a2a.drawio](schemas/schema-5-echange-a2a.drawio), [PNG](schemas/schema-5-echange-a2a.png).
 
 ![Échange A2A et mode dégradé](schemas/schema-5-echange-a2a.png)
+
+Le schéma 7 montre le budget de 10 secondes sur un exemple illustratif, et pourquoi une lecture impossible (escalade technique) et un avis indisponible (règle des 1 500 €) ne suivent pas le même chemin. Fichiers : [schema-7-budget-10-s.drawio](schemas/schema-7-budget-10-s.drawio), [PNG](schemas/schema-7-budget-10-s.png).
+
+![Budget de 10 s et replis](schemas/schema-7-budget-10-s.png)
 
 ### 6. Le plan d'épreuve
 

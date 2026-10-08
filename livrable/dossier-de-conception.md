@@ -124,7 +124,7 @@ Une borne atteinte ne produit jamais un arrêt silencieux : la demande est escal
 
 ### 3.3 La mémoire partagée de la demande
 
-**Ce qu'elle contient.** La demande reçue, en lecture seule ; les cinq sections métier ; une section de contrôle (compteurs des bornes, marqueur d'appel au partenaire, `arret`) ; la trace, en ajout seul.
+**Ce qu'elle contient.** La demande reçue, en lecture seule ; les cinq sections métier ; la trace, en ajout seul. Hors de l'état : l'échéance de la demande et le registre des appels (une exécution) ; `arret` est écrit dans la fiche.
 
 **Où elle vit.** En mémoire, un objet par demande, créé au début du traitement et jamais partagé entre deux demandes. La fiche de décision est construite à partir de cet état à la fin du traitement.
 
@@ -137,12 +137,11 @@ Une borne atteinte ne produit jamais un arrêt silencieux : la demande est escal
 | `estimation` | Estimation | Anti-fraude (montant justifié), Coordination (règles 3 et 5) |
 | `avis_fraude` | Anti-fraude | Coordination (règle 4) |
 | `issue` | Coordination | fiche de décision |
-| `controle` | Coordination | Coordination |
 | `trace` | une ligne par étape, au nom de l'agent dont le résultat est rangé | métriques, fiche de décision |
 
 **Mémoire de session et informations exposées.** L'état de la demande est une mémoire de session, interne à la plateforme et jamais exposée. `interface.md` fixe autre chose : ce que la plateforme expose au système d'information (fiche, trace, métriques). Le partenaire, lui, ne voit que les sept champs de son contrat : la mémoire d'un agent n'est jamais exposée par A2A.
 
-**Reprise après incident.** Une demande se traite en 10 s au plus : elle est reprise depuis le début, les contrôles en code donnant le même résultat. Seule exception, imposée par le contrat du partenaire : la Coordination écrit le marqueur « appel délégué » juste avant l'appel ; à la reprise, un marqueur sans avis rend l'avis indisponible, et le partenaire n'est jamais rappelé.
+**Reprise après incident.** Une demande se traite en 10 s au plus : en cas de crash, elle est reprise depuis le début, les contrôles en code donnant le même résultat. **Une exception, imposée par le contrat du partenaire** : un seul appel par dossier, et un doublon est signalé comme manquement. La Coordination réserve donc la référence dans le registre des appels avant l'envoi : dans une même exécution (une demande ou un lot), un second appel est bloqué et l'avis est « indisponible ». **Limite écrite** (journal, entrées 2 et 3) : après un redémarrage, le registre est vide et la protection n'est pas assurée ; si le partenaire a déjà évalué le dossier, il répond -32029, traité comme une erreur (avis indisponible, mode dégradé). Une protection durable demanderait un stockage persistant.
 
 ![Mémoire partagée : sections, droits et rangement](../conception/schemas/schema-3-memoire-partagee.png)
 
@@ -207,7 +206,7 @@ Le partenaire est indisponible pour une demande quand son avis n'a pas pu être 
 | 1 500 € ou moins | la demande continue sans avis et reçoit sa décision selon les règles 5 et 6 | `mode_degrade: true`, pour contrôle a posteriori |
 | plus de 1 500 € | escalade `cellule_fraude`, motif « contrôle anti-fraude manuel » | `mode_degrade: true` |
 
-L'agent Anti-fraude renvoie « indisponible » et sa raison ; la Coordination range ce résultat et applique la règle. Trois mécanismes empêchent de bloquer le reste : l'appel est abandonné à 3 s (et jamais après la fin des 10 s de la demande) ; les demandes d'un lot sont traitées en concurrence ; une demande sans indicateur n'appelle jamais le partenaire. Une réponse arrivée après l'abandon n'est jamais lue.
+L'agent Anti-fraude renvoie « indisponible » et sa raison ; la Coordination range ce résultat et applique la règle. Trois mécanismes empêchent de bloquer le reste : l'appel dure au plus 3 s et jamais au-delà du temps restant de la demande (aucun appel s'il reste moins de 0,1 s) ; les demandes d'un lot sont traitées en concurrence ; une demande sans indicateur n'appelle jamais le partenaire. Une réponse arrivée après l'abandon n'est jamais lue.
 
 ![Échange A2A : filtre, appel unique, validation et chemin de mode dégradé](../conception/schemas/schema-5-echange-a2a.png)
 

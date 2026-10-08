@@ -17,6 +17,6 @@ Chaque ajustement de l'orchestration (borne, frontière ou routage) y est consig
 Le dossier (`livrable/dossier-de-conception.pdf`) et les schémas reflètent la conception présentée ; ce journal fait foi pour les écarts décidés depuis. À aligner en phase 4 :
 
 - entrée 1 : texte aligné le 08/10 (`6b4c2cc`) ; schémas 1 et N1 alignés le 08/10, schémas 0, 2 et A alignés le 08/10 (séquence avec court-circuit) ; reste le PDF du dossier, régénéré en fin de projet ;
-- entrées 2 et 3 : section 3.3, paragraphe « Reprise après incident » (portée réelle : une exécution) ;
+- entrées 2 et 3 : paragraphe « Reprise après incident » aligné le 08/10 dans la conception et dans le livrable (registre des appels, portée : une exécution ; limite après redémarrage écrite) ;
 - entrée 4 : schéma E aligné le 08/10 (contrôles avant toute lecture, image qui ne s'ouvre pas) ;
 - entrées 5 et 6 : schémas 1, 2, E et N1 et tableau des bornes alignés le 08/10 (`bd883ff`) ; reste le PDF.

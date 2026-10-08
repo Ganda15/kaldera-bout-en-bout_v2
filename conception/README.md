@@ -85,6 +85,7 @@ L'équipe compte sept rôles internes : deux agents de lecture qui utilisent un 
 - [x] Schémas du chantier 2 : arbre de décision de la liaison, échange A2A et mode dégradé, plan d'épreuve (fondés sur le contrat du partenaire)
 - [x] 08/10/2026 : schéma E (lecture des pièces) ajouté ; schémas 1 et N1 alignés sur le code (contrôles dans l'ordre, avec court-circuit)
 - [x] 08/10/2026 : texte des deux chantiers aligné sur le code (contrôles en séquence avec court-circuit, sept rôles, entrée, sortie, modèle et raison de chaque rôle)
+- [x] 08/10/2026 (soir) : schémas 4, 5, 6, N1, N2, 3 et A alignés sur le code du chantier 2 (délai du partenaire dans le temps restant, registre des appels, trace avec la raison, attendu et mesuré séparés) ; schéma 7 ajouté (budget de 10 s, deux replis)
 - [x] 08/10/2026 : schémas 0, 2 et A alignés (contrôles en séquence avec court-circuit, sept rôles, agents de lecture en amont) ; schéma E complété (contrôles avant toute lecture, mesure E5)
 - [x] Trois vues d'ensemble (N0 enjeux et exigences, N1 système complet, N2 épreuve du réel), à jour de la conception au 07/10/2026
 - [ ] Dossier validé par le formateur, avant tout code

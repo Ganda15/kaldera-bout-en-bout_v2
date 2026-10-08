@@ -139,7 +139,7 @@ La Coordination est la seule à lire l'état de la demande. Elle déclenche chaq
 | Éligibilité | le motif cite chaque condition non remplie ; aucun accès au montant | échecs ; refus par condition (NOM-02, NOM-03, NOM-04, NOM-10, NOM-11 en couvrent chacune une) |
 | Pièces justificatives | demandes de complément bornées (2 au plus) ; une demande de complément n'est faite que sur délégation de la Coordination, après le résultat de l'Éligibilité | part des demandes avec complément ; échecs |
 | Estimation | le montant n'est jamais négatif, jamais supérieur au plafond de la formule, arrondi au centime (NOM-05 le vérifie) | échecs ; latence |
-| Anti-fraude | filtre sortant en liste blanche ; un seul appel par dossier (marqueur écrit par la Coordination avant la délégation) ; abandon à 3 s ; réponse contrôlée avant usage (chantier 2) | appels externes, réponses écartées, part des demandes en mode dégradé |
+| Anti-fraude | filtre sortant en liste blanche ; un seul appel par dossier (registre des appels, portée : une exécution) ; au plus 3 s, dans le temps restant de la demande ; réponse contrôlée avant usage (chantier 2) | appels externes, réponses écartées, part des demandes en mode dégradé |
 | Coordination | bornes vérifiées avant chaque délégation ; seule à lire et à écrire l'état ; range chaque résultat dans la seule section de son agent | étapes consommées par demande, bornes atteintes (`arret`), part d'escalades |
 
 ### Le point ambigu
@@ -288,7 +288,7 @@ Les dépôts de l'espace assuré se lisent dans l'ordre : le premier dépôt ré
 Le brief demande une mémoire partagée de la demande, avec un état commun et un accès maîtrisé.
 
 - [x] Que contient l'état partagé de la demande ?
-  **Réponse.** La demande reçue (§ 3), en lecture seule ; les cinq sections métier (`eligibilite`, `pieces`, `estimation`, `avis_fraude`, `issue`) ; une section de contrôle (compteurs des bornes, marqueur d'appel au partenaire, `arret`) ; la trace, en ajout seul.
+  **Réponse.** La demande reçue (§ 3), en lecture seule ; les cinq sections métier (`eligibilite`, `pieces`, `estimation`, `avis_fraude`, `issue`) ; la trace, en ajout seul. Hors de l'état : l'échéance de la demande et le registre des appels (une exécution) ; `arret` est écrit dans la fiche.
 - [x] Sous quelle forme, et où vit-elle ?
   **Réponse.** En mémoire, un objet par demande, créé au début de `traiter_demande` et jamais partagé entre deux demandes : le traitement d'une demande n'en retarde pas une autre (§ 12). À la fin, la fiche de décision est construite depuis `issue`, `avis_fraude`, la trace et `arret`.
 - [x] Accès maîtrisé : qui lit et qui écrit quels champs ?
@@ -296,7 +296,7 @@ Le brief demande une mémoire partagée de la demande, avec un état commun et u
 - [x] Comment un agent évite-t-il d'écraser le travail d'un autre ?
   **Réponse.** Un agent ne peut rien écraser : il n'a aucun accès à l'état. Une table fixe associe chaque agent à sa section ; la Coordination range le résultat d'un agent dans cette seule section et refuse tout autre rangement (erreur de droits). `pieces` est remplie à nouveau après chaque dépôt de l'assuré ; les autres sections métier ne le sont qu'une fois. Les contrôles tournent en séquence et un seul composant écrit : aucun conflit possible. Chaque section métier reste alimentée par un seul agent, comme l'exige `interface.md` : la ligne de trace de l'étape porte le nom de l'agent (`agent`) et la section remplie par son résultat (`ecrit`).
 - [x] Peut-on reprendre une demande après un crash, sans la bloquer de nouveau ?
-  **Réponse.** Une demande se traite en 10 s au plus : en cas de crash, elle est reprise depuis le début, les contrôles en code donnant le même résultat. **Une exception, imposée par le contrat du partenaire** : un seul appel par dossier, et un doublon est signalé comme manquement. La Coordination écrit donc le marqueur « appel au partenaire délégué » dans `controle` juste avant de déléguer l'appel ; à la reprise, un marqueur sans avis rend l'avis « indisponible » (mode dégradé), et le partenaire n'est jamais rappelé.
+  **Réponse (mise à jour le 08/10/2026).** Une demande se traite en 10 s au plus : en cas de crash, elle est reprise depuis le début, les contrôles en code donnant le même résultat. **Une exception, imposée par le contrat du partenaire** : un seul appel par dossier, et un doublon est signalé comme manquement. La Coordination réserve donc la référence dans le registre des appels avant l'envoi : dans une même exécution (une demande ou un lot), un second appel est bloqué et l'avis est « indisponible ». **Limite écrite** (journal, entrées 2 et 3) : après un redémarrage, le registre est vide et la protection n'est pas assurée ; si le partenaire a déjà évalué le dossier, il répond -32029, traité comme une erreur (avis indisponible, mode dégradé). Une protection durable demanderait un stockage persistant.
 - [x] Quels champs de la mémoire ne doivent jamais partir chez le partenaire ? [E3]
   **Réponse (contrat, § 2).** L'identité et les coordonnées de l'assuré (nom, prénom, e-mail, téléphone, adresse, code postal complet), l'IBAN, l'identifiant client et le numéro de contrat, la description libre du sinistre, les pièces et leur contenu. Seuls sept champs partent, construits par l'agent Anti-fraude (chantier 2), qui ne reçoit lui-même que huit données de la Coordination.
 - [x] Où range-t-on l'identifiant de l'évaluation du partenaire ?
@@ -316,7 +316,7 @@ Seule la Coordination lit et écrit l'état. Le tableau dit, pour chaque section
 | `estimation` | Estimation | Coordination | l'Anti-fraude (montant justifié), la Coordination (règles 3 et 5) |
 | `avis_fraude` | Anti-fraude | Coordination | la Coordination (règle 4) |
 | `issue` | Coordination | Coordination | la fiche de décision |
-| `controle` : compteurs des bornes, marqueur d'appel au partenaire, `arret` | Coordination | Coordination | la Coordination |
+| hors de l'état (mis à jour le 08/10) : l'échéance de la demande et le registre des appels (une exécution) ; `arret` est écrit dans la fiche | Coordination | Coordination | la Coordination |
 | `trace` : une ligne par étape, ajout seul | chaque étape, au nom de l'agent dont le résultat est rangé | Coordination | métriques, fiche de décision |
 
 L'agent Anti-fraude ne reçoit ni l'identité de l'assuré, ni son IBAN, ni la description, ni les pièces : il ne peut pas envoyer ce qu'il ne reçoit pas. [E3] est ainsi tenu deux fois, à l'entrée de l'agent et à la sortie du filtre (chantier 2).
