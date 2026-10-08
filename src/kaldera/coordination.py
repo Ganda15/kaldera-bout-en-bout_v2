@@ -150,6 +150,12 @@ class _Parcours:
                              avis=retenu, mode_degrade=degrade)
 
 
+def escalade_directe(reference: str, motif: str) -> dict[str, Any]:
+    """Escalade motivée avant tout contrôle (pièces illisibles pour une raison technique, contrat incohérent) :
+    la demande reçoit quand même une fiche, avec une étape de la Coordination."""
+    return _Parcours({"reference": reference}, BORNES, partenaire_bouchon).conclure(motif, file="gestionnaire")
+
+
 def traiter(demande: dict[str, Any], *, consulter: Callable[..., AvisFraude] = partenaire_bouchon,
             registre: RegistreAppels | None = None, bornes: Bornes = BORNES) -> dict[str, Any]:
     """Traite une demande jusqu'à sa fiche de décision, quoi qu'il arrive."""
