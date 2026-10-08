@@ -2,7 +2,7 @@
 
 ## ▶️ Prochaine action
 
-**Chantier 1 terminé (07/10) : 40/40.** Consigne du formateur du 08/10 : les entrées du système sont des pièces **non structurées** (contrats en PDF, factures en photo) ; le JSON de la spec § 3 est un résultat déjà travaillé, pas l'entrée. Phase E en cours : E1 fait (34 dossiers dans `dossiers/`) ; E0 attend l'essai réel avec la clé (`outils/essai_modele.py`). Prochaine étape : **E2, les agents de lecture** (contrat PDF, factures en image), avant le chantier 2.
+**Chantier 1 terminé (07/10) : 40/40.** Consigne du formateur du 08/10 : les entrées du système sont des pièces **non structurées** (contrats en PDF, factures en photo) ; le JSON de la spec § 3 est un résultat déjà travaillé, pas l'entrée. Phase E en cours : E1 fait (34 dossiers dans `dossiers/`) ; E0 fait le 08/10 : essai réel par Era, déploiement `gpt-5.4`, appel texte « OK » en 12,3 s (premier appel), lecture d'image juste (`montant_total=1234.5`) en 1,5 s. Prochaine étape : **E2, les agents de lecture** (contrat PDF, factures en image), avant le chantier 2.
 
 ## Mesures
 
@@ -85,7 +85,7 @@ Consigne du 08/10 : « le JSON est un résultat déjà travaillé, ce n'est pas 
 
 | Étape | Quoi | Test rouge d'abord | Preuve | Mode |
 |---|---|---|---|---|
-| E0 | accès au modèle : `openai`, `pymupdf`, `pillow` dans `pyproject.toml` ; fabrique du client lisant `.env` ; script d'essai (texte, puis image) | la fabrique refuse de démarrer sans clé, sans afficher de secret | réponse du modèle à l'essai texte et à l'essai image | A, clé saisie par Era |
+| E0 ✅ | accès au modèle : `openai`, `pymupdf`, `pillow` dans `pyproject.toml` ; fabrique du client lisant `.env` ; script d'essai (texte, puis image) | la fabrique refuse de démarrer sans clé, sans afficher de secret | réponse du modèle à l'essai texte et à l'essai image | A, clé saisie par Era |
 | E1 ✅ | génération des pièces non structurées depuis les 34 demandes des scénarios : contrat en PDF, factures en image (illisibles quand la demande le dit), dépôts de l'espace assuré ; la vérité est connue | une pièce par demande et par type ; le PDF contient les champs ; une facture illisible est floue | 34 dossiers générés, reproductibles | A |
 | E2 | agents de lecture : contrat (PDF), facture (image) ; sortie validée par un schéma Pydantic strict ; dans le doute, `lisible: false` | réponses du modèle simulées (aucun réseau) : schéma respecté, doute donne illisible, texte libre jamais transmis à une décision | unitaires verts | A |
 | E3 | point d'entrée `traiter_dossier(fichiers)` : les agents de lecture produisent le JSON § 3, puis la chaîne existante décide | un dossier simulé de bout en bout | NOM-01 depuis ses pièces | A |
