@@ -32,11 +32,11 @@ MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août
         "novembre", "décembre"]
 FLOU_ILLISIBLE = 7
 ARTISANS = {"degat_des_eaux": "Plomberie Durand SARL", "incendie": "Rénov'Habitat SAS",
-            "bris_de_glace": "Miroiterie du Centre", "vol": "Électroménager Bonprix"}
+            "bris_de_glace": "Miroiterie du Centre", "vol": "Bonprix Multimédia"}
 TRAVAUX = {"degat_des_eaux": ("Recherche et réparation de fuite", "Remplacement du parquet"),
            "incendie": ("Déblaiement et nettoyage", "Remise en état des murs et plafonds"),
            "bris_de_glace": ("Dépose du vitrage endommagé", "Fourniture et pose d'un double vitrage"),
-           "vol": ("Remplacement d'un téléviseur", "Remplacement d'un ordinateur portable")}
+           "vol": ("Remplacement d'un ordinateur portable", "Remplacement d'un appareil photo")}
 STATUTS = {"actif": "en vigueur", "suspendu": "suspendu", "resilie": "résilié"}
 
 
