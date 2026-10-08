@@ -93,6 +93,9 @@
           « corrigé par la personne » ; la valeur extraite reste gardée pour l'audit.</div>
         <div class="ligne" style="margin-top:12px"><button id="decider">Confirmer et décider</button>
           <span id="etat-decision" class="sous"></span></div>
+        <div id="verrou" class="boite cache" style="margin-top:10px">Décision enregistrée : les valeurs sont
+          verrouillées et ne peuvent plus changer cette décision. Pour recommencer : « Nouvel essai de simulation »
+          dans le panneau du présentateur.</div>
       </div>
     </div>
   </section>
@@ -143,6 +146,14 @@ let lu = null;
 const euros = (x) => x === null || x === undefined ? "·" :
   new Intl.NumberFormat("fr-FR", {maximumFractionDigits: 2}).format(x) + " €";
 const MODE = {reference: "valeurs de référence (aucun appel au modèle)", modele: "modèle Azure, réel"};
+
+// Après une décision, plus rien n'est modifiable : la décision enregistrée ne changerait pas, et un formulaire
+// encore ouvert laisserait croire le contraire. Seul « Nouvel essai de simulation » déverrouille.
+function verrouiller(oui) {
+  for (const el of $("etape2").querySelectorAll("input, select, button")) el.disabled = oui;
+  $("lire").disabled = oui;
+  $("verrou").classList.toggle("cache", !oui);
+}
 
 function cellule(tr, texte) { const td = document.createElement("td"); td.textContent = texte ?? "·"; tr.appendChild(td); return td; }
 function badge(texte, classe) { const b = document.createElement("span"); b.className = "badge " + classe; b.textContent = texte; return b; }
@@ -271,9 +282,9 @@ $("decider").addEventListener("click", async () => {
     corps[tr.dataset.groupe].push({lisible: sel.value === "true", montant: mont.value === "" ? null : Number(mont.value)});
   }
   $("decider").disabled = true; $("etat-decision").textContent = "décision en cours…";
-  try { afficherDecision(await appel("/api/decider", corps)); $("etat-decision").textContent = ""; }
-  catch (e) { $("etat-decision").replaceChildren(badge("refusé : " + e.message, "personne")); }
-  finally { $("decider").disabled = false; chargerPartenaire(); }
+  try { afficherDecision(await appel("/api/decider", corps)); $("etat-decision").textContent = ""; verrouiller(true); }
+  catch (e) { $("etat-decision").replaceChildren(badge("refusé : " + e.message, "personne")); $("decider").disabled = false; }
+  finally { chargerPartenaire(); }
 });
 
 function afficherDecision(r) {
@@ -330,7 +341,7 @@ $("nouvel-essai").addEventListener("click", async () => {
   for (const id of ["etape2", "etape3", "bloc-lecture"]) $(id).classList.add("cache");
   $("etat-lecture").textContent = `Nouvel essai : ${r.sessions_effacees} demande(s) oubliée(s) ; journal du partenaire simulé ` +
     (r.partenaire_simule_reinitialise ? "vidé." : "non vidé (partenaire injoignable).");
-  lu = null; chargerPartenaire();
+  lu = null; verrouiller(false); chargerPartenaire();
 });
 chargerDossiers(); chargerPartenaire();
 </script>
