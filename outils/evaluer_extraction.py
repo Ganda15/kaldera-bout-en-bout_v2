@@ -148,8 +148,14 @@ def _rapport_md(resultats: dict[str, Any]) -> str:
     d = s["decisions_identiques"]
     lignes += ["", "## Décisions", "",
                f"Décisions identiques au chemin JSON (issue, décision, montant, file, mode dégradé, arrêt) : "
-               f"{d['justes']}/{d['total']}. Lectures impossibles : {s['extractions_impossibles']}.",
-               "", "## Appels au modèle", "", "| Lecture | Appels | Moyenne (s) | p95 (s) | Max (s) |", "|---|---|---|---|---|"]
+               f"{d['justes']}/{d['total']}. Lectures impossibles : {s['extractions_impossibles']}."]
+    for x in resultats["details"]:  # une décision différente : dire si la lecture ou la cohérence l'a changée
+        if not x["decision_identique"]:
+            verdicts = [ligne.get("verdict") for ligne in x.get("lecture", [])
+                        if ligne["agent"] == "coherence" and ligne.get("statut") != "non_utilise"]
+            lignes.append(f"- {x['reference']} : décision différente du chemin JSON ; cohérence des pièces : "
+                          f"{verdicts[0] if verdicts else 'non atteinte'}")
+    lignes += ["", "## Appels au modèle", "", "| Lecture | Appels | Moyenne (s) | p95 (s) | Max (s) |", "|---|---|---|---|---|"]
     lignes += [f"| {k} | {v['appels']} | {v['moyenne_s']} | {v['p95_s']} | {v['max_s']} |"
                for k, v in s["appels_modele"].items()]
     j = s["jetons"]

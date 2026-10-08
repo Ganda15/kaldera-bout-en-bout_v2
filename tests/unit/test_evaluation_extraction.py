@@ -94,3 +94,21 @@ def test_la_consommation_de_jetons_et_les_metriques_de_lecture_sont_mesurees(tmp
     ev.ecrire_rapport(resultats, tmp_path)
     assert "Jetons" in (tmp_path / "rapport.md").read_text(encoding="utf-8")
     assert ev.verifier(tmp_path) == []
+
+
+def test_une_decision_changee_par_la_coherence_est_nommee_dans_le_rapport() -> None:
+    from kaldera.agents.coherence import DocumentInterprete
+
+    parfait = faux_modele()
+
+    def doute(consigne: str, schema: type[BaseModel], image_png: Any = None, **kwargs: Any) -> Any:
+        if schema is Interpretation:
+            lu = interpretation(consigne)
+            return Interpretation(documents=[DocumentInterprete(**{**d.model_dump(), "concorde": "incertain"})
+                                             for d in lu.documents])
+        return parfait(consigne, schema, image_png, **kwargs)
+
+    resultats = ev.evaluer(DOSSIERS, doute)
+    rapport = ev._rapport_md(resultats)
+    assert resultats["synthese"]["decisions_identiques"]["justes"] < 34
+    assert "- KAL-26-0101 : décision différente du chemin JSON ; cohérence des pièces : insuffisant" in rapport
