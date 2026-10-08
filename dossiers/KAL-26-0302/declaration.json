@@ -1,0 +1,24 @@
+{
+  "reference": "KAL-26-0302",
+  "assure": {
+    "id_client": "CL-11457",
+    "nom": "Diallo",
+    "prenom": "Moussa",
+    "email": "m.diallo@example.org",
+    "telephone": "+33 6 44 18 92 05",
+    "iban": "FR76 1695 8000 0100 0567 8901 234",
+    "adresse": "8 impasse du Moulin, 13008",
+    "code_postal": "13008"
+  },
+  "numero_contrat": "CTR-778820",
+  "sinistre": {
+    "type": "incendie",
+    "date_survenance": "2026-08-01",
+    "date_declaration": "2026-08-02",
+    "montant_declare": 6200.0,
+    "description": "Départ de feu dans la cuisine (friteuse), plan de travail et hotte détruits."
+  },
+  "historique": {
+    "sinistres_12_mois": 0
+  }
+}

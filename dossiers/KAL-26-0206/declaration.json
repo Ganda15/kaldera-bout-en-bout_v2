@@ -1,0 +1,24 @@
+{
+  "reference": "KAL-26-0206",
+  "assure": {
+    "id_client": "CL-10021",
+    "nom": "Martin",
+    "prenom": "Claire",
+    "email": "claire.martin@example.org",
+    "telephone": "+33 6 12 34 56 78",
+    "iban": "FR76 3000 6000 0112 3456 7890 189",
+    "adresse": "12 rue des Lilas, 69003",
+    "code_postal": "69003"
+  },
+  "numero_contrat": "CTR-778817",
+  "sinistre": {
+    "type": "bris_de_glace",
+    "date_survenance": "2026-09-05",
+    "date_declaration": "2026-09-06",
+    "montant_declare": 2000.0,
+    "description": "Baie vitrée du séjour fissurée après un choc lors d'un orage de grêle."
+  },
+  "historique": {
+    "sinistres_12_mois": 0
+  }
+}

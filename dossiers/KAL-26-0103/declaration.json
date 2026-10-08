@@ -1,0 +1,24 @@
+{
+  "reference": "KAL-26-0103",
+  "assure": {
+    "id_client": "CL-11002",
+    "nom": "Bernard",
+    "prenom": "Sofia",
+    "email": "sofia.bernard@example.org",
+    "telephone": "+33 7 81 22 43 10",
+    "iban": "FR76 1820 6000 4512 3456 7890 123",
+    "adresse": "27 avenue Jean Jaurès, 31500",
+    "code_postal": "31500"
+  },
+  "numero_contrat": "CTR-778803",
+  "sinistre": {
+    "type": "vol",
+    "date_survenance": "2026-09-01",
+    "date_declaration": "2026-09-02",
+    "montant_declare": 950.0,
+    "description": "Cambriolage pendant les congés : ordinateur portable et appareil photo dérobés."
+  },
+  "historique": {
+    "sinistres_12_mois": 0
+  }
+}

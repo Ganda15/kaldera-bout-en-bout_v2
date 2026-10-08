@@ -1,0 +1,683 @@
+{
+  "KAL-26-0101": {
+    "contrat": {
+      "numero": "CTR-778801",
+      "formule": "confort",
+      "date_souscription": "2024-01-15",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 1850.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0102": {
+    "contrat": {
+      "numero": "CTR-778802",
+      "formule": "essentiel",
+      "date_souscription": "2022-05-02",
+      "statut": "resilie",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 2400.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0103": {
+    "contrat": {
+      "numero": "CTR-778803",
+      "formule": "essentiel",
+      "date_souscription": "2023-02-10",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 950.0
+      },
+      "piece-2-depot_plainte.png": {
+        "type": "depot_plainte",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0104": {
+    "contrat": {
+      "numero": "CTR-778804",
+      "formule": "confort",
+      "date_souscription": "2026-07-20",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 1300.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0105": {
+    "contrat": {
+      "numero": "CTR-778805",
+      "formule": "essentiel",
+      "date_souscription": "2021-11-08",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 4200.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0106": {
+    "contrat": {
+      "numero": "CTR-778806",
+      "formule": "confort",
+      "date_souscription": "2024-06-01",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 140.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0107": {
+    "contrat": {
+      "numero": "CTR-778807",
+      "formule": "premium",
+      "date_souscription": "2023-09-12",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 2300.0
+      },
+      "depots/1-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0108": {
+    "contrat": {
+      "numero": "CTR-778808",
+      "formule": "confort",
+      "date_souscription": "2022-03-14",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 1800.0
+      },
+      "piece-2-depot_plainte.png": {
+        "type": "depot_plainte",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0109": {
+    "contrat": {
+      "numero": "CTR-778809",
+      "formule": "confort",
+      "date_souscription": "2023-04-04",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 600.0
+      }
+    }
+  },
+  "KAL-26-0110": {
+    "contrat": {
+      "numero": "CTR-778810",
+      "formule": "confort",
+      "date_souscription": "2020-10-10",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 1600.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0111": {
+    "contrat": {
+      "numero": "CTR-778811",
+      "formule": "premium",
+      "date_souscription": "2019-01-07",
+      "statut": "actif",
+      "cotisations_a_jour": false
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 3100.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0201": {
+    "contrat": {
+      "numero": "CTR-778812",
+      "formule": "confort",
+      "date_souscription": "2026-06-20",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 1200.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0202": {
+    "contrat": {
+      "numero": "CTR-778813",
+      "formule": "premium",
+      "date_souscription": "2019-03-01",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 7800.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0203": {
+    "contrat": {
+      "numero": "CTR-778814",
+      "formule": "premium",
+      "date_souscription": "2018-05-15",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 12500.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0204": {
+    "contrat": {
+      "numero": "CTR-778815",
+      "formule": "confort",
+      "date_souscription": "2026-06-01",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 6400.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0205": {
+    "contrat": {
+      "numero": "CTR-778816",
+      "formule": "premium",
+      "date_souscription": "2026-05-20",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 9000.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0206": {
+    "contrat": {
+      "numero": "CTR-778817",
+      "formule": "confort",
+      "date_souscription": "2021-01-20",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 1500.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0207": {
+    "contrat": {
+      "numero": "CTR-778818",
+      "formule": "premium",
+      "date_souscription": "2020-02-02",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 2600.0
+      },
+      "piece-2-depot_plainte.png": {
+        "type": "depot_plainte",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0301": {
+    "contrat": {
+      "numero": "CTR-778819",
+      "formule": "confort",
+      "date_souscription": "2026-06-10",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 1200.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0302": {
+    "contrat": {
+      "numero": "CTR-778820",
+      "formule": "premium",
+      "date_souscription": "2017-09-09",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 6200.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0303": {
+    "contrat": {
+      "numero": "CTR-778821",
+      "formule": "confort",
+      "date_souscription": "2022-12-01",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 900.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0304": {
+    "contrat": {
+      "numero": "CTR-778822",
+      "formule": "premium",
+      "date_souscription": "2019-07-07",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 5400.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0305": {
+    "contrat": {
+      "numero": "CTR-778823",
+      "formule": "confort",
+      "date_souscription": "2026-06-15",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 800.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0306": {
+    "contrat": {
+      "numero": "CTR-778824",
+      "formule": "premium",
+      "date_souscription": "2021-05-05",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 1000.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0307": {
+    "contrat": {
+      "numero": "CTR-778825",
+      "formule": "premium",
+      "date_souscription": "2020-11-11",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 5100.0
+      },
+      "piece-2-depot_plainte.png": {
+        "type": "depot_plainte",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0401": {
+    "contrat": {
+      "numero": "CTR-778826",
+      "formule": "confort",
+      "date_souscription": "2023-03-03",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 980.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0402": {
+    "contrat": {
+      "numero": "CTR-778827",
+      "formule": "essentiel",
+      "date_souscription": "2022-10-10",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 450.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0403": {
+    "contrat": {
+      "numero": "CTR-778828",
+      "formule": "confort",
+      "date_souscription": "2026-06-25",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 1500.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0404": {
+    "contrat": {
+      "numero": "CTR-778829",
+      "formule": "premium",
+      "date_souscription": "2016-04-04",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 8800.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0405": {
+    "contrat": {
+      "numero": "CTR-778830",
+      "formule": "premium",
+      "date_souscription": "2022-08-08",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 700.0
+      },
+      "depots/1-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0501": {
+    "contrat": {
+      "numero": "CTR-778831",
+      "formule": "essentiel",
+      "date_souscription": "2021-02-02",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 2100.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0502": {
+    "contrat": {
+      "numero": "CTR-778832",
+      "formule": "confort",
+      "date_souscription": "2020-01-01",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 1100.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0503": {
+    "contrat": {
+      "numero": "CTR-778833",
+      "formule": "premium",
+      "date_souscription": "2018-08-18",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": true,
+        "montant": 6900.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      }
+    }
+  },
+  "KAL-26-0601": {
+    "contrat": {
+      "numero": "CTR-778834",
+      "formule": "confort",
+      "date_souscription": "2022-07-07",
+      "statut": "actif",
+      "cotisations_a_jour": true
+    },
+    "fichiers": {
+      "piece-1-facture.png": {
+        "type": "facture",
+        "lisible": false,
+        "montant": 1400.0
+      },
+      "piece-2-photo.png": {
+        "type": "photo",
+        "lisible": true
+      },
+      "depots/1-facture.png": {
+        "type": "facture",
+        "lisible": false,
+        "montant": 1400.0
+      }
+    }
+  }
+}

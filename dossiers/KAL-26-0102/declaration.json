@@ -1,0 +1,24 @@
+{
+  "reference": "KAL-26-0102",
+  "assure": {
+    "id_client": "CL-10388",
+    "nom": "Nguyen",
+    "prenom": "Thomas",
+    "email": "t.nguyen@example.org",
+    "telephone": "+33 6 23 45 67 89",
+    "iban": "FR76 1027 8060 0100 0203 4567 812",
+    "adresse": "4 allée des Tilleuls, 44100",
+    "code_postal": "44100"
+  },
+  "numero_contrat": "CTR-778802",
+  "sinistre": {
+    "type": "incendie",
+    "date_survenance": "2026-07-03",
+    "date_declaration": "2026-07-05",
+    "montant_declare": 2400.0,
+    "description": "Départ de feu dans la cuisine (friteuse), plan de travail et hotte détruits."
+  },
+  "historique": {
+    "sinistres_12_mois": 0
+  }
+}

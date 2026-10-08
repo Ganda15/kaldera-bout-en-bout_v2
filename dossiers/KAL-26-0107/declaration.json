@@ -1,0 +1,24 @@
+{
+  "reference": "KAL-26-0107",
+  "assure": {
+    "id_client": "CL-13004",
+    "nom": "Petit",
+    "prenom": "Inès",
+    "email": "ines.petit@example.org",
+    "telephone": "+33 6 58 72 19 33",
+    "iban": "FR76 1350 7000 5031 2345 6789 067",
+    "adresse": "22 rue Victor Hugo, 67000",
+    "code_postal": "67000"
+  },
+  "numero_contrat": "CTR-778807",
+  "sinistre": {
+    "type": "degat_des_eaux",
+    "date_survenance": "2026-08-02",
+    "date_declaration": "2026-08-03",
+    "montant_declare": 2300.0,
+    "description": "Fuite sur l'arrivée d'eau de la salle de bains, parquet et plinthes du couloir abîmés."
+  },
+  "historique": {
+    "sinistres_12_mois": 0
+  }
+}
