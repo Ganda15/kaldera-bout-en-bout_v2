@@ -323,3 +323,11 @@ def test_l_environnement_l_emporte_sur_le_fichier_env(tmp_path: Path, monkeypatc
     assert options(["d", "--partenaire"], fichier_env=env)[1] == "http://127.0.0.1:9999"
     import os
     assert os.environ["PARTENAIRE_JETON"] == "jeton-de-l-environnement"
+
+
+def test_des_dates_impossibles_dans_le_formulaire_donnent_une_escalade(tmp_path: Path) -> None:
+    def dates(d: dict[str, Any]) -> None:
+        d["sinistre"].update(date_survenance="2026-08-18", date_declaration="2026-08-14")
+
+    fiche = traiter_dossier(formulaire_modifie(tmp_path, dates), oracle())["fiche"]
+    assert (fiche["issue"], fiche["file"]) == ("escalade", "gestionnaire") and "incohérentes" in fiche["motif"]

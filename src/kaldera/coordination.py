@@ -18,7 +18,7 @@ from .agents.estimation import estimer
 from .agents.pieces import demander_complement, verifier_pieces
 from .bornes import BORNES, Bornes
 from .etat import EtatDemande
-from .regles import continue_en_mode_degrade, depasse_seuil_delegation
+from .regles import continue_en_mode_degrade, depasse_seuil_delegation, jours_entre
 
 
 class RegistreAppels:
@@ -105,6 +105,12 @@ class _Parcours:
     def derouler(self) -> dict[str, Any]:
         demande = self.etat.demande
         contrat, sinistre = demande["contrat"], demande["sinistre"]
+
+        # Données impossibles : un sinistre ne peut pas être déclaré avant d'être survenu. La spec (E4, « au plus tard
+        # 30 jours après ») ne prévoit pas ce cas ; aucune règle n'est inventée, une personne reprend la demande.
+        if jours_entre(sinistre["date_survenance"], sinistre["date_declaration"]) < 0:
+            return self.conclure(f"Dates incohérentes : déclaration du {sinistre['date_declaration']} antérieure à la "
+                                 f"survenance du {sinistre['date_survenance']} : reprise manuelle", file="gestionnaire")
 
         eligibilite = self.deleguer("eligibilite", verifier_eligibilite, contrat=contrat, sinistre=sinistre)
         if not eligibilite.eligible:  # règle 1 ; court-circuit : les pièces ne sont pas contrôlées

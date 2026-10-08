@@ -215,3 +215,26 @@ def test_la_trace_garde_la_raison_d_un_avis_indisponible_jamais_le_contenu() -> 
     assert (ligne["statut"], ligne["raison"], ligne["appel_externe"]) == ("echec", "schema", True)
     autres = [x for x in fiche["trace"] if x["agent"] != "antifraude"]
     assert all(x.get("raison") is None for x in autres)
+
+
+# ---------------------------------------------------------------- dates impossibles : jamais une décision (N1)
+
+def test_une_declaration_anterieure_a_la_survenance_part_en_escalade_sans_controle() -> None:
+    """Spec § 4 E4 : « déclaré au plus tard 30 jours après sa survenance ». Une déclaration AVANT le sinistre ne
+    respecte pas une règle de la spec : la donnée est impossible. Aucune règle n'est inventée : une personne reprend."""
+    import copy
+    vus: list[float | None] = []
+    demande = copy.deepcopy(DEMANDES["KAL-26-0101"])  # NOM-01 : acceptée 1 700 € avec des dates normales
+    demande["sinistre"]["date_survenance"], demande["sinistre"]["date_declaration"] = "2026-08-18", "2026-08-14"
+    fiche = traiter(demande, consulter=espion_du_delai(vus))
+    assert (fiche["issue"], fiche["file"], fiche["decision"], fiche["montant_rembourse"]) == (
+        "escalade", "gestionnaire", None, None)
+    assert "incohérentes" in fiche["motif"] and "2026-08-14" in fiche["motif"] and "2026-08-18" in fiche["motif"]
+    assert agents(fiche) == ["coordination"] and vus == []  # aucun contrôle lancé, aucun appel au partenaire
+
+
+def test_une_declaration_le_jour_meme_suit_le_chemin_normal() -> None:
+    import copy
+    demande = copy.deepcopy(DEMANDES["KAL-26-0101"])
+    demande["sinistre"]["date_declaration"] = demande["sinistre"]["date_survenance"]
+    assert traiter(demande)["decision"] == "acceptee"
