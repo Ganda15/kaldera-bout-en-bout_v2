@@ -63,6 +63,10 @@ Deux agents de lecture transforment ces pièces en données de la spec § 3, pui
 s'applique sans changement. Ils lisent et extraient, ils ne décident jamais. Schéma :
 [`conception/schemas/schema-E-lecture-des-pieces.png`](conception/schemas/schema-E-lecture-des-pieces.png).
 
+L'équipe compte donc sept agents : cinq décident, en code (la Coordination et quatre agents de contrôle : Éligibilité,
+Pièces, Estimation, Anti-fraude), deux lisent les pièces avec un modèle et ne décident jamais (lecteur de contrat,
+lecteur de pièces). Le partenaire anti-fraude est un huitième agent, externe : il appartient à une autre entreprise.
+
 | Agent | Reçoit | Ce qui est fait en code | Ce que fait le modèle |
 |---|---|---|---|
 | Lecteur de contrat (`lire_contrat`) | `contrat.pdf` | extraction du texte (PyMuPDF) | remplit le schéma strict `ContratLu` : numéro, formule, date, statut, cotisations |

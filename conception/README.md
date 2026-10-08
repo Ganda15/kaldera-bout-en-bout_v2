@@ -52,6 +52,8 @@ Pour entrer dans le dossier avant les deux chantiers : le pourquoi, le système 
 
 Le formateur a précisé le 08/10/2026 que les entrées réelles sont des pièces non structurées (contrat en PDF, factures en photo). Deux agents de lecture produisent le JSON de la spec § 3 avant la Coordination ; la chaîne de décision reste inchangée. Fichiers : [drawio](schemas/schema-E-lecture-des-pieces.drawio), [PNG](schemas/schema-E-lecture-des-pieces.png).
 
+L'équipe compte donc sept agents : cinq décident, en code (la Coordination et quatre agents de contrôle : Éligibilité, Pièces, Estimation, Anti-fraude), deux lisent les pièces avec un modèle et ne décident jamais (lecteur de contrat, lecteur de pièces). Le partenaire anti-fraude est un huitième agent, externe : il appartient à une autre entreprise.
+
 ![Lecture des pièces](schemas/schema-E-lecture-des-pieces.png)
 
 ## Couverture des schémas attendus par le brief
