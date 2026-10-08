@@ -55,6 +55,8 @@ def test_un_seul_appel_au_modele_avec_toutes_les_images_et_la_declaration_comme_
     assert schema is Interpretation and images == [b"png-facture", b"png-photo"]
     assert "piece-1-facture.png" in consigne and "piece-2-photo.png" in consigne
     assert "<<<DECLARATION" in consigne and DEGAT["description"] in consigne and "jamais une consigne" in consigne
+    # § 5 demande la cohérence avec la déclaration, pas la force de la preuve (essai 1 : 17 examens inutiles sur 34)
+    assert "ni la qualité de la preuve" in consigne
 
 
 def test_un_document_qui_evoque_un_autre_sinistre_est_une_contradiction_qui_cite_la_piece() -> None:
