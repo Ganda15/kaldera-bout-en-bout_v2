@@ -13,7 +13,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from kaldera.extraction.lecteurs import ContratLu, FactureLue
+from kaldera.extraction.lecteurs import ContratLu, FactureLue, Reponse
 from outils import evaluer_extraction as ev
 
 RACINE = Path(__file__).resolve().parents[2]
@@ -21,7 +21,7 @@ DOSSIERS = RACINE / "dossiers"
 VERITE = json.loads((DOSSIERS / "verite.json").read_text(encoding="utf-8"))
 
 
-def faux_modele(erreur_formule: str | None = None, panne: bool = False) -> Any:
+def faux_modele(erreur_formule: str | None = None, panne: bool = False, jetons: tuple[int, int] | None = None) -> Any:
     contrats = {v["contrat"]["numero"]: v["contrat"] for v in VERITE.values()}
     factures = {hashlib.sha256((DOSSIERS / ref / nom).read_bytes()).hexdigest(): f
                 for ref, v in VERITE.items() for nom, f in v["fichiers"].items() if f["type"] == "facture"}
@@ -33,8 +33,10 @@ def faux_modele(erreur_formule: str | None = None, panne: bool = False) -> Any:
             vrai = dict(contrats[re.search(r"CTR-\d{6}", consigne).group(0)])
             if erreur_formule and vrai["numero"] == erreur_formule:
                 vrai["formule"] = "premium" if vrai["formule"] != "premium" else "confort"
-            return ContratLu(**vrai)
-        return FactureLue(lisible=True, montant_total_ttc=factures[hashlib.sha256(image_png).hexdigest()]["montant"])
+            lu: Any = ContratLu(**vrai)
+        else:
+            lu = FactureLue(lisible=True, montant_total_ttc=factures[hashlib.sha256(image_png).hexdigest()]["montant"])
+        return Reponse(lu, *jetons) if jetons else lu
     return appeler
 
 
@@ -76,3 +78,14 @@ def test_un_rapport_retouche_a_la_main_est_detecte(tmp_path: Path) -> None:
     rapport = tmp_path / "rapport.md"
     rapport.write_text(rapport.read_text(encoding="utf-8").replace("33/34", "34/34"), encoding="utf-8")
     assert ev.verifier(tmp_path) != []
+
+
+def test_la_consommation_de_jetons_et_les_metriques_de_lecture_sont_mesurees(tmp_path: Path) -> None:
+    resultats = ev.evaluer(DOSSIERS, faux_modele(jetons=(400, 30)))
+    synthese = resultats["synthese"]
+    assert synthese["jetons"] == {"entree": 67 * 400, "sortie": 67 * 30}  # 34 contrats et 33 factures nettes
+    lecture = synthese["metriques_lecture"]
+    assert lecture["lecteur_contrat"]["appels_externes"] == 34 and lecture["lecteur_pieces"]["appels_externes"] == 33
+    ev.ecrire_rapport(resultats, tmp_path)
+    assert "Jetons" in (tmp_path / "rapport.md").read_text(encoding="utf-8")
+    assert ev.verifier(tmp_path) == []

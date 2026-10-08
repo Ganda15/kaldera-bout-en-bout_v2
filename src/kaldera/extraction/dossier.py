@@ -26,7 +26,8 @@ from typing import Any
 from ..agents.antifraude import AvisFraude, partenaire_bouchon
 from ..coordination import RegistreAppels, escalade_directe, traiter
 from . import lecteurs
-from .lecteurs import Appeler, ExtractionImpossible
+from ..metriques import calculer_metriques_lecture
+from .lecteurs import Appeler, ExtractionImpossible, Reponse
 
 PIECE = re.compile(r"^(?:piece-)?(\d+)-(facture|photo|depot_plainte)\.png$")
 
@@ -47,14 +48,18 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
     declaration = json.loads((dossier / "declaration.json").read_text(encoding="utf-8"))
     reference = declaration["reference"]
     lecture: list[dict[str, Any]] = []
-    appels = [0]
+    appels, jetons = [0], [0, 0]
 
     def compte(*args: Any, **kwargs: Any) -> Any:
         appels[0] += 1
-        return appeler(*args, **kwargs)
+        reponse = appeler(*args, **kwargs)
+        if isinstance(reponse, Reponse):
+            jetons[0] += reponse.jetons_entree
+            jetons[1] += reponse.jetons_sortie
+        return reponse
 
     def lire(agent: str, chemin: Path, fonction: Callable[..., Any], *args: Any) -> Any:
-        avant, debut = appels[0], perf_counter()
+        avant, jetons_avant, debut = appels[0], list(jetons), perf_counter()
         ligne = {"agent": agent, "fichier": chemin.relative_to(dossier).as_posix(), "statut": "ok"}
         lecture.append(ligne)
         try:
@@ -65,6 +70,8 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
         finally:
             ligne["duree_ms"] = round((perf_counter() - debut) * 1000, 2)
             ligne["appel_modele"] = appels[0] > avant
+            ligne["jetons_entree"] = jetons[0] - jetons_avant[0]
+            ligne["jetons_sortie"] = jetons[1] - jetons_avant[1]
 
     try:
         contrat = lire("lecteur_contrat", dossier / "contrat.pdf", lecteurs.lire_contrat)
@@ -97,6 +104,7 @@ def main() -> None:
         print(json.dumps(ligne, ensure_ascii=False))
     fiche = {k: v for k, v in resultat["fiche"].items() if k != "trace"}
     print(json.dumps(fiche, ensure_ascii=False))
+    print(json.dumps({"metriques_lecture": calculer_metriques_lecture([resultat["lecture"]])}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

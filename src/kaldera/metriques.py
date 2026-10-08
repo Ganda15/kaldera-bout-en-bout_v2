@@ -25,3 +25,23 @@ def calculer_metriques(fiches: list[dict[str, Any]]) -> dict[str, dict[str, Any]
         }
         for agent, lignes in lignes_par_agent.items()
     }
+
+
+def calculer_metriques_lecture(lectures: list[list[dict[str, Any]]]) -> dict[str, dict[str, Any]]:
+    """Les agents de lecture, depuis leurs lignes de lecture : les quatre mêmes métriques (l'appel externe est
+    l'appel au modèle), plus les jetons consommés, qui font le coût."""
+    lignes_par_agent: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for lecture in lectures:
+        for ligne in lecture:
+            lignes_par_agent[ligne["agent"]].append(ligne)
+    return {
+        agent: {
+            "appels": len(lignes),
+            "echecs": sum(1 for ligne in lignes if ligne.get("statut") == "echec"),
+            "latence_ms": round(sum(ligne.get("duree_ms", 0.0) for ligne in lignes) / len(lignes), 2),
+            "appels_externes": sum(1 for ligne in lignes if ligne.get("appel_modele")),
+            "jetons_entree": sum(ligne.get("jetons_entree", 0) for ligne in lignes),
+            "jetons_sortie": sum(ligne.get("jetons_sortie", 0) for ligne in lignes),
+        }
+        for agent, lignes in lignes_par_agent.items()
+    }

@@ -26,6 +26,7 @@ from pydantic import BaseModel
 from kaldera.coordination import traiter
 from kaldera.extraction.dossier import lister_images, traiter_dossier
 from kaldera.extraction.lecteurs import Appeler, ContratLu
+from kaldera.metriques import calculer_metriques_lecture
 
 RACINE = Path(__file__).resolve().parents[1]
 DOSSIERS = RACINE / "dossiers"
@@ -79,6 +80,7 @@ def _evaluer_dossier(dossier: Path, appeler: Appeler, verite: dict[str, Any], de
     identique = {k: resultat["fiche"][k] for k in ISSUE} == {k: attendu[k] for k in ISSUE}
     return {"reference": dossier.name, "impossible": demande is None, "decision_identique": identique,
             "champs": {k: list(v) for k, v in champs.items()}, "erreurs": erreurs, "appels": appels,
+            "lecture": resultat["lecture"],
             "motif_si_impossible": None if demande else resultat["fiche"]["motif"]}
 
 
@@ -102,6 +104,8 @@ def synthetiser(details: list[dict[str, Any]]) -> dict[str, Any]:
     identiques = sum(d["decision_identique"] for d in details)
     impossibles = sum(d["impossible"] for d in details)
     appels = [a for d in details for a in d["appels"]]
+    lectures = [d.get("lecture", []) for d in details]
+    lignes = [x for lecture in lectures for x in lecture]
     reussi = (all(c["taux"] >= SEUIL_CHAMP for c in champs_sortie.values()) and impossibles == 0
               and identiques / len(details) >= SEUIL_DECISIONS)
     return {"dossiers": len(details), "champs": champs_sortie,
@@ -109,6 +113,9 @@ def synthetiser(details: list[dict[str, Any]]) -> dict[str, Any]:
             "extractions_impossibles": impossibles,
             "appels_modele": {s: _stats([a["duree_s"] for a in appels if a["schema"] == s])
                               for s in ("contrat", "facture")},
+            "jetons": {"entree": sum(x.get("jetons_entree", 0) for x in lignes),
+                       "sortie": sum(x.get("jetons_sortie", 0) for x in lignes)},
+            "metriques_lecture": calculer_metriques_lecture(lectures),
             "seuils": {"champ": SEUIL_CHAMP, "decisions": SEUIL_DECISIONS},
             "verdict": "réussi" if reussi else "échoué"}
 
@@ -142,6 +149,16 @@ def _rapport_md(resultats: dict[str, Any]) -> str:
                "", "## Appels au modèle", "", "| Lecture | Appels | Moyenne (s) | p95 (s) | Max (s) |", "|---|---|---|---|---|"]
     lignes += [f"| {k} | {v['appels']} | {v['moyenne_s']} | {v['p95_s']} | {v['max_s']} |"
                for k, v in s["appels_modele"].items()]
+    j = s["jetons"]
+    lignes += ["", "## Jetons consommés et métriques des agents de lecture", "",
+               f"Jetons : {j['entree']} en entrée, {j['sortie']} en sortie, pour {s['dossiers']} dossiers "
+               f"({j['entree'] // max(1, s['dossiers'])} et {j['sortie'] // max(1, s['dossiers'])} par dossier en moyenne). "
+               "Coût = jetons d'entrée × prix d'entrée + jetons de sortie × prix de sortie, aux prix du déploiement "
+               "(portail Azure).", "",
+               "| Agent | Lectures | Échecs | Latence moyenne (ms) | Appels au modèle | Jetons entrée | Jetons sortie |",
+               "|---|---|---|---|---|---|---|"]
+    lignes += [f"| {k} | {v['appels']} | {v['echecs']} | {v['latence_ms']} | {v['appels_externes']} | "
+               f"{v['jetons_entree']} | {v['jetons_sortie']} |" for k, v in s["metriques_lecture"].items()]
     erreurs = [d for d in resultats["details"] if d["erreurs"] or d["impossible"]]
     lignes += ["", "## Écarts", ""]
     if not erreurs:

@@ -18,7 +18,8 @@ from pydantic import BaseModel
 
 from kaldera.coordination import traiter
 from kaldera.extraction.dossier import traiter_dossier
-from kaldera.extraction.lecteurs import ContratLu, FactureLue
+from kaldera.extraction.lecteurs import ContratLu, FactureLue, Reponse
+from kaldera.metriques import calculer_metriques_lecture
 
 RACINE = Path(__file__).resolve().parents[2]
 DOSSIERS = RACINE / "dossiers"
@@ -100,3 +101,39 @@ def test_les_depots_de_l_espace_assure_sont_lus_aussi(reference: str) -> None:
     resultat = traiter_dossier(DOSSIERS / reference, oracle())
     assert resultat["demande"]["espace_assure"]["depots"] == DEMANDES[reference]["espace_assure"]["depots"]
     assert resultat["fiche"]["decision"] == "acceptee"
+
+
+# ---------------------------------------------------------------- jetons et métriques des agents de lecture
+
+def avec_jetons(appeler: Any, entree: int, sortie: int) -> Any:
+    """Le même faux modèle, qui annonce en plus une consommation de jetons par appel."""
+    def appel(*args: Any, **kwargs: Any) -> Any:
+        return Reponse(appeler(*args, **kwargs), entree, sortie)
+    return appel
+
+
+def test_chaque_ligne_de_lecture_porte_les_jetons_consommes() -> None:
+    resultat = traiter_dossier(DOSSIERS / "KAL-26-0101", avec_jetons(oracle(), 400, 30))
+    assert [(x["fichier"], x["jetons_entree"], x["jetons_sortie"]) for x in resultat["lecture"]] == [
+        ("contrat.pdf", 400, 30), ("piece-1-facture.png", 400, 30), ("piece-2-photo.png", 0, 0)]
+    assert resultat["fiche"]["decision"] == "acceptee"
+
+
+def test_les_agents_de_lecture_ont_leurs_metriques() -> None:
+    lectures = [traiter_dossier(DOSSIERS / ref, avec_jetons(oracle(), 400, 30))["lecture"]
+                for ref in ("KAL-26-0101", "KAL-26-0601")]  # NOM-01, puis BCL-01 : deux factures floues
+    metriques = calculer_metriques_lecture(lectures)
+    assert set(metriques) == {"lecteur_contrat", "lecteur_pieces"}
+    contrat, pieces = metriques["lecteur_contrat"], metriques["lecteur_pieces"]
+    assert (contrat["appels"], contrat["appels_externes"], contrat["jetons_entree"]) == (2, 2, 800)
+    assert (pieces["appels"], pieces["appels_externes"], pieces["jetons_sortie"]) == (5, 1, 30)
+    assert contrat["echecs"] == pieces["echecs"] == 0
+    assert isinstance(pieces["latence_ms"], float)
+
+
+def test_une_lecture_en_echec_compte_comme_echec() -> None:
+    def en_panne(*_args: Any, **_kwargs: Any) -> Any:
+        raise ConnectionError("Azure injoignable")
+
+    metriques = calculer_metriques_lecture([traiter_dossier(DOSSIERS / "KAL-26-0101", en_panne)["lecture"]])
+    assert metriques["lecteur_contrat"]["echecs"] == 1

@@ -14,6 +14,7 @@ from __future__ import annotations
 import base64
 import math
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from typing import Any, Literal
@@ -36,6 +37,15 @@ class ExtractionImpossible(Exception):
     """La pièce n'a pas pu être lue pour une raison technique (modèle indisponible, réponse hors schéma)."""
 
 
+@dataclass(frozen=True)
+class Reponse:
+    """La réponse du modèle et ce qu'elle a consommé : les jetons font le coût d'un appel."""
+
+    objet: Any
+    jetons_entree: int = 0
+    jetons_sortie: int = 0
+
+
 class ContratLu(BaseModel):
     model_config = ConfigDict(extra="forbid")
     numero: str
@@ -54,6 +64,8 @@ class FactureLue(BaseModel):
 def _demander(appeler: Appeler, consigne: str, schema: type[BaseModel], image_png: bytes | None = None) -> Any:
     try:
         reponse = appeler(consigne, schema, image_png)
+        if isinstance(reponse, Reponse):
+            reponse = reponse.objet
         return reponse if isinstance(reponse, schema) else schema.model_validate(reponse)
     except ValidationError as erreur:
         raise ExtractionImpossible(f"réponse hors schéma {schema.__name__}") from erreur
@@ -105,5 +117,7 @@ def appel_modele(client: Any, deploiement: str) -> Appeler:
                             "image_url": "data:image/png;base64," + base64.b64encode(image_png).decode("ascii")})
         reponse = client.responses.parse(model=deploiement, input=[{"role": "user", "content": contenu}],
                                          text_format=schema)
-        return reponse.output_parsed
+        usage = getattr(reponse, "usage", None)
+        return Reponse(reponse.output_parsed, getattr(usage, "input_tokens", 0) or 0,
+                       getattr(usage, "output_tokens", 0) or 0)
     return appeler

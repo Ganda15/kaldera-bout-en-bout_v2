@@ -108,3 +108,34 @@ def test_photo_et_depot_de_plainte_nets_sont_lisibles_sans_appel_au_modele(rel: 
 def test_le_seuil_de_nettete_separe_les_pieces_generees() -> None:
     assert lecteurs.nettete(DOSSIERS / "KAL-26-0101" / "piece-2-photo.png") > lecteurs.SEUIL_NETTETE
     assert lecteurs.nettete(DOSSIERS / "KAL-26-0601" / "depots" / "1-facture.png") < lecteurs.SEUIL_NETTETE
+
+
+# ---------------------------------------------------------------- consommation de jetons (coût)
+
+def test_une_reponse_accompagnee_de_sa_consommation_est_acceptee() -> None:
+    modele = FauxModele(lecteurs.Reponse(CONTRAT_107, jetons_entree=420, jetons_sortie=35))
+    contrat = lecteurs.lire_contrat(DOSSIERS / "KAL-26-0107" / "contrat.pdf", modele)
+    assert contrat["numero"] == "CTR-778807"
+
+
+class _FauxClient:
+    """Imite client.responses.parse : rend la réponse prévue, avec ou sans compte de jetons."""
+
+    def __init__(self, usage: Any) -> None:
+        self.reponse = type("R", (), {"output_parsed": FactureLue(lisible=True, montant_total_ttc=10.0),
+                                      "usage": usage})()
+        self.responses = self
+
+    def parse(self, **_kwargs: Any) -> Any:
+        return self.reponse
+
+
+def test_l_appel_reel_rend_les_jetons_consommes() -> None:
+    usage = type("U", (), {"input_tokens": 512, "output_tokens": 48})()
+    reponse = lecteurs.appel_modele(_FauxClient(usage), "deploiement")("consigne", FactureLue, b"png")
+    assert reponse == lecteurs.Reponse(FactureLue(lisible=True, montant_total_ttc=10.0), 512, 48)
+
+
+def test_sans_compte_de_jetons_la_consommation_vaut_zero() -> None:
+    reponse = lecteurs.appel_modele(_FauxClient(None), "deploiement")("consigne", FactureLue, None)
+    assert (reponse.jetons_entree, reponse.jetons_sortie) == (0, 0)
