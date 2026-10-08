@@ -16,10 +16,12 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
+from kaldera.agents.coherence import Interpretation
 from kaldera.coordination import traiter
 from kaldera.extraction.dossier import traiter_dossier
 from kaldera.extraction.lecteurs import ContratLu, FactureLue, Reponse
 from kaldera.metriques import calculer_metriques_lecture
+from tests.faux_coherence import interpretation
 
 RACINE = Path(__file__).resolve().parents[2]
 DOSSIERS = RACINE / "dossiers"
@@ -30,7 +32,8 @@ ISSUE = ("issue", "decision", "montant_rembourse", "file", "mode_degrade", "arre
 
 
 def oracle() -> Any:
-    """Faux modèle parfait : le contrat d'après le numéro lu dans le texte, la facture d'après l'empreinte de l'image."""
+    """Faux modèle parfait : le contrat d'après le numéro lu dans le texte, la facture d'après l'empreinte de l'image,
+    la cohérence d'après les étiquettes (toutes les pièces des 34 dossiers concordent)."""
     contrats = {v["contrat"]["numero"]: v["contrat"] for v in VERITE.values()}
     factures = {hashlib.sha256((DOSSIERS / ref / nom).read_bytes()).hexdigest(): f
                 for ref, v in VERITE.items() for nom, f in v["fichiers"].items() if f["type"] == "facture"}
@@ -40,6 +43,8 @@ def oracle() -> Any:
         if schema is ContratLu:
             numero = re.search(r"CTR-\d{6}", consigne).group(0)
             return ContratLu(**contrats[numero])
+        if schema is Interpretation:
+            return interpretation(consigne)
         vraie = factures[hashlib.sha256(image_png).hexdigest()]
         return FactureLue(lisible=True, montant_total_ttc=vraie["montant"])
     return appeler
@@ -63,10 +68,14 @@ def test_la_demande_extraite_a_le_format_de_la_spec(tmp_path: Path) -> None:
 
 def test_la_lecture_est_tracee_a_part_de_la_decision() -> None:
     resultat = traiter_dossier(DOSSIERS / "KAL-26-0101", oracle())  # NOM-01 : contrat, facture, photo
-    assert [ligne["agent"] for ligne in resultat["lecture"]] == ["lecteur_contrat", "lecteur_pieces", "lecteur_pieces"]
+    assert [ligne["agent"] for ligne in resultat["lecture"]] == ["lecteur_contrat", "lecteur_pieces", "lecteur_pieces",
+                                                                 "coherence"]
     assert [ligne["fichier"] for ligne in resultat["lecture"]] == ["contrat.pdf", "piece-1-facture.png",
-                                                                   "piece-2-photo.png"]
-    assert [ligne["appel_modele"] for ligne in resultat["lecture"]] == [True, True, False]
+                                                                   "piece-2-photo.png",
+                                                                   "piece-1-facture.png, piece-2-photo.png"]
+    assert [ligne["appel_modele"] for ligne in resultat["lecture"]] == [True, True, False, True]
+    etapes = [(ligne["agent"], ligne["raison"]) for ligne in resultat["fiche"]["trace"]]
+    assert ("coherence", "coherent") in etapes  # la Coordination a délégué la cohérence avant de conclure
     assert resultat["fiche"]["decision"] == "acceptee" and resultat["fiche"]["montant_rembourse"] == 1700.0
 
 
@@ -117,7 +126,8 @@ def avec_jetons(appeler: Any, entree: int, sortie: int) -> Any:
 def test_chaque_ligne_de_lecture_porte_les_jetons_consommes() -> None:
     resultat = traiter_dossier(DOSSIERS / "KAL-26-0101", avec_jetons(oracle(), 400, 30))
     assert [(x["fichier"], x["jetons_entree"], x["jetons_sortie"]) for x in resultat["lecture"]] == [
-        ("contrat.pdf", 400, 30), ("piece-1-facture.png", 400, 30), ("piece-2-photo.png", 0, 0)]
+        ("contrat.pdf", 400, 30), ("piece-1-facture.png", 400, 30), ("piece-2-photo.png", 0, 0),
+        ("piece-1-facture.png, piece-2-photo.png", 400, 30)]
     assert resultat["fiche"]["decision"] == "acceptee"
 
 
@@ -125,8 +135,9 @@ def test_les_agents_de_lecture_ont_leurs_metriques() -> None:
     lectures = [traiter_dossier(DOSSIERS / ref, avec_jetons(oracle(), 400, 30))["lecture"]
                 for ref in ("KAL-26-0101", "KAL-26-0601")]  # NOM-01, puis BCL-01 : deux factures floues
     metriques = calculer_metriques_lecture(lectures)
-    assert set(metriques) == {"lecteur_contrat", "lecteur_pieces"}
+    assert set(metriques) == {"lecteur_contrat", "lecteur_pieces", "coherence"}  # BCL-01 s'arrête avant la cohérence
     contrat, pieces = metriques["lecteur_contrat"], metriques["lecteur_pieces"]
+    assert (metriques["coherence"]["appels"], metriques["coherence"]["jetons_entree"]) == (1, 400)
     assert (contrat["appels"], contrat["appels_externes"], contrat["jetons_entree"]) == (2, 2, 800)
     assert (pieces["appels"], pieces["appels_externes"], pieces["jetons_sortie"]) == (5, 1, 30)
     assert contrat["echecs"] == pieces["echecs"] == 0
@@ -249,8 +260,8 @@ def test_chaque_appel_au_modele_recoit_le_temps_restant_du_budget() -> None:
     traiter_dossier(DOSSIERS / "KAL-26-0101", mesure)
     from kaldera.bornes import BORNES
     plafond = BORNES.duree_max_s - BORNES.reserve_fiche_s  # 10 s moins la réserve de la fiche
-    assert len(delais) == 2 and all(d is not None and 0 < d <= plafond for d in delais)
-    assert delais[1] <= delais[0]  # le temps restant ne remonte jamais
+    assert len(delais) == 3 and all(d is not None and 0 < d <= plafond for d in delais)  # contrat, facture, cohérence
+    assert delais[2] <= delais[1] <= delais[0]  # le temps restant ne remonte jamais
 
 
 def test_une_lecture_trop_lente_donne_une_escalade_technique_dans_le_budget() -> None:
@@ -331,3 +342,52 @@ def test_des_dates_impossibles_dans_le_formulaire_donnent_une_escalade(tmp_path:
 
     fiche = traiter_dossier(formulaire_modifie(tmp_path, dates), oracle())["fiche"]
     assert (fiche["issue"], fiche["file"]) == ("escalade", "gestionnaire") and "incohérentes" in fiche["motif"]
+
+
+# ---------------------------------------------------------------- cohérence des pièces avec la déclaration (§ 5)
+
+def test_seules_les_pieces_lisibles_partent_au_controle_de_coherence_depots_compris() -> None:
+    vues: list[str] = []
+    appeler = oracle()
+
+    def espion(consigne: str, schema: type[BaseModel], images: Any = None, **kwargs: Any) -> Any:
+        if schema is Interpretation:
+            vues.extend(re.findall(r"^\d+\. (\S+\.png)", consigne, flags=re.MULTILINE))
+            assert isinstance(images, list) and len(images) == 2
+        return appeler(consigne, schema, images, **kwargs)
+
+    resultat = traiter_dossier(DOSSIERS / "KAL-26-0107", espion)  # NOM-07 : facture, puis photo déposée
+    assert vues == ["piece-1-facture.png", "depots/1-photo.png"]
+    assert resultat["fiche"]["decision"] == "acceptee"
+
+
+def test_un_dossier_incoherent_va_a_un_gestionnaire_avec_la_piece_en_cause() -> None:
+    appeler = oracle()
+
+    def miroiterie(consigne: str, schema: type[BaseModel], images: Any = None, **kwargs: Any) -> Any:
+        if schema is Interpretation:
+            return interpretation(consigne, **{"piece-1-facture.png": "bris_de_glace"})
+        if schema is FactureLue:  # facture construite pour l'évaluation : même montant que le dossier KAL-26-0101
+            return FactureLue(lisible=True, montant_total_ttc=1850.0)
+        return appeler(consigne, schema, images, **kwargs)
+
+    resultat = traiter_dossier(RACINE / "evaluation" / "coherence" / "dossiers" / "KAL-26-0701", miroiterie)
+    fiche = resultat["fiche"]
+    assert (fiche["issue"], fiche["file"], fiche["decision"]) == ("escalade", "gestionnaire", None)
+    assert "incohérentes" in fiche["motif"] and "piece-1-facture.png" in fiche["motif"]
+    assert [ligne["agent"] for ligne in resultat["fiche"]["trace"]][-2:] == ["coherence", "coordination"]
+
+
+def test_un_modele_en_panne_pendant_la_coherence_donne_une_escalade_technique() -> None:
+    appeler = oracle()
+
+    def panne(consigne: str, schema: type[BaseModel], images: Any = None, **kwargs: Any) -> Any:
+        if schema is Interpretation:
+            raise ConnectionError("Azure injoignable")
+        return appeler(consigne, schema, images, **kwargs)
+
+    resultat = traiter_dossier(DOSSIERS / "KAL-26-0101", panne)
+    fiche = resultat["fiche"]
+    assert (fiche["issue"], fiche["file"], fiche["decision"]) == ("escalade", "gestionnaire", None)
+    assert "Contrôle de cohérence impossible (modele_indisponible)" in fiche["motif"]
+    assert resultat["lecture"][-1]["statut"] == "echec"

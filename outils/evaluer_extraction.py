@@ -23,6 +23,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from kaldera.agents.coherence import Interpretation
 from kaldera.coordination import traiter
 from kaldera.extraction.dossier import lister_images, traiter_dossier
 from kaldera.extraction.lecteurs import Appeler, ContratLu
@@ -45,13 +46,14 @@ def _demandes_json() -> dict[str, dict[str, Any]]:
 def _evaluer_dossier(dossier: Path, appeler: Appeler, verite: dict[str, Any], demande_json: dict[str, Any]) -> dict:
     appels: list[dict[str, Any]] = []
 
-    def mesure(consigne: str, schema: type[BaseModel], image_png: bytes | None = None, *,
+    def mesure(consigne: str, schema: type[BaseModel], image_png: bytes | list[bytes] | None = None, *,
                delai_s: float | None = None) -> Any:
         debut = perf_counter()
         try:
             return appeler(consigne, schema, image_png, delai_s=delai_s)
         finally:
-            appels.append({"schema": "contrat" if schema is ContratLu else "facture",
+            appels.append({"schema": "contrat" if schema is ContratLu else
+                           "coherence" if schema is Interpretation else "facture",
                            "duree_s": round(perf_counter() - debut, 3)})
 
     resultat = traiter_dossier(dossier, mesure)
@@ -113,7 +115,7 @@ def synthetiser(details: list[dict[str, Any]]) -> dict[str, Any]:
             "decisions_identiques": {"justes": identiques, "total": len(details)},
             "extractions_impossibles": impossibles,
             "appels_modele": {s: _stats([a["duree_s"] for a in appels if a["schema"] == s])
-                              for s in ("contrat", "facture")},
+                              for s in ("contrat", "facture", "coherence")},
             "jetons": {"entree": sum(x.get("jetons_entree", 0) for x in lignes),
                        "sortie": sum(x.get("jetons_sortie", 0) for x in lignes)},
             "metriques_lecture": calculer_metriques_lecture(lectures),

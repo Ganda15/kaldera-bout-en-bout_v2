@@ -13,8 +13,10 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from kaldera.agents.coherence import Interpretation
 from kaldera.extraction.lecteurs import ContratLu, FactureLue, Reponse
 from outils import evaluer_extraction as ev
+from tests.faux_coherence import interpretation
 
 RACINE = Path(__file__).resolve().parents[2]
 DOSSIERS = RACINE / "dossiers"
@@ -30,6 +32,8 @@ def faux_modele(erreur_formule: str | None = None, panne: bool = False, jetons: 
                 delai_s: float | None = None) -> Any:
         if panne:
             raise ConnectionError("modèle injoignable")
+        if schema is Interpretation:
+            return interpretation(consigne)
         if schema is ContratLu:
             vrai = dict(contrats[re.search(r"CTR-\d{6}", consigne).group(0)])
             if erreur_formule and vrai["numero"] == erreur_formule:

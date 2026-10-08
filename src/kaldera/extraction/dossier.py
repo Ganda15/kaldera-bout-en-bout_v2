@@ -5,7 +5,8 @@ Un dossier contient le formulaire de l'assuré (`declaration.json`), le contrat 
 
 0. Contrôle du dossier, avant toute lecture : formulaire validé par un schéma, fichiers reconnus, contrat présent.
 1. Lecture : les agents de lecture produisent les données de la spec § 3. Elle est tracée à part (`lecture`).
-2. Décision : la chaîne du chantier 1 (`coordination.traiter`), inchangée.
+2. Décision : la chaîne du chantier 1 (`coordination.traiter`), plus l'agent Documents et cohérence (§ 5), que la
+   Coordination appelle après un contrôle des pièces complet, avec les images lisibles du dossier.
 Un seul budget de 10 s (§ 12) couvre les trois : il commence à l'arrivée du dossier, chaque appel au modèle reçoit
 le temps restant comme délai, et la Coordination continue la même limite au lieu d'en ouvrir une nouvelle.
 Une lecture impossible (modèle en panne, réponse hors schéma) ou un contrat qui ne correspond pas à la déclaration
@@ -33,7 +34,9 @@ from typing import Annotated, Any
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from ..agents import coherence as agent_coherence
 from ..agents.antifraude import AvisFraude, partenaire_bouchon
+from ..agents.coherence import ResultatCoherence
 from ..bornes import BORNES, Bornes
 from ..coordination import RegistreAppels, escalade_directe, traiter
 from . import lecteurs
@@ -134,13 +137,14 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
     def compte(*args: Any) -> Any:
         restant = limite - monotonic()
         if restant <= 0:
-            raise ExtractionImpossible(f"délai de {bornes.duree_max_s:g} s dépassé pendant la lecture")
+            raise ExtractionImpossible(f"délai de {bornes.duree_max_s:g} s dépassé pendant la lecture", "delai_depasse")
         appels[0] += 1
         try:
             reponse = appeler(*args, delai_s=restant)
         except Exception as erreur:
             if monotonic() >= limite:  # l'appel a été abandonné faute de temps
-                raise ExtractionImpossible(f"délai de {bornes.duree_max_s:g} s dépassé pendant la lecture") from erreur
+                raise ExtractionImpossible(f"délai de {bornes.duree_max_s:g} s dépassé pendant la lecture",
+                                           "delai_depasse") from erreur
             raise
         if isinstance(reponse, Reponse):
             jetons[0] += reponse.jetons_entree
@@ -168,19 +172,38 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
             motif = (f"Contrat lu ({contrat['numero']}) différent du contrat déclaré "
                      f"({declaration['numero_contrat']}) : reprise manuelle")
             return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif)}
-        pieces = [lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece)
-                  for type_piece, chemin in lister_images(dossier)]
-        depots = [lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece)
-                  for type_piece, chemin in lister_images(dossier / "depots")]
+        lues = [(chemin, lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece))
+                for type_piece, chemin in lister_images(dossier)]
+        deposees = [(chemin, lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece))
+                    for type_piece, chemin in lister_images(dossier / "depots")]
     except ExtractionImpossible as erreur:
         motif = f"Lecture des pièces impossible ({erreur}) : reprise manuelle"
         return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif)}
 
+    # Les images lisibles, pièces et dépôts : une image illisible suit le complément, elle n'est pas interprétée.
+    lisibles = [(chemin.relative_to(dossier).as_posix(), piece["type"], chemin)
+                for chemin, piece in lues + deposees if piece.get("lisible")]
+
+    def verifier_coherence(sinistre: dict[str, Any]) -> ResultatCoherence:
+        """L'agent Documents et cohérence, tel que la Coordination l'appelle : un appel au modèle pris sur le même
+        budget, et une ligne de lecture qui montre ce qu'il a reçu, ce qu'il a coûté et s'il a échoué."""
+        avant, jetons_avant, debut = appels[0], list(jetons), perf_counter()
+        documents = [(fichier, type_piece, chemin.read_bytes()) for fichier, type_piece, chemin in lisibles]
+        resultat = agent_coherence.verifier_coherence(sinistre, documents, compte)
+        lecture.append({"agent": "coherence", "fichier": ", ".join(f for f, _, _ in lisibles),
+                        "statut": "echec" if resultat.verdict == "non_effectue" else "ok",
+                        "duree_ms": round((perf_counter() - debut) * 1000, 2), "appel_modele": appels[0] > avant,
+                        "jetons_entree": jetons[0] - jetons_avant[0], "jetons_sortie": jetons[1] - jetons_avant[1],
+                        "verdict": resultat.verdict})
+        return resultat
+
     demande = {"reference": reference, "assure": declaration["assure"], "contrat": contrat,
-               "sinistre": declaration["sinistre"], "pieces": pieces, "historique": declaration["historique"],
-               "espace_assure": {"depots": depots}}
+               "sinistre": declaration["sinistre"], "pieces": [piece for _, piece in lues],
+               "historique": declaration["historique"],
+               "espace_assure": {"depots": [piece for _, piece in deposees]}}
     return {"demande": demande, "lecture": lecture,
-            "fiche": traiter(demande, consulter=consulter, registre=registre, bornes=bornes, limite=limite)}
+            "fiche": traiter(demande, consulter=consulter, registre=registre, bornes=bornes, limite=limite,
+                             coherence=verifier_coherence)}
 
 
 def options(argv: list[str], fichier_env: Path | None = None) -> tuple[Path, str | None]:
