@@ -93,7 +93,9 @@ def test_un_modele_en_panne_donne_une_escalade_motivee_sans_decision() -> None:
     fiche = resultat["fiche"]
     assert (fiche["issue"], fiche["file"], fiche["decision"]) == ("escalade", "gestionnaire", None)
     assert "lecture" in fiche["motif"].lower()
-    assert resultat["lecture"][-1]["statut"] == "echec"
+    assert [(x["agent"], x["statut"]) for x in resultat["lecture"]] == [
+        ("lecteur_contrat", "echec"), ("coherence", "non_utilise")]  # l'appel anticipé a échoué lui aussi
+    assert resultat["lecture"][-1]["verdict"] == "non_effectue"
 
 
 def test_un_contrat_qui_ne_correspond_pas_a_la_declaration_est_escalade() -> None:
@@ -135,9 +137,11 @@ def test_les_agents_de_lecture_ont_leurs_metriques() -> None:
     lectures = [traiter_dossier(DOSSIERS / ref, avec_jetons(oracle(), 400, 30))["lecture"]
                 for ref in ("KAL-26-0101", "KAL-26-0601")]  # NOM-01, puis BCL-01 : deux factures floues
     metriques = calculer_metriques_lecture(lectures)
-    assert set(metriques) == {"lecteur_contrat", "lecteur_pieces", "coherence"}  # BCL-01 s'arrête avant la cohérence
+    assert set(metriques) == {"lecteur_contrat", "lecteur_pieces", "coherence"}
     contrat, pieces = metriques["lecteur_contrat"], metriques["lecteur_pieces"]
-    assert (metriques["coherence"]["appels"], metriques["coherence"]["jetons_entree"]) == (1, 400)
+    # BCL-01 s'arrête avant la cohérence, mais l'appel anticipé a eu lieu (sur la photo nette) : il est compté
+    assert (metriques["coherence"]["appels"], metriques["coherence"]["jetons_entree"]) == (2, 800)
+    assert [x["statut"] for x in lectures[1] if x["agent"] == "coherence"] == ["non_utilise"]
     assert (contrat["appels"], contrat["appels_externes"], contrat["jetons_entree"]) == (2, 2, 800)
     assert (pieces["appels"], pieces["appels_externes"], pieces["jetons_sortie"]) == (5, 1, 30)
     assert contrat["echecs"] == pieces["echecs"] == 0
@@ -249,19 +253,43 @@ def test_un_formulaire_incomplet_donne_une_escalade_sans_appel_au_modele(tmp_pat
 # ---------------------------------------------------------------- un seul budget de 10 s, lecture comprise (§ 12)
 
 def test_chaque_appel_au_modele_recoit_le_temps_restant_du_budget() -> None:
-    delais: list[float] = []
+    delais: dict[str, float] = {}
     appeler = oracle()
 
-    def mesure(consigne: str, schema: type[BaseModel], image_png: bytes | None = None, *,
+    def mesure(consigne: str, schema: type[BaseModel], image_png: Any = None, *,
                delai_s: float | None = None) -> Any:
-        delais.append(delai_s)
+        delais[schema.__name__] = delai_s
         return appeler(consigne, schema, image_png)
 
     traiter_dossier(DOSSIERS / "KAL-26-0101", mesure)
     from kaldera.bornes import BORNES
     plafond = BORNES.duree_max_s - BORNES.reserve_fiche_s  # 10 s moins la réserve de la fiche
-    assert len(delais) == 3 and all(d is not None and 0 < d <= plafond for d in delais)  # contrat, facture, cohérence
-    assert delais[2] <= delais[1] <= delais[0]  # le temps restant ne remonte jamais
+    assert set(delais) == {"ContratLu", "FactureLue", "Interpretation"}
+    assert all(d is not None and 0 < d <= plafond for d in delais.values())
+    assert delais["FactureLue"] <= delais["ContratLu"]  # le temps restant ne remonte jamais
+
+
+def test_la_coherence_part_des_l_arrivee_en_parallele_de_la_lecture() -> None:
+    import time
+    appeler = oracle()
+
+    def lent(consigne: str, schema: type[BaseModel], image_png: Any = None, **kwargs: Any) -> Any:
+        time.sleep(0.3)
+        return appeler(consigne, schema, image_png)
+
+    debut = time.perf_counter()
+    resultat = traiter_dossier(DOSSIERS / "KAL-26-0101", lent)
+    duree = time.perf_counter() - debut
+    assert resultat["fiche"]["decision"] == "acceptee"
+    assert duree < 0.8, duree  # contrat puis facture (0,6 s), la cohérence en même temps ; en série : 0,9 s
+
+
+def test_un_appel_anticipe_non_utilise_reste_dans_la_trace_avec_son_cout() -> None:
+    resultat = traiter_dossier(DOSSIERS / "KAL-26-0102", avec_jetons(oracle(), 400, 30))  # contrat résilié
+    assert resultat["fiche"]["decision"] == "refusee"  # la règle 1 conclut avant la cohérence
+    ligne = resultat["lecture"][-1]
+    assert (ligne["agent"], ligne["statut"], ligne["appel_modele"], ligne["jetons_entree"]) == (
+        "coherence", "non_utilise", True, 400)
 
 
 def test_une_lecture_trop_lente_donne_une_escalade_technique_dans_le_budget() -> None:

@@ -5,8 +5,9 @@ Un dossier contient le formulaire de l'assuré (`declaration.json`), le contrat 
 
 0. Contrôle du dossier, avant toute lecture : formulaire validé par un schéma, fichiers reconnus, contrat présent.
 1. Lecture : les agents de lecture produisent les données de la spec § 3. Elle est tracée à part (`lecture`).
-2. Décision : la chaîne du chantier 1 (`coordination.traiter`), plus l'agent Documents et cohérence (§ 5), que la
-   Coordination appelle après un contrôle des pièces complet, avec les images lisibles du dossier.
+2. Décision : la chaîne du chantier 1 (`coordination.traiter`), plus l'agent Documents et cohérence (§ 5). Son appel
+   au modèle part dès l'arrivée, avec les images nettes, en parallèle de la lecture ; la Coordination s'en sert après
+   un contrôle des pièces complet.
 Un seul budget de 10 s (§ 12) couvre les trois : il commence à l'arrivée du dossier, chaque appel au modèle reçoit
 le temps restant comme délai, et la Coordination continue la même limite au lieu d'en ouvrir une nouvelle.
 Une lecture impossible (modèle en panne, réponse hors schéma) ou un contrat qui ne correspond pas à la déclaration
@@ -28,6 +29,8 @@ from datetime import date
 import re
 import sys
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FuturDepasse
 from pathlib import Path
 from time import monotonic, perf_counter
 from typing import Annotated, Any
@@ -132,6 +135,18 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
         motif = "Contrat absent du dossier : reprise manuelle"
         return {"demande": None, "lecture": [], "fiche": escalade_directe(reference, motif)}
     lecture: list[dict[str, Any]] = []
+    coherence = _CoherenceAnticipee(dossier, declaration["sinistre"], appeler, limite, bornes, lecture)
+    try:
+        return _lire_et_decider(dossier, declaration, reference, appeler, lecture, coherence, consulter=consulter,
+                                registre=registre, bornes=bornes, limite=limite)
+    finally:
+        coherence.clore()
+
+
+def _lire_et_decider(dossier: Path, declaration: dict[str, Any], reference: str, appeler: Appeler,
+                     lecture: list[dict[str, Any]], coherence: _CoherenceAnticipee, *,
+                     consulter: Callable[..., AvisFraude], registre: RegistreAppels | None, bornes: Bornes,
+                     limite: float) -> dict[str, Any]:
     appels, jetons = [0], [0, 0]
 
     def compte(*args: Any) -> Any:
@@ -180,30 +195,96 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
         motif = f"Lecture des pièces impossible ({erreur}) : reprise manuelle"
         return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif)}
 
-    # Les images lisibles, pièces et dépôts : une image illisible suit le complément, elle n'est pas interprétée.
-    lisibles = [(chemin.relative_to(dossier).as_posix(), piece["type"], chemin)
-                for chemin, piece in lues + deposees if piece.get("lisible")]
-
-    def verifier_coherence(sinistre: dict[str, Any]) -> ResultatCoherence:
-        """L'agent Documents et cohérence, tel que la Coordination l'appelle : un appel au modèle pris sur le même
-        budget, et une ligne de lecture qui montre ce qu'il a reçu, ce qu'il a coûté et s'il a échoué."""
-        avant, jetons_avant, debut = appels[0], list(jetons), perf_counter()
-        documents = [(fichier, type_piece, chemin.read_bytes()) for fichier, type_piece, chemin in lisibles]
-        resultat = agent_coherence.verifier_coherence(sinistre, documents, compte)
-        lecture.append({"agent": "coherence", "fichier": ", ".join(f for f, _, _ in lisibles),
-                        "statut": "echec" if resultat.verdict == "non_effectue" else "ok",
-                        "duree_ms": round((perf_counter() - debut) * 1000, 2), "appel_modele": appels[0] > avant,
-                        "jetons_entree": jetons[0] - jetons_avant[0], "jetons_sortie": jetons[1] - jetons_avant[1],
-                        "verdict": resultat.verdict})
-        return resultat
-
     demande = {"reference": reference, "assure": declaration["assure"], "contrat": contrat,
                "sinistre": declaration["sinistre"], "pieces": [piece for _, piece in lues],
                "historique": declaration["historique"],
                "espace_assure": {"depots": [piece for _, piece in deposees]}}
     return {"demande": demande, "lecture": lecture,
             "fiche": traiter(demande, consulter=consulter, registre=registre, bornes=bornes, limite=limite,
-                             coherence=verifier_coherence)}
+                             coherence=coherence.verifier_coherence)}
+
+
+def _nette(chemin: Path) -> bool:
+    try:
+        return lecteurs.nettete(chemin) >= lecteurs.SEUIL_NETTETE
+    except OSError:  # image qu'on ne sait pas ouvrir : illisible, elle suit le complément
+        return False
+
+
+class _CoherenceAnticipee:
+    """L'agent Documents et cohérence, côté dossier. Son interprétation ne dépend que du formulaire et des images :
+    elle part dès l'arrivée, en parallèle de la lecture du contrat et des factures. Mesuré le 08/10 (essai 2) : 4 s
+    en moyenne, après 4 s de lecture ; en série, 2 dossiers sur 42 dépassaient le budget de 10 s.
+
+    La Coordination décide quand s'en servir : après un contrôle des pièces complet. Un appel dont le résultat ne sert
+    pas (demande refusée avant, lecture impossible) reste dans la lecture, avec son coût : il a été payé.
+    """
+
+    def __init__(self, dossier: Path, sinistre: dict[str, Any], appeler: Appeler, limite: float, bornes: Bornes,
+                 lecture: list[dict[str, Any]]) -> None:
+        self.nettes = [(chemin.relative_to(dossier).as_posix(), type_piece, chemin)
+                       for type_piece, chemin in lister_images(dossier) + lister_images(dossier / "depots")
+                       if _nette(chemin)]  # netteté mesurée en code ; une image floue suit le complément
+        self.sinistre, self.appeler, self.limite, self.bornes, self.lecture = sinistre, appeler, limite, bornes, lecture
+        self.jetons, self.duree_s, self.utilise = [0, 0], 0.0, False
+        self.futur = None
+        if self.nettes:
+            executeur = ThreadPoolExecutor(max_workers=1)
+            self.futur = executeur.submit(self._interpreter, sinistre)
+            executeur.shutdown(wait=False)  # un seul appel ; le fil s'arrête avec lui
+
+    def _compte(self, *args: Any) -> Any:
+        """Le même budget que la lecture, et des jetons comptés à part : la lecture tourne en même temps."""
+        restant = self.limite - monotonic()
+        delai = f"délai de {self.bornes.duree_max_s:g} s dépassé pendant la cohérence"
+        if restant <= 0:
+            raise ExtractionImpossible(delai, "delai_depasse")
+        try:
+            reponse = self.appeler(*args, delai_s=restant)
+        except Exception as erreur:
+            if monotonic() >= self.limite:
+                raise ExtractionImpossible(delai, "delai_depasse") from erreur
+            raise
+        if isinstance(reponse, Reponse):
+            self.jetons[0] += reponse.jetons_entree
+            self.jetons[1] += reponse.jetons_sortie
+        return reponse
+
+    def _interpreter(self, sinistre: dict[str, Any]) -> ResultatCoherence:
+        debut = perf_counter()
+        try:
+            documents = [(fichier, type_piece, chemin.read_bytes()) for fichier, type_piece, chemin in self.nettes]
+            return agent_coherence.verifier_coherence(sinistre, documents, self._compte)
+        finally:
+            self.duree_s = perf_counter() - debut
+
+    def _attendre(self) -> ResultatCoherence:
+        if self.futur is None:
+            return ResultatCoherence("non_effectue", raison="aucune_piece_nette", statut="indisponible")
+        try:
+            return self.futur.result(timeout=max(0.0, self.limite - monotonic()))
+        except FuturDepasse:
+            return ResultatCoherence("non_effectue", raison="delai_depasse", statut="indisponible", appel_externe=True)
+
+    def _noter(self, resultat: ResultatCoherence, statut: str, attente_s: float) -> None:
+        self.lecture.append({"agent": "coherence", "fichier": ", ".join(f for f, _, _ in self.nettes),
+                             "statut": statut, "duree_ms": round(self.duree_s * 1000, 2),
+                             "attente_ms": round(attente_s * 1000, 2), "appel_modele": self.futur is not None,
+                             "jetons_entree": self.jetons[0], "jetons_sortie": self.jetons[1],
+                             "verdict": resultat.verdict})
+
+    def verifier_coherence(self, sinistre: dict[str, Any]) -> ResultatCoherence:
+        """Ce que la Coordination appelle : le résultat de l'appel parti à l'arrivée, attendu dans le budget restant."""
+        self.utilise, debut = True, perf_counter()
+        resultat = self._attendre() if sinistre == self.sinistre else self._interpreter(sinistre)
+        self._noter(resultat, "echec" if resultat.verdict == "non_effectue" else "ok", perf_counter() - debut)
+        return resultat
+
+    def clore(self) -> None:
+        """Demande conclue sans la cohérence : l'appel parti à l'arrivée est attendu (dans le budget) et noté."""
+        if self.futur is not None and not self.utilise:
+            debut = perf_counter()
+            self._noter(self._attendre(), "non_utilise", perf_counter() - debut)
 
 
 def options(argv: list[str], fichier_env: Path | None = None) -> tuple[Path, str | None]:
