@@ -86,7 +86,8 @@ def executer() -> tuple[dict[str, Any], list[dict[str, Any]]]:
               if "evaluation/acceptance/" not in ligne]  # le fichier de preuve lui-même ne compte pas
     contexte = {"date": datetime.now().strftime("%Y-%m-%d %H:%M"), "commit": _git("rev-parse", "--short", "HEAD"),
                 "arbre_propre": not modifs, "python": platform.python_version(),
-                "systeme": f"{platform.system()} {platform.release()}", "commande": COMMANDE, "duree_s": duree}
+                "systeme": f"{platform.system()} {platform.version()}",  # release() dit « 10 » sous Windows 11
+                "commande": COMMANDE, "duree_s": duree}
     return contexte, cas
 
 
