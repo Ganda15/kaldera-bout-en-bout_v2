@@ -45,10 +45,11 @@ def _demandes_json() -> dict[str, dict[str, Any]]:
 def _evaluer_dossier(dossier: Path, appeler: Appeler, verite: dict[str, Any], demande_json: dict[str, Any]) -> dict:
     appels: list[dict[str, Any]] = []
 
-    def mesure(consigne: str, schema: type[BaseModel], image_png: bytes | None = None) -> Any:
+    def mesure(consigne: str, schema: type[BaseModel], image_png: bytes | None = None, *,
+               delai_s: float | None = None) -> Any:
         debut = perf_counter()
         try:
-            return appeler(consigne, schema, image_png)
+            return appeler(consigne, schema, image_png, delai_s=delai_s)
         finally:
             appels.append({"schema": "contrat" if schema is ContratLu else "facture",
                            "duree_s": round(perf_counter() - debut, 3)})

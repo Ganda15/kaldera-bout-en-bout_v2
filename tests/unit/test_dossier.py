@@ -35,7 +35,8 @@ def oracle() -> Any:
     factures = {hashlib.sha256((DOSSIERS / ref / nom).read_bytes()).hexdigest(): f
                 for ref, v in VERITE.items() for nom, f in v["fichiers"].items() if f["type"] == "facture"}
 
-    def appeler(consigne: str, schema: type[BaseModel], image_png: bytes | None = None) -> Any:
+    def appeler(consigne: str, schema: type[BaseModel], image_png: bytes | None = None, *,
+                delai_s: float | None = None) -> Any:
         if schema is ContratLu:
             numero = re.search(r"CTR-\d{6}", consigne).group(0)
             return ContratLu(**contrats[numero])
@@ -87,7 +88,8 @@ def test_un_modele_en_panne_donne_une_escalade_motivee_sans_decision() -> None:
 
 
 def test_un_contrat_qui_ne_correspond_pas_a_la_declaration_est_escalade() -> None:
-    def mauvais_contrat(consigne: str, schema: type[BaseModel], image_png: bytes | None = None) -> Any:
+    def mauvais_contrat(consigne: str, schema: type[BaseModel], image_png: bytes | None = None, *,
+                        delai_s: float | None = None) -> Any:
         return ContratLu(numero="CTR-000000", formule="premium", date_souscription="2020-01-01", statut="actif",
                          cotisations_a_jour=True)
 
@@ -202,3 +204,81 @@ def test_une_image_corrompue_est_une_piece_illisible_qui_suit_le_complement(tmp_
     resultat = traiter_dossier(dossier, oracle())  # le modèle ne lit que le contrat
     assert resultat["demande"]["pieces"][0] == {"type": "facture", "lisible": False}
     assert resultat["fiche"]["motif"].startswith("Pièces manquantes")  # complément demandé, aucun dépôt (§ 5)
+
+
+# ---------------------------------------------------------------- formulaire validé avant toute lecture (N1)
+
+def formulaire_modifie(tmp_path: Path, modifier: Any) -> Path:
+    dossier = copie_du_dossier(tmp_path)
+    chemin = dossier / "declaration.json"
+    declaration = json.loads(chemin.read_text(encoding="utf-8"))
+    modifier(declaration)
+    chemin.write_text(json.dumps(declaration, ensure_ascii=False), encoding="utf-8")
+    return dossier
+
+
+@pytest.mark.parametrize("modifier, champ", [
+    (lambda d: d.pop("assure"), "assure"),
+    (lambda d: d["assure"].pop("code_postal"), "assure"),
+    (lambda d: d.pop("numero_contrat"), "numero_contrat"),
+    (lambda d: d["sinistre"].pop("type"), "sinistre"),
+    (lambda d: d["sinistre"].update(date_survenance="14/08/2026"), "sinistre"),
+    (lambda d: d["sinistre"].update(montant_declare="1850"), "sinistre"),
+    (lambda d: d.pop("historique"), "historique"),
+    (lambda d: d["historique"].update(sinistres_12_mois=-1), "historique"),
+])
+def test_un_formulaire_incomplet_donne_une_escalade_sans_appel_au_modele(tmp_path: Path, modifier: Any,
+                                                                         champ: str) -> None:
+    resultat = traiter_dossier(formulaire_modifie(tmp_path, modifier), sans_appel)
+    doit_escalader(resultat, "Formulaire")
+    assert champ in resultat["fiche"]["motif"]
+    assert resultat["fiche"]["reference"] == "KAL-26-0101"
+
+
+# ---------------------------------------------------------------- un seul budget de 10 s, lecture comprise (§ 12)
+
+def test_chaque_appel_au_modele_recoit_le_temps_restant_du_budget() -> None:
+    delais: list[float] = []
+    appeler = oracle()
+
+    def mesure(consigne: str, schema: type[BaseModel], image_png: bytes | None = None, *,
+               delai_s: float | None = None) -> Any:
+        delais.append(delai_s)
+        return appeler(consigne, schema, image_png)
+
+    traiter_dossier(DOSSIERS / "KAL-26-0101", mesure)
+    assert len(delais) == 2 and all(d is not None and 0 < d <= 9.5 for d in delais)
+    assert delais[1] <= delais[0]  # le temps restant ne remonte jamais
+
+
+def test_une_lecture_trop_lente_donne_une_escalade_technique_dans_le_budget() -> None:
+    import time
+    from kaldera.bornes import Bornes
+    appeler = oracle()
+
+    def lent(consigne: str, schema: type[BaseModel], image_png: bytes | None = None, *,
+             delai_s: float | None = None) -> Any:
+        time.sleep(0.25)
+        return appeler(consigne, schema, image_png)
+
+    debut = time.perf_counter()
+    resultat = traiter_dossier(DOSSIERS / "KAL-26-0101", lent, bornes=Bornes(duree_max_s=0.3, reserve_fiche_s=0.1))
+    duree = time.perf_counter() - debut
+    doit_escalader(resultat, "délai")
+    assert duree < 0.6, duree  # la facture n'est jamais lue : plus de temps
+
+
+def test_la_coordination_continue_le_meme_budget_que_la_lecture() -> None:
+    from kaldera.bornes import Bornes
+    appeler = oracle()
+    rapide = Bornes(duree_max_s=0.3, reserve_fiche_s=0.1)
+
+    def lecture_qui_consomme_le_budget(consigne: str, schema: type[BaseModel], image_png: bytes | None = None, *,
+                                       delai_s: float | None = None) -> Any:
+        import time
+        if schema is FactureLue:
+            time.sleep(delai_s + 0.01 if delai_s else 0)  # la dernière lecture finit juste après la limite
+        return appeler(consigne, schema, image_png)
+
+    fiche = traiter_dossier(DOSSIERS / "KAL-26-0101", lecture_qui_consomme_le_budget, bornes=rapide)["fiche"]
+    assert fiche["arret"] == {"borne": "duree_max_s"}  # la Coordination ne repart pas de zéro

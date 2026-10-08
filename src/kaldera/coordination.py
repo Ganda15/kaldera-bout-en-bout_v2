@@ -55,11 +55,13 @@ class _BorneAtteinte(Exception):
 
 
 class _Parcours:
-    def __init__(self, demande: dict[str, Any], bornes: Bornes, consulter: Callable[..., AvisFraude]) -> None:
+    def __init__(self, demande: dict[str, Any], bornes: Bornes, consulter: Callable[..., AvisFraude],
+                 limite: float | None = None) -> None:
         self.etat = EtatDemande(demande)
         self.bornes = bornes
         self.consulter = consulter
-        self.limite = monotonic() + bornes.duree_max_s - bornes.reserve_fiche_s
+        # une seule limite par demande : reçue de la lecture des pièces si elle a eu lieu, sinon posée ici
+        self.limite = limite if limite is not None else monotonic() + bornes.duree_max_s - bornes.reserve_fiche_s
 
     def deleguer(self, agent: str, fonction: Callable[..., Any], **entrees: Any) -> Any:
         """Vérifie les bornes, appelle l'agent avec ses seules entrées, range son résultat."""
@@ -157,9 +159,13 @@ def escalade_directe(reference: str, motif: str) -> dict[str, Any]:
 
 
 def traiter(demande: dict[str, Any], *, consulter: Callable[..., AvisFraude] = partenaire_bouchon,
-            registre: RegistreAppels | None = None, bornes: Bornes = BORNES) -> dict[str, Any]:
-    """Traite une demande jusqu'à sa fiche de décision, quoi qu'il arrive."""
-    parcours = _Parcours(demande, bornes, appel_unique(consulter, registre or RegistreAppels()))
+            registre: RegistreAppels | None = None, bornes: Bornes = BORNES,
+            limite: float | None = None) -> dict[str, Any]:
+    """Traite une demande jusqu'à sa fiche de décision, quoi qu'il arrive.
+
+    `limite` (horloge monotonic) : fin du budget de 10 s déjà commencé, par exemple pendant la lecture des pièces.
+    """
+    parcours = _Parcours(demande, bornes, appel_unique(consulter, registre or RegistreAppels()), limite)
     try:
         return parcours.derouler()
     except _BorneAtteinte as atteinte:

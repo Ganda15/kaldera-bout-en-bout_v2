@@ -139,3 +139,19 @@ def test_l_appel_reel_rend_les_jetons_consommes() -> None:
 def test_sans_compte_de_jetons_la_consommation_vaut_zero() -> None:
     reponse = lecteurs.appel_modele(_FauxClient(None), "deploiement")("consigne", FactureLue, None)
     assert (reponse.jetons_entree, reponse.jetons_sortie) == (0, 0)
+
+
+class _FauxClientAvecDelai(_FauxClient):
+    def __init__(self) -> None:
+        super().__init__(None)
+        self.delais: list[float] = []
+
+    def with_options(self, *, timeout: float) -> Any:
+        self.delais.append(timeout)
+        return self
+
+
+def test_l_appel_reel_applique_le_temps_restant_comme_delai() -> None:
+    client = _FauxClientAvecDelai()
+    lecteurs.appel_modele(client, "deploiement")("consigne", FactureLue, None, delai_s=4.2)
+    assert client.delais == [4.2]

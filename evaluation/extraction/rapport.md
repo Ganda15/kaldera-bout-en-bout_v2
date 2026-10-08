@@ -3,12 +3,12 @@
 Rapport généré par `outils/evaluer_extraction.py` depuis `resultats.json`. Ne pas le modifier à la main : `--verifier` le recalcule et le compare.
 
 - Dossiers : 34 ; verdict : **réussi** (seuils : 95% par champ, 95% de décisions identiques, aucune lecture impossible)
-- date : 2026-10-08 13:05
+- date : 2026-10-08 18:56
 - modele : gpt-5.4
-- commit : e36a52c
+- commit : 0922f9b
 - python : 3.11.15
 - lectures_en_parallele : 6
-- duree_totale_s : 24.8
+- duree_totale_s : 21.7
 
 ## Exactitude par champ
 
@@ -30,17 +30,17 @@ Décisions identiques au chemin JSON (issue, décision, montant, file, mode dég
 
 | Lecture | Appels | Moyenne (s) | p95 (s) | Max (s) |
 |---|---|---|---|---|
-| contrat | 34 | 1.91 | 4.3 | 4.99 |
-| facture | 33 | 2.38 | 5.43 | 5.89 |
+| contrat | 34 | 1.81 | 2.93 | 6.98 |
+| facture | 33 | 1.97 | 2.9 | 2.99 |
 
 ## Jetons consommés et métriques des agents de lecture
 
-Jetons : 32180 en entrée, 2480 en sortie, pour 34 dossiers (946 et 72 par dossier en moyenne). Coût = jetons d'entrée × prix d'entrée + jetons de sortie × prix de sortie, aux prix du déploiement (portail Azure).
+Jetons : 32180 en entrée, 2486 en sortie, pour 34 dossiers (946 et 73 par dossier en moyenne). Coût = jetons d'entrée × prix d'entrée + jetons de sortie × prix de sortie, aux prix du déploiement (portail Azure).
 
 | Agent | Lectures | Échecs | Latence moyenne (ms) | Appels au modèle | Jetons entrée | Jetons sortie |
 |---|---|---|---|---|---|---|
-| lecteur_contrat | 34 | 0 | 1915.29 | 34 | 10763 | 1653 |
-| lecteur_pieces | 68 | 0 | 1158.69 | 33 | 21417 | 827 |
+| lecteur_contrat | 34 | 0 | 1807.91 | 34 | 10763 | 1653 |
+| lecteur_pieces | 68 | 0 | 959.68 | 33 | 21417 | 833 |
 
 ## Écarts
 

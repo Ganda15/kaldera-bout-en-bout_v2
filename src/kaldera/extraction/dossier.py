@@ -3,9 +3,11 @@
 Un dossier contient le formulaire de l'assuré (`declaration.json`), le contrat (`contrat.pdf`), les pièces jointes
 (`piece-<n>-<type>.png`, le type étant le créneau de dépôt choisi par l'assuré) et ses dépôts (`depots/<n>-<type>.png`).
 
-1. Lecture : les agents de lecture produisent les données de la spec § 3. Elle est tracée à part (`lecture`), car elle
-   précède la chaîne de décision et ses 10 secondes (un appel au modèle peut à lui seul en durer davantage).
+0. Contrôle du dossier, avant toute lecture : formulaire validé par un schéma, fichiers reconnus, contrat présent.
+1. Lecture : les agents de lecture produisent les données de la spec § 3. Elle est tracée à part (`lecture`).
 2. Décision : la chaîne du chantier 1 (`coordination.traiter`), inchangée.
+Un seul budget de 10 s (§ 12) couvre les trois : il commence à l'arrivée du dossier, chaque appel au modèle reçoit
+le temps restant comme délai, et la Coordination continue la même limite au lieu d'en ouvrir une nouvelle.
 Une lecture impossible (modèle en panne, réponse hors schéma) ou un contrat qui ne correspond pas à la déclaration
 donnent une escalade motivée vers un gestionnaire : jamais une décision prise sur des données douteuses.
 
@@ -16,20 +18,70 @@ Lancement réel, depuis la racine du dépôt (la clé doit être dans .env) :
 from __future__ import annotations
 
 import json
+from datetime import date
 import re
 import sys
 from collections.abc import Callable
 from pathlib import Path
-from time import perf_counter
-from typing import Any
+from time import monotonic, perf_counter
+from typing import Annotated, Any
+
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from ..agents.antifraude import AvisFraude, partenaire_bouchon
+from ..bornes import BORNES, Bornes
 from ..coordination import RegistreAppels, escalade_directe, traiter
 from . import lecteurs
 from ..metriques import calculer_metriques_lecture
 from .lecteurs import Appeler, ExtractionImpossible, Reponse
 
 PIECE = re.compile(r"^(?:piece-)?(\d+)-(facture|photo|depot_plainte)\.png$")
+
+
+class _Assure(BaseModel):
+    code_postal: str  # seul champ de l'assuré lu par la chaîne ; les autres restent dans la demande, jamais transmis
+
+
+class _Sinistre(BaseModel):
+    model_config = ConfigDict(strict=True)
+    type: str
+    date_survenance: date
+    date_declaration: date
+    montant_declare: Annotated[float, Field(ge=0)]
+
+
+class _Historique(BaseModel):
+    model_config = ConfigDict(strict=True)
+    sinistres_12_mois: Annotated[int, Field(ge=0)]
+
+
+class Declaration(BaseModel):
+    """Ce que la chaîne lit dans le formulaire : vérifié avant toute lecture, pour qu'aucun champ manquant ne
+    provoque une erreur brute après des appels au modèle déjà payés."""
+
+    reference: str
+    numero_contrat: str
+    assure: _Assure
+    sinistre: _Sinistre
+    historique: _Historique
+
+
+def lire_declaration(dossier: Path) -> tuple[dict[str, Any] | None, str, str | None]:
+    """Rend (formulaire, référence, motif d'escalade ou None)."""
+    try:
+        texte = (dossier / "declaration.json").read_text(encoding="utf-8")
+        brut = json.loads(texte)
+    except (OSError, ValueError):
+        return None, dossier.name, "Formulaire de déclaration absent ou illisible : reprise manuelle"
+    reference = brut.get("reference") if isinstance(brut, dict) and isinstance(brut.get("reference"), str) \
+        else dossier.name
+    try:
+        Declaration.model_validate_json(texte)
+    except ValidationError as erreur:
+        champs = sorted({str(e["loc"][0]) for e in erreur.errors() if e["loc"]}) or ["formulaire"]
+        return None, reference, (f"Formulaire de déclaration incomplet ou invalide ({', '.join(champs)}) : "
+                                 "reprise manuelle")
+    return brut, reference, None
 
 
 def lister_images(dossier: Path) -> list[tuple[str, Path]]:
@@ -54,18 +106,16 @@ def fichiers_non_reconnus(dossier: Path) -> list[str]:
 
 
 def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[..., AvisFraude] = partenaire_bouchon,
-                    registre: RegistreAppels | None = None) -> dict[str, Any]:
+                    registre: RegistreAppels | None = None, bornes: Bornes = BORNES) -> dict[str, Any]:
     """Rend {"demande": JSON § 3 extrait, "lecture": une ligne par pièce lue, "fiche": fiche de décision}.
 
     Aucune erreur brute (exigence N1) : un dossier inexploitable donne une escalade motivée vers un gestionnaire ;
     une pièce illisible suit, elle, la demande de complément du § 5.
     """
-    try:
-        declaration = json.loads((dossier / "declaration.json").read_text(encoding="utf-8"))
-        reference = declaration["reference"]
-    except (OSError, ValueError, KeyError, TypeError):
-        motif = "Formulaire de déclaration absent ou illisible : reprise manuelle"
-        return {"demande": None, "lecture": [], "fiche": escalade_directe(dossier.name, motif)}
+    limite = monotonic() + bornes.duree_max_s - bornes.reserve_fiche_s  # le budget commence à l'arrivée du dossier
+    declaration, reference, motif = lire_declaration(dossier)
+    if motif:
+        return {"demande": None, "lecture": [], "fiche": escalade_directe(reference, motif)}
     inconnus = fichiers_non_reconnus(dossier)
     if inconnus:
         motif = f"Fichier non pris en charge ({', '.join(inconnus)}) : reprise manuelle"
@@ -76,9 +126,17 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
     lecture: list[dict[str, Any]] = []
     appels, jetons = [0], [0, 0]
 
-    def compte(*args: Any, **kwargs: Any) -> Any:
+    def compte(*args: Any) -> Any:
+        restant = limite - monotonic()
+        if restant <= 0:
+            raise ExtractionImpossible(f"délai de {bornes.duree_max_s:g} s dépassé pendant la lecture")
         appels[0] += 1
-        reponse = appeler(*args, **kwargs)
+        try:
+            reponse = appeler(*args, delai_s=restant)
+        except Exception as erreur:
+            if monotonic() >= limite:  # l'appel a été abandonné faute de temps
+                raise ExtractionImpossible(f"délai de {bornes.duree_max_s:g} s dépassé pendant la lecture") from erreur
+            raise
         if isinstance(reponse, Reponse):
             jetons[0] += reponse.jetons_entree
             jetons[1] += reponse.jetons_sortie
@@ -117,7 +175,7 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
                "sinistre": declaration["sinistre"], "pieces": pieces, "historique": declaration["historique"],
                "espace_assure": {"depots": depots}}
     return {"demande": demande, "lecture": lecture,
-            "fiche": traiter(demande, consulter=consulter, registre=registre)}
+            "fiche": traiter(demande, consulter=consulter, registre=registre, bornes=bornes, limite=limite)}
 
 
 def main() -> None:

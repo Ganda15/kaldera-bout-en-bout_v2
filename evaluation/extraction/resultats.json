@@ -1,11 +1,11 @@
 {
  "contexte": {
-  "date": "2026-10-08 13:05",
+  "date": "2026-10-08 18:56",
   "modele": "gpt-5.4",
-  "commit": "e36a52c",
+  "commit": "0922f9b",
   "python": "3.11.15",
   "lectures_en_parallele": 6,
-  "duree_totale_s": 24.8
+  "duree_totale_s": 21.7
  },
  "synthese": {
   "dossiers": 34,
@@ -54,26 +54,26 @@
   "appels_modele": {
    "contrat": {
     "appels": 34,
-    "moyenne_s": 1.91,
-    "p95_s": 4.3,
-    "max_s": 4.99
+    "moyenne_s": 1.81,
+    "p95_s": 2.93,
+    "max_s": 6.98
    },
    "facture": {
     "appels": 33,
-    "moyenne_s": 2.38,
-    "p95_s": 5.43,
-    "max_s": 5.89
+    "moyenne_s": 1.97,
+    "p95_s": 2.9,
+    "max_s": 2.99
    }
   },
   "jetons": {
    "entree": 32180,
-   "sortie": 2480
+   "sortie": 2486
   },
   "metriques_lecture": {
    "lecteur_contrat": {
     "appels": 34,
     "echecs": 0,
-    "latence_ms": 1915.29,
+    "latence_ms": 1807.91,
     "appels_externes": 34,
     "jetons_entree": 10763,
     "jetons_sortie": 1653
@@ -81,10 +81,10 @@
    "lecteur_pieces": {
     "appels": 68,
     "echecs": 0,
-    "latence_ms": 1158.69,
+    "latence_ms": 959.68,
     "appels_externes": 33,
     "jetons_entree": 21417,
-    "jetons_sortie": 827
+    "jetons_sortie": 833
    }
   },
   "seuils": {
@@ -132,11 +132,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.655
+     "duree_s": 2.412
     },
     {
      "schema": "facture",
-     "duree_s": 4.917
+     "duree_s": 2.22
     }
    ],
    "lecture": [
@@ -144,7 +144,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2667.33,
+     "duree_ms": 2423.01,
      "appel_modele": true,
      "jetons_entree": 305,
      "jetons_sortie": 49
@@ -153,16 +153,16 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 4927.14,
+     "duree_ms": 2223.73,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 25
+     "jetons_sortie": 27
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.01,
+     "duree_ms": 4.45,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -208,11 +208,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.714
+     "duree_s": 2.13
     },
     {
      "schema": "facture",
-     "duree_s": 3.826
+     "duree_s": 1.548
     }
    ],
    "lecture": [
@@ -220,7 +220,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2726.69,
+     "duree_ms": 2136.37,
      "appel_modele": true,
      "jetons_entree": 330,
      "jetons_sortie": 49
@@ -229,7 +229,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 3829.94,
+     "duree_ms": 1555.88,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -238,7 +238,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.74,
+     "duree_ms": 3.52,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -284,11 +284,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.637
+     "duree_s": 6.982
     },
     {
      "schema": "facture",
-     "duree_s": 2.27
+     "duree_s": 1.94
     }
    ],
    "lecture": [
@@ -296,7 +296,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2643.67,
+     "duree_ms": 6988.66,
      "appel_modele": true,
      "jetons_entree": 307,
      "jetons_sortie": 49
@@ -305,16 +305,16 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2278.22,
+     "duree_ms": 1946.08,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 26
+     "jetons_sortie": 24
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-depot_plainte.png",
      "statut": "ok",
-     "duree_ms": 3.75,
+     "duree_ms": 4.76,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -360,11 +360,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 4.305
+     "duree_s": 2.63
     },
     {
      "schema": "facture",
-     "duree_s": 2.155
+     "duree_s": 2.164
     }
    ],
    "lecture": [
@@ -372,7 +372,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 4311.74,
+     "duree_ms": 2638.89,
      "appel_modele": true,
      "jetons_entree": 307,
      "jetons_sortie": 49
@@ -381,7 +381,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2158.24,
+     "duree_ms": 2167.62,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -390,7 +390,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.68,
+     "duree_ms": 3.75,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -436,11 +436,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.702
+     "duree_s": 2.113
     },
     {
      "schema": "facture",
-     "duree_s": 5.893
+     "duree_s": 2.267
     }
    ],
    "lecture": [
@@ -448,7 +448,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2707.3,
+     "duree_ms": 2119.41,
      "appel_modele": true,
      "jetons_entree": 315,
      "jetons_sortie": 49
@@ -457,7 +457,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 5896.86,
+     "duree_ms": 2280.75,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -466,7 +466,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.97,
+     "duree_ms": 4.73,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -512,11 +512,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.796
+     "duree_s": 2.427
     },
     {
      "schema": "facture",
-     "duree_s": 3.849
+     "duree_s": 2.314
     }
    ],
    "lecture": [
@@ -524,7 +524,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2800.93,
+     "duree_ms": 2432.2,
      "appel_modele": true,
      "jetons_entree": 315,
      "jetons_sortie": 49
@@ -533,16 +533,16 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 3851.97,
+     "duree_ms": 2317.86,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 26
+     "jetons_sortie": 24
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.85,
+     "duree_ms": 5.11,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -588,11 +588,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.877
+     "duree_s": 1.318
     },
     {
      "schema": "facture",
-     "duree_s": 1.834
+     "duree_s": 1.847
     }
    ],
    "lecture": [
@@ -600,7 +600,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1878.56,
+     "duree_ms": 1320.1,
      "appel_modele": true,
      "jetons_entree": 326,
      "jetons_sortie": 48
@@ -609,7 +609,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1837.96,
+     "duree_ms": 1851.19,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -618,7 +618,7 @@
      "agent": "lecteur_pieces",
      "fichier": "depots/1-photo.png",
      "statut": "ok",
-     "duree_ms": 3.09,
+     "duree_ms": 3.57,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -664,11 +664,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.526
+     "duree_s": 1.373
     },
     {
      "schema": "facture",
-     "duree_s": 1.909
+     "duree_s": 2.092
     }
    ],
    "lecture": [
@@ -676,7 +676,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1528.96,
+     "duree_ms": 1374.78,
      "appel_modele": true,
      "jetons_entree": 314,
      "jetons_sortie": 49
@@ -685,7 +685,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1912.58,
+     "duree_ms": 2096.33,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -694,7 +694,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-depot_plainte.png",
      "statut": "ok",
-     "duree_ms": 3.85,
+     "duree_ms": 3.8,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -740,11 +740,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.574
+     "duree_s": 1.366
     },
     {
      "schema": "facture",
-     "duree_s": 1.912
+     "duree_s": 1.848
     }
    ],
    "lecture": [
@@ -752,7 +752,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1575.49,
+     "duree_ms": 1368.15,
      "appel_modele": true,
      "jetons_entree": 327,
      "jetons_sortie": 49
@@ -761,7 +761,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1915.25,
+     "duree_ms": 1852.11,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
@@ -807,11 +807,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.563
+     "duree_s": 1.489
     },
     {
      "schema": "facture",
-     "duree_s": 1.801
+     "duree_s": 2.228
     }
    ],
    "lecture": [
@@ -819,7 +819,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1564.48,
+     "duree_ms": 1490.76,
      "appel_modele": true,
      "jetons_entree": 329,
      "jetons_sortie": 49
@@ -828,16 +828,16 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1806.12,
+     "duree_ms": 2231.62,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 27
+     "jetons_sortie": 25
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.27,
+     "duree_ms": 4.34,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -883,11 +883,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.632
+     "duree_s": 1.564
     },
     {
      "schema": "facture",
-     "duree_s": 5.431
+     "duree_s": 1.509
     }
    ],
    "lecture": [
@@ -895,7 +895,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1633.47,
+     "duree_ms": 1565.43,
      "appel_modele": true,
      "jetons_entree": 306,
      "jetons_sortie": 48
@@ -904,7 +904,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 5434.73,
+     "duree_ms": 1512.57,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -913,7 +913,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.13,
+     "duree_ms": 3.69,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -959,11 +959,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.438
+     "duree_s": 2.933
     },
     {
      "schema": "facture",
-     "duree_s": 1.853
+     "duree_s": 2.989
     }
    ],
    "lecture": [
@@ -971,7 +971,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1439.67,
+     "duree_ms": 2934.51,
      "appel_modele": true,
      "jetons_entree": 316,
      "jetons_sortie": 49
@@ -980,16 +980,16 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1856.46,
+     "duree_ms": 2992.99,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 25
+     "jetons_sortie": 27
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 5.39,
+     "duree_ms": 3.92,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1035,11 +1035,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.929
+     "duree_s": 1.353
     },
     {
      "schema": "facture",
-     "duree_s": 2.303
+     "duree_s": 1.789
     }
    ],
    "lecture": [
@@ -1047,7 +1047,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1930.2,
+     "duree_ms": 1354.83,
      "appel_modele": true,
      "jetons_entree": 328,
      "jetons_sortie": 48
@@ -1056,7 +1056,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2307.09,
+     "duree_ms": 1793.39,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1065,7 +1065,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.25,
+     "duree_ms": 3.79,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1111,11 +1111,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.654
+     "duree_s": 1.389
     },
     {
      "schema": "facture",
-     "duree_s": 1.713
+     "duree_s": 1.894
     }
    ],
    "lecture": [
@@ -1123,7 +1123,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1655.19,
+     "duree_ms": 1390.84,
      "appel_modele": true,
      "jetons_entree": 304,
      "jetons_sortie": 48
@@ -1132,7 +1132,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1717.31,
+     "duree_ms": 1897.7,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 27
@@ -1141,7 +1141,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 5.89,
+     "duree_ms": 3.37,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1187,11 +1187,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.626
+     "duree_s": 2.217
     },
     {
      "schema": "facture",
-     "duree_s": 1.49
+     "duree_s": 2.897
     }
    ],
    "lecture": [
@@ -1199,7 +1199,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1627.31,
+     "duree_ms": 2218.12,
      "appel_modele": true,
      "jetons_entree": 327,
      "jetons_sortie": 49
@@ -1208,16 +1208,16 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1492.85,
+     "duree_ms": 2900.69,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 25
+     "jetons_sortie": 27
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.54,
+     "duree_ms": 3.42,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1263,11 +1263,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.908
+     "duree_s": 1.452
     },
     {
      "schema": "facture",
-     "duree_s": 1.339
+     "duree_s": 2.169
     }
    ],
    "lecture": [
@@ -1275,7 +1275,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1909.46,
+     "duree_ms": 1454.64,
      "appel_modele": true,
      "jetons_entree": 314,
      "jetons_sortie": 48
@@ -1284,7 +1284,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1343.75,
+     "duree_ms": 2173.13,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1293,7 +1293,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 6.44,
+     "duree_ms": 3.34,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1339,11 +1339,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.419
+     "duree_s": 1.319
     },
     {
      "schema": "facture",
-     "duree_s": 1.978
+     "duree_s": 1.943
     }
    ],
    "lecture": [
@@ -1351,7 +1351,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1420.69,
+     "duree_ms": 1322.42,
      "appel_modele": true,
      "jetons_entree": 305,
      "jetons_sortie": 49
@@ -1360,7 +1360,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1981.17,
+     "duree_ms": 1947.29,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1369,7 +1369,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.4,
+     "duree_ms": 4.51,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1415,11 +1415,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.674
+     "duree_s": 1.609
     },
     {
      "schema": "facture",
-     "duree_s": 2.162
+     "duree_s": 2.377
     }
    ],
    "lecture": [
@@ -1427,7 +1427,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1675.63,
+     "duree_ms": 1610.05,
      "appel_modele": true,
      "jetons_entree": 328,
      "jetons_sortie": 48
@@ -1436,7 +1436,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2165.88,
+     "duree_ms": 2380.71,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1445,7 +1445,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-depot_plainte.png",
      "statut": "ok",
-     "duree_ms": 3.29,
+     "duree_ms": 3.86,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1491,11 +1491,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.548
+     "duree_s": 1.278
     },
     {
      "schema": "facture",
-     "duree_s": 1.615
+     "duree_s": 2.154
     }
    ],
    "lecture": [
@@ -1503,7 +1503,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1549.91,
+     "duree_ms": 1279.1,
      "appel_modele": true,
      "jetons_entree": 328,
      "jetons_sortie": 49
@@ -1512,10 +1512,10 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1617.93,
+     "duree_ms": 2158.21,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 25
+     "jetons_sortie": 27
     },
     {
      "agent": "lecteur_pieces",
@@ -1567,11 +1567,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.661
+     "duree_s": 1.586
     },
     {
      "schema": "facture",
-     "duree_s": 1.588
+     "duree_s": 1.646
     }
    ],
    "lecture": [
@@ -1579,7 +1579,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1662.9,
+     "duree_ms": 1586.78,
      "appel_modele": true,
      "jetons_entree": 316,
      "jetons_sortie": 48
@@ -1588,7 +1588,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1591.1,
+     "duree_ms": 1651.08,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 27
@@ -1597,7 +1597,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.54,
+     "duree_ms": 3.96,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1643,11 +1643,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.56
+     "duree_s": 1.304
     },
     {
      "schema": "facture",
-     "duree_s": 1.707
+     "duree_s": 1.756
     }
    ],
    "lecture": [
@@ -1655,7 +1655,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1561.9,
+     "duree_ms": 1305.68,
      "appel_modele": true,
      "jetons_entree": 315,
      "jetons_sortie": 49
@@ -1664,7 +1664,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1711.12,
+     "duree_ms": 1759.82,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
@@ -1673,7 +1673,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.41,
+     "duree_ms": 4.21,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1719,11 +1719,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.468
+     "duree_s": 1.536
     },
     {
      "schema": "facture",
-     "duree_s": 1.812
+     "duree_s": 1.899
     }
    ],
    "lecture": [
@@ -1731,7 +1731,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1469.65,
+     "duree_ms": 1538.04,
      "appel_modele": true,
      "jetons_entree": 315,
      "jetons_sortie": 48
@@ -1740,7 +1740,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1815.8,
+     "duree_ms": 1903.72,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1749,7 +1749,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.78,
+     "duree_ms": 4.05,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1795,11 +1795,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.437
+     "duree_s": 1.335
     },
     {
      "schema": "facture",
-     "duree_s": 1.575
+     "duree_s": 1.703
     }
    ],
    "lecture": [
@@ -1807,7 +1807,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1437.88,
+     "duree_ms": 1336.3,
      "appel_modele": true,
      "jetons_entree": 315,
      "jetons_sortie": 49
@@ -1816,7 +1816,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1579.39,
+     "duree_ms": 1707.82,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
@@ -1825,7 +1825,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.24,
+     "duree_ms": 3.34,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1871,11 +1871,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.486
+     "duree_s": 1.371
     },
     {
      "schema": "facture",
-     "duree_s": 4.074
+     "duree_s": 2.3
     }
    ],
    "lecture": [
@@ -1883,7 +1883,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1486.89,
+     "duree_ms": 1372.82,
      "appel_modele": true,
      "jetons_entree": 325,
      "jetons_sortie": 48
@@ -1892,16 +1892,16 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 4077.07,
+     "duree_ms": 2304.72,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 25
+     "jetons_sortie": 27
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.45,
+     "duree_ms": 4.09,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -1947,11 +1947,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.667
+     "duree_s": 1.198
     },
     {
      "schema": "facture",
-     "duree_s": 1.706
+     "duree_s": 1.947
     }
    ],
    "lecture": [
@@ -1959,7 +1959,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1668.67,
+     "duree_ms": 1199.96,
      "appel_modele": true,
      "jetons_entree": 304,
      "jetons_sortie": 48
@@ -1968,7 +1968,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1709.43,
+     "duree_ms": 1952.02,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1977,7 +1977,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-depot_plainte.png",
      "statut": "ok",
-     "duree_ms": 3.61,
+     "duree_ms": 4.07,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2023,11 +2023,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.409
+     "duree_s": 1.447
     },
     {
      "schema": "facture",
-     "duree_s": 1.812
+     "duree_s": 1.978
     }
    ],
    "lecture": [
@@ -2035,7 +2035,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1410.72,
+     "duree_ms": 1448.95,
      "appel_modele": true,
      "jetons_entree": 306,
      "jetons_sortie": 49
@@ -2044,7 +2044,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1815.29,
+     "duree_ms": 1983.12,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
@@ -2053,7 +2053,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.27,
+     "duree_ms": 4.16,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2099,11 +2099,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.275
+     "duree_s": 1.326
     },
     {
      "schema": "facture",
-     "duree_s": 1.692
+     "duree_s": 1.669
     }
    ],
    "lecture": [
@@ -2111,7 +2111,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1276.03,
+     "duree_ms": 1327.72,
      "appel_modele": true,
      "jetons_entree": 314,
      "jetons_sortie": 49
@@ -2120,7 +2120,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1695.78,
+     "duree_ms": 1672.85,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
@@ -2129,7 +2129,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.11,
+     "duree_ms": 4.29,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2175,11 +2175,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 4.989
+     "duree_s": 1.813
     },
     {
      "schema": "facture",
-     "duree_s": 1.796
+     "duree_s": 1.791
     }
    ],
    "lecture": [
@@ -2187,7 +2187,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 4990.7,
+     "duree_ms": 1814.72,
      "appel_modele": true,
      "jetons_entree": 329,
      "jetons_sortie": 49
@@ -2196,7 +2196,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1799.45,
+     "duree_ms": 1796.51,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -2205,7 +2205,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.68,
+     "duree_ms": 3.96,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2251,11 +2251,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.439
+     "duree_s": 1.518
     },
     {
      "schema": "facture",
-     "duree_s": 3.483
+     "duree_s": 1.921
     }
    ],
    "lecture": [
@@ -2263,7 +2263,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1440.01,
+     "duree_ms": 1520.06,
      "appel_modele": true,
      "jetons_entree": 328,
      "jetons_sortie": 48
@@ -2272,16 +2272,16 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 3487.15,
+     "duree_ms": 1925.93,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 25
+     "jetons_sortie": 27
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.6,
+     "duree_ms": 4.3,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2327,11 +2327,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.572
+     "duree_s": 1.455
     },
     {
      "schema": "facture",
-     "duree_s": 2.092
+     "duree_s": 2.017
     }
    ],
    "lecture": [
@@ -2339,7 +2339,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1573.35,
+     "duree_ms": 1456.76,
      "appel_modele": true,
      "jetons_entree": 304,
      "jetons_sortie": 48
@@ -2348,7 +2348,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2096.1,
+     "duree_ms": 2021.63,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
@@ -2357,7 +2357,7 @@
      "agent": "lecteur_pieces",
      "fichier": "depots/1-photo.png",
      "statut": "ok",
-     "duree_ms": 3.43,
+     "duree_ms": 3.46,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2403,11 +2403,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.27
+     "duree_s": 1.78
     },
     {
      "schema": "facture",
-     "duree_s": 1.814
+     "duree_s": 1.553
     }
    ],
    "lecture": [
@@ -2415,7 +2415,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1271.58,
+     "duree_ms": 1782.51,
      "appel_modele": true,
      "jetons_entree": 327,
      "jetons_sortie": 49
@@ -2424,7 +2424,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1817.84,
+     "duree_ms": 1558.28,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -2433,7 +2433,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.68,
+     "duree_ms": 3.44,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2479,11 +2479,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.983
+     "duree_s": 1.44
     },
     {
      "schema": "facture",
-     "duree_s": 1.558
+     "duree_s": 1.237
     }
    ],
    "lecture": [
@@ -2491,7 +2491,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1983.93,
+     "duree_ms": 1441.92,
      "appel_modele": true,
      "jetons_entree": 314,
      "jetons_sortie": 49
@@ -2500,7 +2500,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1561.68,
+     "duree_ms": 1240.78,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -2509,7 +2509,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.62,
+     "duree_ms": 3.79,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2555,11 +2555,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.346
+     "duree_s": 1.63
     },
     {
      "schema": "facture",
-     "duree_s": 1.565
+     "duree_s": 1.355
     }
    ],
    "lecture": [
@@ -2567,7 +2567,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1347.68,
+     "duree_ms": 1631.35,
      "appel_modele": true,
      "jetons_entree": 314,
      "jetons_sortie": 48
@@ -2576,7 +2576,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1568.25,
+     "duree_ms": 1359.7,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -2585,7 +2585,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.54,
+     "duree_ms": 4.45,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2627,7 +2627,7 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.29
+     "duree_s": 1.281
     }
    ],
    "lecture": [
@@ -2635,7 +2635,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1291.37,
+     "duree_ms": 1282.95,
      "appel_modele": true,
      "jetons_entree": 306,
      "jetons_sortie": 49
@@ -2644,7 +2644,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 3.97,
+     "duree_ms": 5.45,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2653,7 +2653,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.39,
+     "duree_ms": 3.49,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2662,7 +2662,7 @@
      "agent": "lecteur_pieces",
      "fichier": "depots/1-facture.png",
      "statut": "ok",
-     "duree_ms": 4.29,
+     "duree_ms": 4.02,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0

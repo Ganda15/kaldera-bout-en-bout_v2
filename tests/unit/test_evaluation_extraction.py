@@ -26,7 +26,8 @@ def faux_modele(erreur_formule: str | None = None, panne: bool = False, jetons: 
     factures = {hashlib.sha256((DOSSIERS / ref / nom).read_bytes()).hexdigest(): f
                 for ref, v in VERITE.items() for nom, f in v["fichiers"].items() if f["type"] == "facture"}
 
-    def appeler(consigne: str, schema: type[BaseModel], image_png: bytes | None = None) -> Any:
+    def appeler(consigne: str, schema: type[BaseModel], image_png: bytes | None = None, *,
+                delai_s: float | None = None) -> Any:
         if panne:
             raise ConnectionError("modèle injoignable")
         if schema is ContratLu:
