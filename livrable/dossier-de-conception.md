@@ -23,9 +23,9 @@ La spécification nomme aussi E1 à E5 les cinq conditions d'éligibilité (§ 4
 
 ### 1.2 Trois choix structurants
 
-**Aucun LLM dans le chemin de décision.** Toutes les règles sont chiffrées (spécification, § 4 à § 10) : dates, seuils, franchises, plafonds. Elles s'écrivent en code et se testent. Le seul jugement du parcours, l'avis de fraude, est rendu par le partenaire, « jamais en interne » (§ 2). Un LLM dans la décision n'apporterait rien et rendrait les six garanties impossibles à prouver.
+**Un modèle pour lire les documents, du code pour décider.** Les règles de décision sont chiffrées (spécification, § 4 à § 10) : dates, seuils, franchises, plafonds. Elles s'écrivent en code et se testent. Les documents (contrat en PDF, factures en photo) sont lus par deux agents de lecture qui utilisent un modèle (mise à jour du 08/10/2026). Le seul jugement du parcours, l'avis de fraude, est rendu par le partenaire, « jamais en interne » (§ 2). Un LLM dans la décision n'apporterait rien et rendrait les six garanties impossibles à prouver.
 
-**Un superviseur en code et quatre agents de contrôle.** `interface.md` impose qu'une section métier ne soit écrite que par un agent, et qu'un agent n'écrive qu'une section. Les sections étant cinq (`eligibilite`, `pieces`, `estimation`, `avis_fraude`, `issue`), l'équipe compte cinq agents : la Coordination, qui conclut, et quatre agents de contrôle.
+**Un superviseur en code et quatre agents de contrôle.** `interface.md` impose qu'une section métier ne soit écrite que par un agent, et qu'un agent n'écrive qu'une section. Les sections étant cinq (`eligibilite`, `pieces`, `estimation`, `avis_fraude`, `issue`), il y a cinq écrivains : la Coordination, qui conclut, et quatre contrôles déterministes. L'équipe compte sept rôles internes : deux agents de lecture qui utilisent un modèle (lecteur de contrat, lecteur de pièces), quatre contrôles déterministes (Éligibilité, Pièces, Estimation, Anti-fraude) et la Coordination, qui applique les règles et produit seule l'issue. Le partenaire anti-fraude est un agent externe : il appartient à une autre entreprise.
 
 **La mémoire de la demande n'appartient qu'à la Coordination.** Elle seule lit et écrit l'état. Elle appelle chaque agent directement, lui passe seulement les données utiles et range son résultat. Un agent ne peut donc ni écraser le travail d'un autre, ni envoyer au partenaire une donnée qu'il n'a jamais reçue.
 
@@ -69,13 +69,13 @@ Autres frontières tranchées :
 
 ### 2.3 Dépendances et parallélisme
 
-- Éligibilité et Pièces sont indépendantes : elles tournent **en parallèle**.
+- Éligibilité, puis Pièces, **en séquence** : une demande non éligible est refusée sans contrôle des pièces (0,01 ms par contrôle, le parallèle n'apportait rien).
 - La demande de complément attend l'Éligibilité : on ne sollicite pas l'assuré pour une demande qui sera refusée.
 - L'Estimation attend les factures lisibles de Pièces.
 - L'Anti-fraude attend l'Estimation, car F4 compare le montant déclaré au montant justifié. Appeler le partenaire plus tôt gaspillerait l'unique appel autorisé.
 - La Coordination conclut en dernier.
 
-Quand deux résultats obtenus en parallèle se contredisent (éligible, mais pièces incomplètes), l'ordre des règles du § 10 tranche : la première qui s'applique fixe l'issue.
+Quand deux résultats se contredisent (éligible, mais pièces incomplètes), l'ordre des règles du § 10 tranche : la première qui s'applique fixe l'issue.
 
 ### 2.4 Pourquoi des agents, si les contrôles sont des règles
 
@@ -87,7 +87,7 @@ Un agent est ici une unité de responsabilité : un rôle, un contrat d'entrée 
 
 ### 3.1 Le schéma d'orchestration
 
-Le schéma est **mixte** : un superviseur, la Coordination, délègue chaque contrôle ; les deux premiers tournent en parallèle, la suite s'enchaîne dans l'ordre de la spécification. Les agents ne s'appellent jamais entre eux et ne choisissent pas l'étape suivante. Une étape est une délégation : l'appel, le résultat, son rangement, soit une ligne de trace.
+Le schéma est un **superviseur en séquence** : la Coordination délègue chaque contrôle dans l'ordre de la spécification, et s'arrête dès qu'une règle conclut. Les agents ne s'appellent jamais entre eux et ne choisissent pas l'étape suivante. Une étape est une délégation : l'appel, le résultat, son rangement, soit une ligne de trace.
 
 **Qui décide qu'une demande est terminée : la Coordination seule**, en écrivant la section `issue`. Elle applique les règles du § 10 dans l'ordre :
 

@@ -52,7 +52,7 @@ Pour entrer dans le dossier avant les deux chantiers : le pourquoi, le système 
 
 Le formateur a précisé le 08/10/2026 que les entrées réelles sont des pièces non structurées (contrat en PDF, factures en photo). Deux agents de lecture produisent le JSON de la spec § 3 avant la Coordination ; la chaîne de décision reste inchangée. Fichiers : [drawio](schemas/schema-E-lecture-des-pieces.drawio), [PNG](schemas/schema-E-lecture-des-pieces.png).
 
-L'équipe compte donc sept agents : cinq décident, en code (la Coordination et quatre agents de contrôle : Éligibilité, Pièces, Estimation, Anti-fraude), deux lisent les pièces avec un modèle et ne décident jamais (lecteur de contrat, lecteur de pièces). Le partenaire anti-fraude est un huitième agent, externe : il appartient à une autre entreprise.
+L'équipe compte sept rôles internes : deux agents de lecture qui utilisent un modèle (lecteur de contrat, lecteur de pièces), quatre contrôles déterministes (Éligibilité, Pièces, Estimation, Anti-fraude) et la Coordination, qui applique les règles et produit seule l'issue. Le partenaire anti-fraude est un agent externe : il appartient à une autre entreprise.
 
 ![Lecture des pièces](schemas/schema-E-lecture-des-pieces.png)
 
@@ -84,7 +84,8 @@ L'équipe compte donc sept agents : cinq décident, en code (la Coordination et 
 - [x] Schémas du chantier 1 : architecture générale, arbre de décision, carte des agents, orchestration, mémoire partagée (fondés sur les documents reçus ; bornes provisoires)
 - [x] Schémas du chantier 2 : arbre de décision de la liaison, échange A2A et mode dégradé, plan d'épreuve (fondés sur le contrat du partenaire)
 - [x] 08/10/2026 : schéma E (lecture des pièces) ajouté ; schémas 1 et N1 alignés sur le code (contrôles dans l'ordre, avec court-circuit)
-- [ ] Schémas 0, 2 et A et texte des deux chantiers : décrivent encore Éligibilité et Pièces « en parallèle » ; l'écart est consigné (journal des ajustements, entrée 1), l'alignement est prévu
+- [x] 08/10/2026 : texte des deux chantiers aligné sur le code (contrôles en séquence avec court-circuit, sept rôles, entrée, sortie, modèle et raison de chaque rôle)
+- [ ] Schémas 0, 2 et A : décrivent encore Éligibilité et Pièces « en parallèle » ; l'écart est consigné (journal des ajustements, entrée 1), l'alignement est prévu
 - [x] Trois vues d'ensemble (N0 enjeux et exigences, N1 système complet, N2 épreuve du réel), à jour de la conception au 07/10/2026
 - [ ] Dossier validé par le formateur, avant tout code
 

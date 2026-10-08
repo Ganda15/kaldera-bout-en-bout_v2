@@ -30,7 +30,7 @@ Avant toute conception technique, un cadrage avec le métier établit les contra
 ### Expression du besoin
 
 - [x] Le recours à un système agentique est-il justifié, au regard d'un traitement humain ou d'un système déterministe plus simple ? Pour quelles étapes ?
-  **Réponse.** Toutes les règles sont chiffrées (§ 4 à § 10) : elles s'écrivent en code et se testent. L'avis anti-fraude vient d'un agent externe, le partenaire. Aucune règle n'exige de LLM, et la description libre du sinistre n'entre dans aucune règle. **Choix : aucun LLM dans le chemin de décision.** Un LLM pourrait au plus rédiger le motif lisible de la fiche (§ 11), hors décision ; des modèles de phrases suffisent par défaut.
+  **Réponse (mise à jour le 08/10/2026).** Les règles de décision sont chiffrées (§ 4 à § 10) : elles s'écrivent en code et se testent ; l'avis anti-fraude vient du partenaire externe. Mais l'entrée réelle est un dossier de pièces non structurées (contrat en PDF, factures en photo), et les lire demande un modèle. **Choix : un modèle pour extraire l'information des documents (deux agents de lecture), du code pour les règles explicites et les calculs, aucun LLM dans la décision finale.** La cohérence des pièces avec la déclaration (§ 5) est un jugement : son périmètre est demandé au formateur avant tout ajout.
 - [x] Le partenaire anti-fraude externe est-il indispensable, ou un contrôle interne pourrait-il le remplacer ?
   **Réponse (§ 2).** « L'avis de fraude est émis par le partenaire, jamais en interne. » Le partenaire est imposé ; son indisponibilité est traitée par le mode dégradé (§ 9, chantier 2).
 - [x] Les règles métier (éligibilité, plafonds, pièces exigées) sont-elles formalisées ? Qui les fait évoluer, et à quelle fréquence ?
@@ -59,14 +59,14 @@ Les questions se posent dans l'ordre, et chaque réponse élimine une option. Q0
 
 | # | Question | Réponse | Ce qu'elle écarte ou ajoute |
 |---|---|---|---|
-| Q0 | Le recours à un système agentique est-il justifié, au regard d'un traitement humain ou de règles simples ? | En partie : les règles sont chiffrées (§ 4 à § 10), l'avis de fraude vient d'un agent externe | Écarte : confier une règle à un LLM. Éligibilité, pièces, montant, indicateurs et décision restent en code |
+| Q0 | Le recours à un système agentique est-il justifié, au regard d'un traitement humain ou de règles simples ? | En partie : les règles sont chiffrées (§ 4 à § 10), l'avis de fraude vient d'un agent externe ; les documents, eux, demandent un modèle pour être lus | Retient : deux agents de lecture (modèle). Écarte : confier une règle chiffrée à un LLM. Éligibilité, pièces, montant, indicateurs et décision restent en code |
 | Q1 | Un seul agent avec 10 à 15 outils suffit-il ? | Non | Écarte : l'agent unique. `interface.md` exige qu'un agent n'écrive qu'une seule section métier ; c'est aussi le défaut de l'agent actuel |
 | Q2 | Les étapes sont-elles connues d'avance, et dans quel ordre ? | Oui : éligibilité et pièces, estimation, anti-fraude, issue (§ 2) | Écarte : un planificateur LLM qui invente les étapes. Le parcours est fixé par la spec, testable et bornable |
-| Q3 | Des sous-tâches peuvent-elles s'exécuter en parallèle ? | Oui : éligibilité et vérification des pièces | Retient : ces deux contrôles en parallèle ; la demande de complément seulement si la demande est éligible |
+| Q3 | Des sous-tâches peuvent-elles s'exécuter en parallèle ? | Dans une demande, non utile : chaque contrôle dure 0,01 ms (journal, entrée 1). Entre les demandes d'un lot, oui (§ 12) | Retient : contrôles en séquence dans l'ordre de la spec, arrêt dès qu'une règle conclut ; demandes d'un lot en parallèle |
 | Q4 | Faut-il un contrôle central qui garantit une décision ou une escalade pour chaque demande ? | Oui | Écarte : des agents qui se passent la main sans contrôle central ; personne ne garantirait l'issue de chaque demande, ni les 10 secondes |
 | Q5 | Quelles métriques par agent faut-il rendre visibles ? | Appels, échecs, latence, appels externes (`interface.md`) | Ajoute : une trace à chaque étape (agent, sections écrites), source des métriques |
 
-Pattern retenu : une Coordination centrale écrite en code (pattern superviseur) qui délègue chaque contrôle et applique les règles de décision, et quatre agents de contrôle, chacun maître d'une seule section ; éligibilité et pièces en parallèle ; un seul appel au partenaire par demande ; une trace à chaque étape.
+Pattern retenu : une Coordination centrale écrite en code (pattern superviseur) qui délègue chaque contrôle et applique les règles de décision, et quatre contrôles déterministes, chacun maître d'une seule section, en séquence avec court-circuit ; deux agents de lecture en amont pour les documents (phase E) ; un seul appel au partenaire par demande ; une trace à chaque étape.
 
 La tension à arbitrer : le code déterministe est prévisible mais peu flexible ; un système tout agentique est flexible mais difficile à garantir. Ici chaque règle est chiffrée et les engagements sont absolus (une issue pour chaque demande, 10 secondes, données limitées au contrat). D'où le choix : un squelette en code, l'avis externe venant du partenaire.
 
@@ -165,29 +165,62 @@ Autres frontières tranchées :
 ### Dépendances et parallélisme
 
 - [x] Quelles étapes dépendent les unes des autres, et lesquelles peuvent s'exécuter en parallèle ?
-  **Réponse.** Éligibilité et vérification des pièces sont indépendantes et tournent en parallèle. La demande de complément, elle, attend l'Éligibilité : la Coordination ne la confie à Pièces que si la demande est éligible. L'Estimation attend les factures lisibles de Pièces. L'Anti-fraude attend l'Estimation (F4). La Coordination conclut en dernier. L'appel au partenaire n'est jamais lancé plus tôt : appeler pour une demande qui sera refusée gaspillerait l'unique appel autorisé et enverrait des données sans nécessité.
-- [x] Quand deux résultats obtenus en parallèle se contredisent (par exemple : éligible, mais pièces incomplètes), quelle règle l'emporte ?
+  **Réponse (mise à jour le 08/10/2026).** Éligibilité, puis vérification des pièces, en séquence : les lancer en parallèle n'apportait rien (0,01 ms par contrôle, journal entrée 1), et une demande non éligible est refusée sans contrôle des pièces. La demande de complément, elle, attend l'Éligibilité : la Coordination ne la confie à Pièces que si la demande est éligible. L'Estimation attend les factures lisibles de Pièces. L'Anti-fraude attend l'Estimation (F4). La Coordination conclut en dernier. L'appel au partenaire n'est jamais lancé plus tôt : appeler pour une demande qui sera refusée gaspillerait l'unique appel autorisé et enverrait des données sans nécessité.
+- [x] Quand deux résultats se contredisent (par exemple : éligible, mais pièces incomplètes), quelle règle l'emporte ?
   **Réponse.** L'ordre des règles du § 10 : la première qui s'applique fixe l'issue. Une demande non éligible est refusée quel que soit l'état de ses pièces (règle 1), et la demande de complément n'est alors jamais adressée à l'assuré.
 
-### Règle métier ou jugement : ce que fait chaque agent
 
-Dans ce dossier, un agent est une unité de responsabilité : un rôle, un contrat (entrée, sortie, erreurs) et une seule section de la mémoire. Sa réalisation interne peut être du code ou un LLM ; la Coordination ne voit que le contrat.
+### Règle métier ou jugement : ce que fait chaque rôle (mis à jour le 08/10/2026)
 
-| Agent | Contrôles | Nature | Où un LLM aurait du sens, en production | Place dans l'architecture et la mémoire |
-|---|---|---|---|---|
-| Éligibilité | E1 contrat actif, E2 cotisations à jour, E3 carence de 30 jours, E4 déclaration sous 30 jours (5 pour un vol), E5 garantie de la formule | règles simples : un statut, une date, une liste | aucun | son résultat remplit `eligibilite` (règle 1) ; tourne en parallèle de Pièces |
-| Pièces justificatives | présence, lisibilité, type attendu ; demande de complément | présence et type : règles. Lisibilité : fournie par un champ dans les scénarios (`lisible`, § 3) | lire une facture scannée, vérifier qu'une photo montre bien le sinistre déclaré : le cas le plus solide pour un LLM | son résultat remplit `pieces`, seule section remplie à nouveau après chaque dépôt ; ses factures lisibles sont passées à l'Estimation |
-| Estimation | montant justifié, retenu, estimé ; franchise ; plafond | calcul | aucun : un montant calculé par un LLM serait un risque | son résultat remplit `estimation` ; son montant justifié est passé à l'Anti-fraude (F4) |
-| Anti-fraude | indicateurs F1 à F4 ; un appel au partenaire ; contrôle de la réponse | F1 à F4 : des seuils. L'avis : un jugement, rendu par le partenaire | le jugement existe déjà, chez le partenaire | son résultat remplit `avis_fraude` ; seul agent qui sort du système ; ne reçoit ni l'identité ni l'IBAN |
-| Coordination | bornes, règles du § 10 dans l'ordre, issue, motif | règles ordonnées | rédiger le motif lisible (§ 11), hors décision | seule à lire et à écrire l'état : range chaque résultat, écrit `issue` et `controle` ; seule à conclure |
+Vocabulaire de ce dossier, aligné sur celui du formateur : un **agent LLM** est un modèle qui lit ou juge, avec des
+outils et une sortie vérifiée par le code ; un **contrôle déterministe** est du code, exact et testable ; la
+**Coordination** est du code, seule à lire et écrire la mémoire et seule à conclure. Chaque rôle a un contrat (entrée,
+sortie, erreurs) et un nom fixe dans la trace et les métriques, exigé par `interface.md`.
 
-**Pourquoi garder des agents alors que les contrôles sont des règles ?**
+| Rôle | Nature | Entrée | Sortie | Modèle | Pourquoi ce choix | J'aurais pu… |
+|---|---|---|---|---|---|---|
+| Lecteur de contrat | agent LLM | le texte du contrat PDF (extrait en code par PyMuPDF) | numéro, formule, date de souscription, statut, cotisations à jour (schéma strict `ContratLu`) | gpt-5.4 (Azure AI Foundry, API Responses) | comprendre un document fait pour un humain, aux mises en page variées ; mesuré : 34/34 contrats lus juste | utiliser des règles après un OCR ; écarté : fragile dès que la mise en page change |
+| Lecteur de pièces | agent LLM (vision) pour les factures nettes ; code pour le reste | une image et son type (créneau choisi par l'assuré) | lisible ou non ; montant TTC pour une facture (schéma strict `FactureLue`) | gpt-5.4, vision | une image floue, une photo, un dépôt de plainte ne partent jamais au modèle (netteté mesurée en code) ; dans le doute : illisible ; mesuré : 33/33 montants, 68/68 lisibilités | envoyer toutes les images au modèle ; écarté : 35 documents sur 102 n'en ont pas besoin (coût, délai, données envoyées) |
+| Éligibilité | contrôle déterministe | le contrat et le sinistre | éligible ou non, conditions non remplies | aucun | E1 à E5 : des dates, des statuts, une liste, écrits dans la spec ; la réponse doit être exacte à la frontière (conseil du formateur du 07/10 : un outil) | un agent LLM avec les règles dans son prompt ; écarté : moins sûr aux seuils, un appel de modèle en plus |
+| Pièces justificatives | contrôle déterministe | type de sinistre, pièces lues, dépôts | complet ou non, pièces manquantes, montants lisibles ; demande de complément groupée | aucun | présence, lisibilité, type attendu : des règles ; toutes les pièces manquantes sont demandées en une fois | un agent LLM ; à reconsidérer pour la **cohérence avec la déclaration** (§ 5), question posée au formateur le 08/10 |
+| Estimation | contrôle déterministe | montant déclaré, formule, factures lisibles | montant justifié, retenu, estimé | aucun | un calcul : franchise et plafond ; un montant calculé par un LLM serait un risque | un agent LLM qui expliquerait le calcul ; écarté : aucun besoin du parcours |
+| Anti-fraude | contrôle déterministe et client de l'agent externe | 8 données, jamais l'identité ni l'IBAN | indicateurs F1 à F4 ; avis du partenaire, non requis ou indisponible | aucun en interne | l'avis est « émis par le partenaire, jamais en interne » (§ 2) | un LLM interne ; interdit par la spec |
+| Coordination | code (workflow déterministe) | la demande complète | la fiche de décision (§ 11) | aucun | l'ordre des règles est fixé par le § 10 ; elle centralise la mémoire et conclut seule | un superviseur LLM ; écarté : coût, délai, imprévisibilité pour un parcours écrit dans la spec |
+| Partenaire anti-fraude | agent externe (A2A) | 7 champs du contrat d'échange | un avis : faible, modéré, élevé | le sien | une autre entreprise ; chantier 2 | aucun choix de notre côté |
+
+**Parcours utilisateur retenu** (il décide de la place d'un modèle) : l'assuré dépose ses pièces dans son espace en
+ligne (§ 3, `espace_assure`) ; la fiche porte un motif « rédigé pour l'assuré ou le gestionnaire » (§ 11) ; les
+escalades vont à des files humaines. Un courrier rédigé par un modèle n'est donc pas nécessaire.
+
+**Chaque exigence, et ce qui la garantit dans le code :**
+
+| Exigence | Élément du code | Preuve |
+|---|---|---|
+| [E1] toute demande a une issue motivée | `coordination.traiter` : bornes, puis filet de sécurité ; `escalade_directe` pour une lecture impossible | test `test_toute_demande_aboutit_a_une_decision_ou_une_escalade_motivee` |
+| [E2] une section, un écrivain | `etat.ranger` : table `SECTION_DE`, type contrôlé, section écrite une fois (sauf `pieces`) | `verifier_roles` (tests du formateur) |
+| [E3] seules les données prévues sortent | l'Anti-fraude ne reçoit que 8 données ; filtre de 7 champs (chantier 2) | test de frontière des paramètres ; tests A2A (chantier 2) |
+| [E4] une réponse non conforme est écartée | validation de la réponse du partenaire (chantier 2) | tests A2A (chantier 2) |
+| [E5] partenaire indisponible : mode dégradé | `continue_en_mode_degrade` (1 500 €) | tests unitaires de la Coordination |
+| [E6] aucune boucle, métriques visibles, ajustements consignés | bornes (étapes, durée, « même état vu deux fois ») ; `metriques.py` ; `journal-ajustements.md` | `test_scenario_piege_a_boucle_s_arrete_dans_les_bornes` ; métriques des 7 rôles |
+
+**Patterns écartés, une raison chacun :** un agent unique avec 10 à 15 outils (une section, un écrivain) ; un
+superviseur LLM (le chemin est écrit dans la spec) ; un planificateur qui invente les étapes (étapes connues) ; une
+machine à états avec table de transitions (une séquence de règles suffit, plus simple à tester) ; des agents qui se
+passent la main (personne ne garantirait l'issue) ; des contrôles en parallèle dans une demande (0,01 ms par contrôle,
+journal entrée 1).
+
+**Honnêteté de conception :** les documents de l'évaluation sont synthétiques et propres, 100 % ici n'est pas 100 % sur
+de vrais scans ; un montant plausible mais faux passe le schéma (c'est ce que l'évaluation mesure) ; le contenu des
+photos n'est pas vérifié ; le statut et les cotisations devraient venir des fichiers de l'assureur, pas du contrat
+signé ; la phrase de garde contre l'injection est une précaution, pas une preuve.
+
+**Pourquoi des rôles séparés, même quand c'est du code ?**
 
 1. Chaque agent rend un service sans montrer ses règles. La Coordination demande « cette demande est-elle éligible ? » et reçoit oui ou non avec les conditions non remplies, sans connaître les seuils. Si le métier passe la carence de 30 à 45 jours, seul l'agent Éligibilité change. Le partenaire anti-fraude fonctionne déjà ainsi : il rend un avis sans révéler son modèle.
 2. La frontière se prouve : une section, un propriétaire, vérifié dans la trace sur les 28 scénarios [E2].
-3. Le contrat ne change pas si la réalisation change. L'agent Pièces peut passer au LLM sans toucher la Coordination ni la mémoire. Trois choses changent alors : un budget de tokens (aujourd'hui « sans objet », section 4), une validation de sa sortie, et la règle « pas de relance », qui suppose un code déterministe.
+3. Le contrat ne change pas si la réalisation change. L'agent Pièces peut passer au LLM sans toucher la Coordination ni la mémoire. Trois choses changent alors : un budget de tokens (mesuré pour les agents de lecture depuis l'étape E5, section 4), une validation de sa sortie, et la règle « pas de relance », qui suppose un code déterministe.
 4. Les métriques se lisent par agent (appels, échecs, latence), sous un nom fixe (`interface.md`).
-5. Agent ou outil, l'architecture est la même : la Coordination appelle et reçoit un résultat. Le mot « agent » désigne ici une responsabilité métier séparée, avec son contrat, son nom dans la trace et ses métriques ; il ne suppose pas de LLM, donc pas la latence d'un appel de modèle.
+5. Agent LLM ou contrôle déterministe, l'architecture est la même : la Coordination appelle et reçoit un résultat. Les deux agents de lecture ont été ajoutés le 08/10 sans changer la chaîne de décision (34 décisions sur 34 identiques).
 
 **Comment les agents communiquent.** Aucun agent ne lit la mémoire : la Coordination lui passe ses entrées et range son résultat. Ici, les agents internes sont des fonctions appelées par la Coordination, dans le même processus : une seule équipe les maintient, et c'est le plus sûr pour tenir 10 s. Si un contrôle appartenait à un autre service de l'entreprise, il serait exposé par une API ou une interface d'agent, comme le partenaire en A2A. Ce choix dépend de l'organisation, pas des règles de décision.
 
@@ -206,7 +239,7 @@ Le schéma A montre cette architecture générale sur une seule vue.
 ## 4. L'orchestration et la terminaison garantie [E1] [E6]
 
 - [x] Quel schéma d'orchestration : superviseur qui délègue, chaîne séquentielle, mixte ?
-  **Réponse : mixte.** Un superviseur, la Coordination, délègue chaque contrôle ; les deux premiers tournent en parallèle, la suite s'enchaîne dans l'ordre de la spec. Les agents ne s'appellent jamais entre eux.
+  **Réponse : superviseur, en séquence.** La Coordination délègue chaque contrôle dans l'ordre de la spec et s'arrête dès qu'une règle conclut. Les agents ne s'appellent jamais entre eux.
 - [x] Qui déclenche chaque agent, l'Éligibilité par exemple ?
   **Réponse.** La Coordination, par un appel direct, avec les données dont l'agent a besoin. Aucun agent ne surveille la mémoire pour y trouver du travail : il attend d'être appelé, renvoie son résultat, et la Coordination le range avant de décider de l'appel suivant.
 - [x] Qui décide qu'une demande est terminée ?
@@ -244,7 +277,7 @@ Les valeurs fixées par la spec ou le contrat ne sont pas provisoires. Les autre
 | Appels au partenaire par dossier | 1 exactement | contrat, § 6 : un seul appel, aucune relance, tout doublon est refusé et signalé | PAN-01, PAN-02, scénarios `invalide` |
 | Délai d'un appel au partenaire | 3 s | contrat, § 5 : le client abandonne au plus tard 3 s après l'envoi | PAN-02 |
 | Délai par contrôle interne | 1 s | contrôles en code, sans réseau ; une seconde laisse du temps à l'appel externe | cas nominal |
-| Budget de tokens ou de coût | sans objet | aucun LLM dans le chemin de décision | (aucun) |
+| Budget de tokens ou de coût | mesuré, hors décision | les deux agents de lecture consomment des jetons (32 180 en entrée, 2 480 en sortie pour 34 dossiers, étape E5) ; aucun LLM dans le chemin de décision | évaluation E4 |
 
 Lecture du scénario BCL-01 : la facture est illisible, et le seul dépôt de l'assuré est une facture tout aussi illisible. Ce n'est pas « aucun dépôt du type demandé » (§ 5), donc la spec demanderait un nouveau complément, sans fin. Le scénario attend une escalade avec `arret` : c'est la borne « même état vu deux fois » qui l'arrête, à la quatrième étape (éligibilité, pièces, demande de complément qui retrouve le même état, issue). Cette lecture sera vérifiée contre les tests d'acceptance quand ils seront fournis.
 
@@ -333,8 +366,7 @@ Situation : formule essentiel, contrat au statut `resilie`, incendie de 2 400 �
 | Étape | Agent | Section remplie | Résultat |
 |---|---|---|---|
 | 1 | eligibilite | eligibilite | non éligible : condition E1 (contrat actif) non remplie |
-| 2 | pieces | pieces | pièces complètes (contrôle mené en parallèle) |
-| 3 | coordination | issue | règle 1 : refusée |
+| 2 | coordination | issue | règle 1 : refusée ; les pièces ne sont pas contrôlées (court-circuit) |
 
 Issue : décision refusée, 0 €, le motif cite la condition E1. Ce que le cas montre : l'arrêt anticipé ; ni estimation, ni appel au partenaire, ni sollicitation de l'assuré.
 

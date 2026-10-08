@@ -269,7 +269,7 @@ Dans le retour de `traiter_lot` (métriques) et dans la fiche de chaque demande 
 
 Un test d'intégration soumet chaque scénario de `eval/scenarios.jsonl` à `traiter_lot`, avec le partenaire simulé réglé selon le champ `partenaire` du scénario (`normal`, `lent`, `invalide`, `panne`), et compare chaque fiche au champ `attendu`. Il observe les métriques et la trace, pas seulement l'issue. Le partenaire simulé se pilote avec `scripts/partner_ctl.py`, pas encore reçu ; en attendant, un bouchon local reproduit les quatre comportements.
 
-Le chemin de décision ne contient aucun LLM et le partenaire simulé est déterministe : un rejeu suffit pour juger une issue. Seules les durées varient d'une exécution à l'autre ; les scénarios `panne` sont donc rejoués cinq fois pour mesurer les temps. C'est la plus lente des cinq mesures qui est comparée aux 10 s, et non la moyenne : l'engagement porte sur chaque demande.
+Le chemin de décision ne contient aucun LLM (les agents de lecture, en amont, sont évalués à part : étape E4) et le partenaire simulé est déterministe : un rejeu suffit pour juger une issue. Seules les durées varient d'une exécution à l'autre ; les scénarios `panne` sont donc rejoués cinq fois pour mesurer les temps. C'est la plus lente des cinq mesures qui est comparée aux 10 s, et non la moyenne : l'engagement porte sur chaque demande.
 
 ### Scénarios × signaux × ajustements
 
@@ -401,7 +401,7 @@ Ce que le cas montre : [E5] et le § 12. Les demandes étant traitées en concur
 ## Hors brief, mais réel
 
 - [x] Une pièce justificative peut-elle contenir une injection de prompt ?
-  **Réponse.** Pas dans cette conception : aucun LLM ne lit les pièces ni la description, et rien de ce que le partenaire renvoie n'est donné à un modèle. Le risque reviendrait si un LLM rédigeait un jour le motif de la fiche : il ne recevrait alors que des champs validés, jamais un texte libre.
+  **Réponse (mise à jour le 08/10/2026).** Oui, depuis la phase E : les agents de lecture donnent à un modèle le texte d'un contrat et l'image d'une facture. Précautions : une phrase de garde dans chaque consigne (le document est une donnée, jamais une instruction), le document entre balises, une sortie limitée à un schéma strict, et les champs lus passent ensuite par les règles en code. Ce n'est pas une preuve : aucun document piégé n'a encore été testé. Rien de ce que le partenaire renvoie n'est donné à un modèle.
 
 ## Schémas
 
