@@ -284,3 +284,41 @@ def test_la_coordination_continue_le_meme_budget_que_la_lecture() -> None:
 
     fiche = traiter_dossier(DOSSIERS / "KAL-26-0101", lecture_qui_consomme_le_budget, bornes=rapide)["fiche"]
     assert fiche["arret"] == {"borne": "duree_max_s"}  # la Coordination ne repart pas de zéro
+
+
+# ---------------------------------------------------------------- la démonstration complète : pièces, partenaire, décision
+
+def test_sans_option_le_chemin_des_pieces_garde_le_bouchon() -> None:
+    from kaldera.agents.antifraude import partenaire_bouchon
+    from kaldera.extraction.dossier import consulter_pour, options
+    assert options(["dossiers/KAL-26-0201"]) == (Path("dossiers/KAL-26-0201"), None)
+    assert consulter_pour(None) is partenaire_bouchon
+
+
+def test_une_adresse_explicite_branche_le_vrai_client_a2a() -> None:
+    from kaldera.agents.antifraude import partenaire_bouchon
+    from kaldera.extraction.dossier import consulter_pour, options
+    dossier, url = options(["dossiers/KAL-26-0201", "--partenaire", "http://127.0.0.1:8100"])
+    assert url == "http://127.0.0.1:8100" and consulter_pour(url) is not partenaire_bouchon
+
+
+def test_partenaire_seul_lit_adresse_et_jeton_dans_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from kaldera.extraction.dossier import options
+    monkeypatch.delenv("PARTENAIRE_URL", raising=False)
+    monkeypatch.delenv("PARTENAIRE_JETON", raising=False)
+    env = tmp_path / ".env"
+    env.write_text("PARTENAIRE_URL=http://localhost:8100\nPARTENAIRE_JETON=jeton-du-fichier\n", encoding="utf-8")
+    assert options(["dossiers/KAL-26-0201", "--partenaire"], fichier_env=env)[1] == "http://localhost:8100"
+    import os
+    assert os.environ["PARTENAIRE_JETON"] == "jeton-du-fichier"
+
+
+def test_l_environnement_l_emporte_sur_le_fichier_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from kaldera.extraction.dossier import options
+    monkeypatch.setenv("PARTENAIRE_URL", "http://127.0.0.1:9999")
+    monkeypatch.setenv("PARTENAIRE_JETON", "jeton-de-l-environnement")
+    env = tmp_path / ".env"
+    env.write_text("PARTENAIRE_URL=http://localhost:8100\nPARTENAIRE_JETON=autre\n", encoding="utf-8")
+    assert options(["d", "--partenaire"], fichier_env=env)[1] == "http://127.0.0.1:9999"
+    import os
+    assert os.environ["PARTENAIRE_JETON"] == "jeton-de-l-environnement"

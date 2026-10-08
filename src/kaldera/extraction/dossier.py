@@ -13,11 +13,16 @@ donnent une escalade motivée vers un gestionnaire : jamais une décision prise 
 
 Lancement réel, depuis la racine du dépôt (la clé doit être dans .env) :
     .venv\\Scripts\\python.exe -m kaldera.extraction.dossier dossiers\\KAL-26-0101
+Avec le vrai partenaire (lancé à part : python -m external_agent), adresse et jeton lus dans .env :
+    .venv\\Scripts\\python.exe -m kaldera.extraction.dossier dossiers\\KAL-26-0201 --partenaire
+Sans --partenaire, le partenaire est le bouchon du chantier 1, qui répond toujours « indisponible ».
 """
 
 from __future__ import annotations
 
+import argparse
 import json
+import os
 from datetime import date
 import re
 import sys
@@ -178,12 +183,39 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
             "fiche": traiter(demande, consulter=consulter, registre=registre, bornes=bornes, limite=limite)}
 
 
+def options(argv: list[str], fichier_env: Path | None = None) -> tuple[Path, str | None]:
+    """(dossier, adresse du partenaire ou None). `--partenaire` sans valeur prend PARTENAIRE_URL de l'environnement,
+    sinon du fichier .env ; le jeton PARTENAIRE_JETON est chargé de la même façon s'il manque (jamais affiché)."""
+    from .modele import RACINE, _lire_env
+
+    parser = argparse.ArgumentParser(description="Traite un dossier de pièces jusqu'à la fiche de décision.")
+    parser.add_argument("dossier", type=Path)
+    parser.add_argument("--partenaire", nargs="?", const="", default=None,
+                        help="adresse du partenaire anti-fraude ; sans valeur : PARTENAIRE_URL (.env)")
+    args = parser.parse_args(argv)
+    if args.partenaire is None:
+        return args.dossier, None
+    fichier = _lire_env(fichier_env or RACINE / ".env")
+    if not os.environ.get("PARTENAIRE_JETON") and fichier.get("PARTENAIRE_JETON"):
+        os.environ["PARTENAIRE_JETON"] = fichier["PARTENAIRE_JETON"]
+    return args.dossier, args.partenaire or os.environ.get("PARTENAIRE_URL") or fichier.get("PARTENAIRE_URL")
+
+
+def consulter_pour(url: str | None) -> Callable[..., AvisFraude]:
+    """Le vrai client A2A si une adresse est donnée, sinon le bouchon du chantier 1."""
+    from ..a2a.client import partenaire_a2a
+
+    return partenaire_a2a(url) if url else partenaire_bouchon
+
+
 def main() -> None:
     from . import modele
 
+    dossier, url = options(sys.argv[1:])
     config = modele.configuration()
     appeler = lecteurs.appel_modele(modele.client(config), config.deploiement)
-    resultat = traiter_dossier(Path(sys.argv[1]), appeler)
+    print(json.dumps({"partenaire": url or "bouchon (aucun appel réseau)"}, ensure_ascii=False))
+    resultat = traiter_dossier(dossier, appeler, consulter=consulter_pour(url))
     for ligne in resultat["lecture"]:
         print(json.dumps(ligne, ensure_ascii=False))
     fiche = {k: v for k, v in resultat["fiche"].items() if k != "trace"}
