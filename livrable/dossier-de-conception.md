@@ -206,7 +206,7 @@ Le partenaire est indisponible pour une demande quand son avis n'a pas pu être 
 | 1 500 € ou moins | la demande continue sans avis et reçoit sa décision selon les règles 5 et 6 | `mode_degrade: true`, pour contrôle a posteriori |
 | plus de 1 500 € | escalade `cellule_fraude`, motif « contrôle anti-fraude manuel » | `mode_degrade: true` |
 
-L'agent Anti-fraude renvoie « indisponible » et sa raison ; la Coordination range ce résultat et applique la règle. Trois mécanismes empêchent de bloquer le reste : l'appel dure au plus 3 s et jamais au-delà du temps restant de la demande (aucun appel s'il reste moins de 0,1 s) ; les demandes d'un lot sont traitées en concurrence ; une demande sans indicateur n'appelle jamais le partenaire. Une réponse arrivée après l'abandon n'est jamais lue.
+L'agent Anti-fraude renvoie « indisponible » et sa raison ; la Coordination range ce résultat et applique la règle. Trois mécanismes empêchent de bloquer le reste : l'appel dure au plus 3 s et jamais au-delà du temps restant de la demande (aucun appel s'il reste moins de 0,15 s) ; les demandes d'un lot sont traitées en concurrence ; une demande sans indicateur n'appelle jamais le partenaire. Une réponse arrivée après l'abandon n'est jamais lue.
 
 ![Échange A2A : filtre, appel unique, validation et chemin de mode dégradé](../conception/schemas/schema-5-echange-a2a.png)
 

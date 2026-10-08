@@ -415,7 +415,7 @@ Une question métier (Q0), puis cinq questions de conception posées dans l'ordr
 
 ### 5. L'échange A2A, le filtre, la validation et le chemin de mode dégradé
 
-Un seul point de sortie vers le partenaire ; la Coordination, seule à lire l'état, passe huit données à l'agent Anti-fraude et range son résultat ; sept champs exactement ; un appel unique, au plus 3 s dans le temps restant, aucun appel s'il reste moins de 0,1 s ; une validation à cinq niveaux ; sans avis exploitable, la règle du § 9. Fichiers : [schema-5-echange-a2a.drawio](schemas/schema-5-echange-a2a.drawio), [PNG](schemas/schema-5-echange-a2a.png).
+Un seul point de sortie vers le partenaire ; la Coordination, seule à lire l'état, passe huit données à l'agent Anti-fraude et range son résultat ; sept champs exactement ; un appel unique, au plus 3 s dans le temps restant, aucun appel s'il reste moins de 0,15 s ; une validation à cinq niveaux ; sans avis exploitable, la règle du § 9. Fichiers : [schema-5-echange-a2a.drawio](schemas/schema-5-echange-a2a.drawio), [PNG](schemas/schema-5-echange-a2a.png).
 
 ![Échange A2A et mode dégradé](schemas/schema-5-echange-a2a.png)
 
