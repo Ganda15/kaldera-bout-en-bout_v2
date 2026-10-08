@@ -117,17 +117,30 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
     Aucune erreur brute (exigence N1) : un dossier inexploitable donne une escalade motivée vers un gestionnaire ;
     une pièce illisible suit, elle, la demande de complément du § 5.
     """
+    lu = lire_dossier(dossier, appeler, bornes=bornes)
+    if lu["fiche"] is not None:
+        return {"demande": None, "lecture": lu["lecture"], "fiche": lu["fiche"]}
+    return {"demande": lu["demande"], "lecture": lu["lecture"],
+            "fiche": traiter(lu["demande"], consulter=consulter, registre=registre, bornes=bornes, limite=lu["limite"])}
+
+
+def lire_dossier(dossier: Path, appeler: Appeler, *, bornes: Bornes = BORNES) -> dict[str, Any]:
+    """La lecture seule, sans décider : {"demande", "lecture", "fiche" (escalade avant décision, sinon None),
+    "limite" (échéance de la demande, horloge monotonic)}. Sert au poste du gestionnaire, qui fait confirmer ce qui
+    a été lu avant de décider."""
     limite = monotonic() + bornes.duree_max_s - bornes.reserve_fiche_s  # le budget commence à l'arrivée du dossier
+
+    def escalade(lecture: list[dict[str, Any]], reference: str, motif: str) -> dict[str, Any]:
+        return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif), "limite": limite}
+
     declaration, reference, motif = lire_declaration(dossier)
     if motif:
-        return {"demande": None, "lecture": [], "fiche": escalade_directe(reference, motif)}
+        return escalade([], reference, motif)
     inconnus = fichiers_non_reconnus(dossier)
     if inconnus:
-        motif = f"Fichier non pris en charge ({', '.join(inconnus)}) : reprise manuelle"
-        return {"demande": None, "lecture": [], "fiche": escalade_directe(reference, motif)}
+        return escalade([], reference, f"Fichier non pris en charge ({', '.join(inconnus)}) : reprise manuelle")
     if not (dossier / "contrat.pdf").is_file():
-        motif = "Contrat absent du dossier : reprise manuelle"
-        return {"demande": None, "lecture": [], "fiche": escalade_directe(reference, motif)}
+        return escalade([], reference, "Contrat absent du dossier : reprise manuelle")
     lecture: list[dict[str, Any]] = []
     appels, jetons = [0], [0, 0]
 
@@ -165,22 +178,19 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
     try:
         contrat = lire("lecteur_contrat", dossier / "contrat.pdf", lecteurs.lire_contrat)
         if contrat["numero"] != declaration["numero_contrat"]:
-            motif = (f"Contrat lu ({contrat['numero']}) différent du contrat déclaré "
-                     f"({declaration['numero_contrat']}) : reprise manuelle")
-            return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif)}
+            return escalade(lecture, reference, f"Contrat lu ({contrat['numero']}) différent du contrat déclaré "
+                                                f"({declaration['numero_contrat']}) : reprise manuelle")
         pieces = [lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece)
                   for type_piece, chemin in lister_images(dossier)]
         depots = [lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece)
                   for type_piece, chemin in lister_images(dossier / "depots")]
     except ExtractionImpossible as erreur:
-        motif = f"Lecture des pièces impossible ({erreur}) : reprise manuelle"
-        return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif)}
+        return escalade(lecture, reference, f"Lecture des pièces impossible ({erreur}) : reprise manuelle")
 
     demande = {"reference": reference, "assure": declaration["assure"], "contrat": contrat,
                "sinistre": declaration["sinistre"], "pieces": pieces, "historique": declaration["historique"],
                "espace_assure": {"depots": depots}}
-    return {"demande": demande, "lecture": lecture,
-            "fiche": traiter(demande, consulter=consulter, registre=registre, bornes=bornes, limite=limite)}
+    return {"demande": demande, "lecture": lecture, "fiche": None, "limite": limite}
 
 
 def options(argv: list[str], fichier_env: Path | None = None) -> tuple[Path, str | None]:
@@ -198,7 +208,10 @@ def options(argv: list[str], fichier_env: Path | None = None) -> tuple[Path, str
     fichier = _lire_env(fichier_env or RACINE / ".env")
     if not os.environ.get("PARTENAIRE_JETON") and fichier.get("PARTENAIRE_JETON"):
         os.environ["PARTENAIRE_JETON"] = fichier["PARTENAIRE_JETON"]
-    return args.dossier, args.partenaire or os.environ.get("PARTENAIRE_URL") or fichier.get("PARTENAIRE_URL")
+    adresse = args.partenaire or os.environ.get("PARTENAIRE_URL") or fichier.get("PARTENAIRE_URL")
+    # Sous Windows, « localhost » est d'abord essayé en IPv6 alors que le partenaire n'écoute que 127.0.0.1 :
+    # mesuré le 08/10, 2,1 s par requête au lieu de 0,03 s, pris sur les 3 s de l'appel. Même machine, sans détour.
+    return args.dossier, adresse.replace("://localhost", "://127.0.0.1", 1) if adresse else adresse
 
 
 def consulter_pour(url: str | None) -> Callable[..., AvisFraude]:

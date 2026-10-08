@@ -308,7 +308,8 @@ def test_partenaire_seul_lit_adresse_et_jeton_dans_env(tmp_path: Path, monkeypat
     monkeypatch.delenv("PARTENAIRE_JETON", raising=False)
     env = tmp_path / ".env"
     env.write_text("PARTENAIRE_URL=http://localhost:8100\nPARTENAIRE_JETON=jeton-du-fichier\n", encoding="utf-8")
-    assert options(["dossiers/KAL-26-0201", "--partenaire"], fichier_env=env)[1] == "http://localhost:8100"
+    # localhost devient 127.0.0.1 : sous Windows, localhost passe d'abord par IPv6 et coûte 2 s par appel (mesuré)
+    assert options(["dossiers/KAL-26-0201", "--partenaire"], fichier_env=env)[1] == "http://127.0.0.1:8100"
     import os
     assert os.environ["PARTENAIRE_JETON"] == "jeton-du-fichier"
 
