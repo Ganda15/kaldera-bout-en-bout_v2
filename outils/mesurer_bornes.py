@@ -66,7 +66,7 @@ def depassement_lecture() -> float:
     budget = Bornes(duree_max_s=0.5, reserve_fiche_s=0.0)  # échéance = arrivée + 0,5 s
 
     def lecture_qui_va_jusqu_a_l_echeance(*_args: Any, delai_s: float | None = None) -> Any:
-        time.sleep(delai_s or 0)
+        time.sleep((delai_s or 0) + 0.002)  # dépasse l'échéance de 2 ms : time.sleep peut rendre la main trop tôt
         raise TimeoutError("délai épuisé")
 
     debut = time.monotonic()
