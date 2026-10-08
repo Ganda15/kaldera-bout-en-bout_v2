@@ -26,4 +26,4 @@ Le dossier (`livrable/dossier-de-conception.pdf`) et les schémas reflètent la 
 - entrée 4 : schéma E aligné le 08/10 (contrôles avant toute lecture, image qui ne s'ouvre pas) ;
 - entrée 8 : schémas 5, 6, 7 et N2, tableau des bornes, textes de la conception et du livrable alignés le 08/10 (0,15 s et 0,4 s) ;
 - entrées 5 et 6 : schémas 1, 2, E et N1 et tableau des bornes alignés le 08/10 (`bd883ff`) ; reste le PDF.
-- entrées 10 à 12 : tableau des rôles, carte des agents, point ambigu du § 5 et borne `etapes_max` alignés le 08/10 dans `chantier-1-equipe-orchestration.md` ; restent les schémas 1, A, E et N1 (nouvel agent, appel lancé à l'arrivée) et le PDF.
+- entrées 10 à 12 : tableau des rôles, carte des agents, point ambigu du § 5 et borne `etapes_max` alignés le 08/10 dans `chantier-1-equipe-orchestration.md` ; schémas 1, A, E et N1 alignés le 08/10, la nuit (agent 2 bis, appel lancé à l'arrivée, mesures relancées ; dépôt de conception `b1b75a5`) ; reste le PDF.
