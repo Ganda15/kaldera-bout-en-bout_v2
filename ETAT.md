@@ -2,7 +2,7 @@
 
 ## ▶️ Prochaine action
 
-**Chantier 1 terminé (07/10) : 40/40.** Prochaine étape : chantier 2, en commençant par l'échange HTTP construit à la main avec le partenaire simulé (ancien point de 1.8, déplacé au début du chantier 2), puis 2.1 le filtre sortant. Le débrief du formateur (jeudi 08/10, fin de matinée) peut changer l'ordre.
+**Chantier 1 terminé (07/10) : 40/40.** Consigne du formateur du 08/10 : les entrées du système sont des pièces **non structurées** (contrats en PDF, factures en photo) ; le JSON de la spec § 3 est un résultat déjà travaillé, pas l'entrée. Prochaine étape : **phase E, extraction** (E0 accès au modèle, puis E1 génération des pièces), avant le chantier 2.
 
 ## Mesures
 
@@ -79,8 +79,19 @@ Le débrief du formateur (jeudi fin de matinée) passe avant l'étape 1.6.
 | 2.5 | **programme de rejeu** : pour chaque scénario, règle le partenaire, le réinitialise, exécute, compare à `attendu`, enregistre les écarts ; PAN rejoués 5 fois (la plus lente comparée à 10 s) ; totaux 16/7/4/6/1, 11 en mode dégradé, 18 appels ; aucun jeton ni contenu rejeté dans la trace ; appels externes égaux au journal du simulateur. **Relevé de résultats** : commit, version de Python, commande, attendu et obtenu, durées, limites | les totaux | **56/56** et relevé | A |
 | 2.6 | démo : partenaire lancé comme service séparé (`docker compose up`), modes changés en direct par `scripts/partner_ctl.py` | aucun | démo répétée | A |
 
-### Phase 3 : la touche personnelle, seulement à 56/56
-- [ ] Agent « Lecteur de pièces » : facture PDF, photo JPG, contrat PDF en entrée ; JSON de la spec § 3 en sortie, validé par un schéma ; un LLM lit, il ne décide jamais. Sinon : choix justifié dans le dossier (section 6.2).
+### Phase E : extraction des pièces non structurées (jeudi 08/10), exigée par le formateur
+
+Consigne du 08/10 : « le JSON est un résultat déjà travaillé, ce n'est pas la pièce d'entrée » ; « les pièces d'entrée doivent être non structurées » (contrats en PDF, factures en photo) ; « chaque agent a une responsabilité qui dépend de l'input qu'il reçoit » ; l'approche coordinateur et « agent as tool » lui convient. Les agents de lecture extraient ; les règles chiffrées décident, appelées comme outils. Modèle : `gpt-5.4-2`, déploiement Azure AI Foundry (API Responses, compatible OpenAI) ; la clé vit dans `.env`, jamais dans le code ni dans Git.
+
+| Étape | Quoi | Test rouge d'abord | Preuve | Mode |
+|---|---|---|---|---|
+| E0 | accès au modèle : `openai`, `pymupdf`, `pillow` dans `pyproject.toml` ; fabrique du client lisant `.env` ; script d'essai (texte, puis image) | la fabrique refuse de démarrer sans clé, sans afficher de secret | réponse du modèle à l'essai texte et à l'essai image | A, clé saisie par Era |
+| E1 | génération des pièces non structurées depuis les 34 demandes des scénarios : contrat en PDF, factures en image (illisibles quand la demande le dit), dépôts de l'espace assuré ; la vérité est connue | une pièce par demande et par type ; le PDF contient les champs ; une facture illisible est floue | 34 dossiers générés, reproductibles | A |
+| E2 | agents de lecture : contrat (PDF), facture (image) ; sortie validée par un schéma Pydantic strict ; dans le doute, `lisible: false` | réponses du modèle simulées (aucun réseau) : schéma respecté, doute donne illisible, texte libre jamais transmis à une décision | unitaires verts | A |
+| E3 | point d'entrée `traiter_dossier(fichiers)` : les agents de lecture produisent le JSON § 3, puis la chaîne existante décide | un dossier simulé de bout en bout | NOM-01 depuis ses pièces | A |
+| E4 | évaluation : exactitude de l'extraction champ par champ sur les 34 dossiers, avec seuil | le relevé est généré, jamais écrit à la main | taux par champ, coût et durée mesurés | A |
+
+Points ouverts : les 10 s du § 12 couvrent-elles la lecture des pièces (proposition : lecture en amont, avant la chaîne de décision) ; données personnelles envoyées au modèle (région de l'Azure, minimisation) ; photos de dégâts et dépôt de plainte en option si le temps le permet.
 
 ### Phase 4 : alignement et livrables (vendredi 09/10 après-midi)
 - [x] PDF unique du dossier de conception (07/10), validation formelle du formateur à obtenir
