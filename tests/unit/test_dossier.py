@@ -137,3 +137,68 @@ def test_une_lecture_en_echec_compte_comme_echec() -> None:
 
     metriques = calculer_metriques_lecture([traiter_dossier(DOSSIERS / "KAL-26-0101", en_panne)["lecture"]])
     assert metriques["lecteur_contrat"]["echecs"] == 1
+
+
+# ---------------------------------------------------------------- aucune erreur brute sur le chemin des pièces (N1)
+
+def copie_du_dossier(tmp_path: Path, reference: str = "KAL-26-0101") -> Path:
+    import shutil
+    cible = tmp_path / reference
+    shutil.copytree(DOSSIERS / reference, cible)
+    return cible
+
+
+def sans_appel(*_args: Any, **_kwargs: Any) -> Any:
+    raise AssertionError("le modèle ne devait pas être appelé")
+
+
+def doit_escalader(resultat: dict[str, Any], mot: str) -> None:
+    fiche = resultat["fiche"]
+    assert (fiche["issue"], fiche["file"], fiche["decision"]) == ("escalade", "gestionnaire", None)
+    assert mot in fiche["motif"], fiche["motif"]
+    assert resultat["demande"] is None
+
+
+def test_un_contrat_absent_donne_une_escalade_motivee(tmp_path: Path) -> None:
+    dossier = copie_du_dossier(tmp_path)
+    (dossier / "contrat.pdf").unlink()
+    doit_escalader(traiter_dossier(dossier, sans_appel), "Contrat absent")
+
+
+def test_un_contrat_corrompu_donne_une_escalade_motivee(tmp_path: Path) -> None:
+    dossier = copie_du_dossier(tmp_path)
+    (dossier / "contrat.pdf").write_bytes(b"ceci n'est pas un PDF")
+    doit_escalader(traiter_dossier(dossier, sans_appel), "corrompu")
+
+
+def test_un_contrat_sans_texte_donne_une_escalade_sans_appel_au_modele(tmp_path: Path) -> None:
+    import pymupdf
+    dossier = copie_du_dossier(tmp_path)
+    document = pymupdf.open()
+    page = document.new_page()
+    page.insert_image(page.rect, filename=str(dossier / "piece-1-facture.png"))
+    document.save(dossier / "contrat.pdf")
+    doit_escalader(traiter_dossier(dossier, sans_appel), "sans texte")
+
+
+def test_un_formulaire_absent_donne_une_escalade_sous_le_nom_du_dossier(tmp_path: Path) -> None:
+    dossier = copie_du_dossier(tmp_path)
+    (dossier / "declaration.json").unlink()
+    resultat = traiter_dossier(dossier, sans_appel)
+    doit_escalader(resultat, "Formulaire")
+    assert resultat["fiche"]["reference"] == "KAL-26-0101"
+
+
+@pytest.mark.parametrize("nom", ["piece-3-facture.jpg", "piece-3-facture.PNG", "facture-scan.png"])
+def test_un_fichier_non_reconnu_n_est_jamais_ignore(tmp_path: Path, nom: str) -> None:
+    dossier = copie_du_dossier(tmp_path)
+    (dossier / nom).write_bytes((dossier / "piece-1-facture.png").read_bytes())
+    doit_escalader(traiter_dossier(dossier, sans_appel), nom)
+
+
+def test_une_image_corrompue_est_une_piece_illisible_qui_suit_le_complement(tmp_path: Path) -> None:
+    dossier = copie_du_dossier(tmp_path)
+    (dossier / "piece-1-facture.png").write_bytes(b"pas une image")
+    resultat = traiter_dossier(dossier, oracle())  # le modèle ne lit que le contrat
+    assert resultat["demande"]["pieces"][0] == {"type": "facture", "lisible": False}
+    assert resultat["fiche"]["motif"].startswith("Pièces manquantes")  # complément demandé, aucun dépôt (§ 5)

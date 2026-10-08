@@ -75,7 +75,12 @@ def _demander(appeler: Appeler, consigne: str, schema: type[BaseModel], image_pn
 
 def lire_contrat(chemin_pdf: Path, appeler: Appeler) -> dict[str, Any]:
     """Reçoit le PDF du contrat, rend la section `contrat` de la spec § 3."""
-    texte = "\n".join(page.get_text() for page in pymupdf.open(chemin_pdf))
+    try:
+        texte = "\n".join(page.get_text() for page in pymupdf.open(chemin_pdf))
+    except Exception as erreur:  # fichier qui n'est pas un PDF lisible
+        raise ExtractionImpossible("contrat illisible : fichier corrompu") from erreur
+    if not texte.strip():  # contrat scanné : il faudrait le lire comme une image (amélioration prévue)
+        raise ExtractionImpossible("contrat sans texte lisible : document scanné ?")
     consigne = (
         "Tu lis les conditions particulières d'un contrat d'assurance habitation. Extrais : le numéro du contrat ; "
         "la formule (essentiel, confort ou premium) ; la date de souscription ou d'effet (format AAAA-MM-JJ) ; "
@@ -95,7 +100,11 @@ def nettete(chemin_image: Path) -> float:
 
 def lire_piece(chemin_image: Path, type_piece: str, appeler: Appeler) -> dict[str, Any]:
     """Reçoit une image et son type (le créneau de dépôt choisi par l'assuré), rend une pièce de la spec § 3."""
-    if nettete(chemin_image) < SEUIL_NETTETE:
+    try:
+        nette = nettete(chemin_image) >= SEUIL_NETTETE
+    except OSError:  # image que l'on ne sait pas ouvrir : pièce illisible, l'assuré peut la redéposer (§ 5)
+        nette = False
+    if not nette:
         return {"type": type_piece, "lisible": False}
     if type_piece != "facture":
         return {"type": type_piece, "lisible": True}

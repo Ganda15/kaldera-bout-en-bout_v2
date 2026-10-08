@@ -42,11 +42,37 @@ def lister_images(dossier: Path) -> list[tuple[str, Path]]:
     return [(type_piece, chemin) for _, type_piece, chemin in sorted(trouves)]
 
 
+def fichiers_non_reconnus(dossier: Path) -> list[str]:
+    """Les fichiers que le système ne sait pas traiter : signalés, jamais ignorés en silence."""
+    attendus_a_la_racine = {"contrat.pdf", "declaration.json"}
+    inconnus = [f.name for f in dossier.iterdir()
+                if f.is_file() and f.name not in attendus_a_la_racine and not PIECE.match(f.name)]
+    if (dossier / "depots").is_dir():
+        inconnus += [f"depots/{f.name}" for f in (dossier / "depots").iterdir()
+                     if f.is_file() and not PIECE.match(f.name)]
+    return sorted(inconnus)
+
+
 def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[..., AvisFraude] = partenaire_bouchon,
                     registre: RegistreAppels | None = None) -> dict[str, Any]:
-    """Rend {"demande": JSON § 3 extrait, "lecture": une ligne par pièce lue, "fiche": fiche de décision}."""
-    declaration = json.loads((dossier / "declaration.json").read_text(encoding="utf-8"))
-    reference = declaration["reference"]
+    """Rend {"demande": JSON § 3 extrait, "lecture": une ligne par pièce lue, "fiche": fiche de décision}.
+
+    Aucune erreur brute (exigence N1) : un dossier inexploitable donne une escalade motivée vers un gestionnaire ;
+    une pièce illisible suit, elle, la demande de complément du § 5.
+    """
+    try:
+        declaration = json.loads((dossier / "declaration.json").read_text(encoding="utf-8"))
+        reference = declaration["reference"]
+    except (OSError, ValueError, KeyError, TypeError):
+        motif = "Formulaire de déclaration absent ou illisible : reprise manuelle"
+        return {"demande": None, "lecture": [], "fiche": escalade_directe(dossier.name, motif)}
+    inconnus = fichiers_non_reconnus(dossier)
+    if inconnus:
+        motif = f"Fichier non pris en charge ({', '.join(inconnus)}) : reprise manuelle"
+        return {"demande": None, "lecture": [], "fiche": escalade_directe(reference, motif)}
+    if not (dossier / "contrat.pdf").is_file():
+        motif = "Contrat absent du dossier : reprise manuelle"
+        return {"demande": None, "lecture": [], "fiche": escalade_directe(reference, motif)}
     lecture: list[dict[str, Any]] = []
     appels, jetons = [0], [0, 0]
 
