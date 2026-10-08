@@ -9,6 +9,8 @@ agent-à-agent (A2A).
 
 Le dossier de conception (équipe d'agents, orchestration, mémoire partagée, liaison A2A, mode dégradé et plan d'épreuve) est dans [`conception/`](conception/README.md).
 
+Schémas alignés sur le code le 08/10/2026 : carte des agents (contrôles dans l'ordre, avec court-circuit), système complet (N1) et lecture des pièces (schéma E), dans [`conception/schemas/`](conception/schemas/).
+
 Livrable de conception, en un seul document : [`livrable/dossier-de-conception.pdf`](livrable/dossier-de-conception.pdf) (source : [`livrable/dossier-de-conception.md`](livrable/dossier-de-conception.md)).
 
 ## Features
@@ -27,7 +29,8 @@ Livrable de conception, en un seul document : [`livrable/dossier-de-conception.p
 - FastAPI 0.115+ / uvicorn 0.30+ (service partenaire simulé)
 - httpx 0.27+ (client A2A)
 - pydantic 2.x
-- LangChain 0.3.x, langchain-azure-ai 0.1.x (Kimi-K2.6), LangGraph 0.2.x
+- openai 2.x (API Responses, déploiement Azure AI Foundry), PyMuPDF, Pillow : lecture des pièces (phase E)
+- LangChain 0.3.x, langchain-azure-ai 0.1.x, LangGraph 0.2.x : présents dans le code de départ, non utilisés (aucune décision ne passe par un modèle)
 - pytest 8.x
 - Docker Compose (service partenaire)
 
@@ -53,9 +56,58 @@ make ctl ARGS=journal                             # appels reçus par le partena
 
 Les cibles `make` chargent `.env`. Hors `make` : `set -a; . ./.env; set +a`.
 
+## Lecture des pièces non structurées (phase E)
+
+Dans la réalité, l'assuré n'envoie pas un JSON : il envoie le PDF de son contrat et des photos de ses factures.
+Deux agents de lecture transforment ces pièces en données de la spec § 3, puis la chaîne de décision du chantier 1
+s'applique sans changement. Ils lisent et extraient, ils ne décident jamais. Schéma :
+[`conception/schemas/schema-E-lecture-des-pieces.png`](conception/schemas/schema-E-lecture-des-pieces.png).
+
+| Agent | Reçoit | Ce qui est fait en code | Ce que fait le modèle |
+|---|---|---|---|
+| Lecteur de contrat (`lire_contrat`) | `contrat.pdf` | extraction du texte (PyMuPDF) | remplit le schéma strict `ContratLu` : numéro, formule, date, statut, cotisations |
+| Lecteur de pièces (`lire_piece`) | une image et son type | mesure de netteté : une image floue est illisible, sans appel au modèle ; photo et dépôt de plainte nets sont lisibles | lit le montant TTC d'une facture nette, schéma strict `FactureLue` |
+
+Règles : dans le doute, une facture est déclarée illisible, ce qui déclenche une demande de complément (jamais un
+montant inventé). Un modèle indisponible ou une réponse hors schéma rendent la lecture impossible : escalade motivée
+vers un gestionnaire, aucun contrôle lancé. Un contrat lu différent du contrat déclaré : même escalade. Chaque consigne
+précise que le document est une donnée, jamais une instruction.
+
+Fichiers : `src/kaldera/extraction/` (`modele.py`, `lecteurs.py`, `dossier.py`) ; 34 dossiers générés depuis les
+scénarios dans `dossiers/` (avec `dossiers/verite.json`, la vérité connue) ; générateur `outils/generer_dossiers.py`.
+
+Configuration : copier `.env.example` en `.env` (ignoré par Git) et renseigner `AZURE_OPENAI_ENDPOINT`,
+`AZURE_OPENAI_API_KEY` et `AZURE_OPENAI_DEPLOYMENT`. La clé n'est jamais écrite dans le code ni affichée.
+
+Traiter un dossier (Windows, PowerShell, depuis la racine du dépôt) :
+
+```powershell
+.venv\Scripts\python.exe -m kaldera.extraction.dossier dossiers\KAL-26-0101
+```
+
+Sortie : une ligne par pièce lue (agent, fichier, statut, durée, appel au modèle ou non), puis la fiche de décision.
+Mesuré le 08/10/2026 : `KAL-26-0101` acceptée 1 700 € en 8,9 s ; `KAL-26-0601` (facture floue déposée deux fois)
+escaladée par la borne `etat_repete` en 3,7 s, sans appel au modèle pour les images.
+
+Évaluation sur les 34 dossiers, contre la vérité connue :
+
+```powershell
+.venv\Scripts\python.exe -m outils.evaluer_extraction
+.venv\Scripts\python.exe -m outils.evaluer_extraction --verifier
+```
+
+Résultat du 08/10/2026 ([`evaluation/extraction/rapport.md`](evaluation/extraction/rapport.md), généré depuis
+`resultats.json`, jamais écrit à la main) : 100 % sur chaque champ, 34 décisions sur 34 identiques au chemin JSON,
+aucune lecture impossible, 67 appels au modèle en 25,1 s. Limites : pièces de synthèse, nettes et dactylographiées ;
+deux images illisibles seulement ; le contenu des photos n'est pas vérifié. Les tests unitaires remplacent le modèle
+par un faux : ils ne font aucun appel réseau.
+
 ## Layout
 
-- `src/kaldera/` — traitement des demandes (orchestrateur, agent, client partenaire, espace assuré, règles)
+- `src/kaldera/` : la Coordination (`coordination.py`), la mémoire de la demande (`etat.py`), les bornes (`bornes.py`), les métriques (`metriques.py`), les règles (`regles.py`), les quatre agents de contrôle (`agents/`), les agents de lecture (`extraction/`), l'espace assuré
+- `tests/unit/` : nos tests unitaires (123 au 08/10/2026)
+- `dossiers/` : 34 dossiers de pièces non structurées et leur vérité ; `outils/` : générateur, essai du modèle, évaluation ; `evaluation/extraction/` : rapport généré
+- `conception/` : dossier de conception, schémas, journal des ajustements ; `livrable/` : le PDF
 - `docs/specs_metier.md` — spécifications fonctionnelles
 - `docs/interface.md` — contrat d'intégration (points d'entrée, fiche de décision, trace, métriques)
 - `external_agent/` — service anti-fraude partenaire simulé et son contrat d'échange (`contrat.md`)

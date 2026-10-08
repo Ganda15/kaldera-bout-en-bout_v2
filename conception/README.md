@@ -16,8 +16,8 @@ Les questions de réflexion ont été discutées en groupe pendant la séance du
 |---|---|
 | [chantier-1-equipe-orchestration.md](chantier-1-equipe-orchestration.md) | Chantier 1 : cadrage métier (existant, besoin, résultats attendus), choix du pattern par arbre de décision, carte des agents avec contrats et garde-fous, orchestration, mémoire partagée, observabilité et plan de preuve |
 | [chantier-2-a2a-epreuve.md](chantier-2-a2a-epreuve.md) | Chantier 2 : cadrage métier de la collaboration avec le partenaire, choix de la liaison par arbre de décision, protocole et contrat A2A, filtre des données, validation des réponses, mode dégradé, observabilité et preuves, plan d'épreuve, journal des ajustements |
-| [schemas/](schemas/) | Trois vues d'ensemble (N0 à N2), puis les schémas des chantiers 1 (A et 0 à 3) et 2 (4 à 6), en `.drawio` (modifiable) et en `.png` |
-| [scripts/](https://github.com/Ganda15/kaldera-v2-conception/tree/main/scripts) (dépôt de conception) | Générateurs des schémas (`make_schemas_vues.py`, `make_schemas_ch1.py`, `make_schemas_ch2.py`), outils communs et légende en puces |
+| [schemas/](schemas/) | Trois vues d'ensemble (N0 à N2), puis les schémas des chantiers 1 (A et 0 à 3) et 2 (4 à 6), et le schéma E (lecture des pièces), en `.drawio` (modifiable) et en `.png` |
+| [scripts/](https://github.com/Ganda15/kaldera-v2-conception/tree/main/scripts) (dépôt de conception) | Générateurs des schémas (`make_schemas_vues.py`, `make_schemas_ch1.py`, `make_schemas_ch2.py`, `make_schema_lecture.py`), outils communs et légende en puces |
 
 ## Les six exigences de la direction des opérations
 
@@ -48,6 +48,12 @@ Pour entrer dans le dossier avant les deux chantiers : le pourquoi, le système 
 
 ![Niveau 2 · Épreuve du réel](schemas/schema-N2-epreuve-du-reel.png)
 
+## Lecture des pièces (phase E, ajoutée le 08/10/2026)
+
+Le formateur a précisé le 08/10/2026 que les entrées réelles sont des pièces non structurées (contrat en PDF, factures en photo). Deux agents de lecture produisent le JSON de la spec § 3 avant la Coordination ; la chaîne de décision reste inchangée. Fichiers : [drawio](schemas/schema-E-lecture-des-pieces.drawio), [PNG](schemas/schema-E-lecture-des-pieces.png).
+
+![Lecture des pièces](schemas/schema-E-lecture-des-pieces.png)
+
 ## Couverture des schémas attendus par le brief
 
 | Schéma attendu | Où il se prépare |
@@ -75,6 +81,8 @@ Pour entrer dans le dossier avant les deux chantiers : le pourquoi, le système 
 - [x] Réponses du chantier 2, fondées sur le contrat du partenaire (version 2.0) et les 28 scénarios ; points ouverts listés en fin de chantier
 - [x] Schémas du chantier 1 : architecture générale, arbre de décision, carte des agents, orchestration, mémoire partagée (fondés sur les documents reçus ; bornes provisoires)
 - [x] Schémas du chantier 2 : arbre de décision de la liaison, échange A2A et mode dégradé, plan d'épreuve (fondés sur le contrat du partenaire)
+- [x] 08/10/2026 : schéma E (lecture des pièces) ajouté ; schémas 1 et N1 alignés sur le code (contrôles dans l'ordre, avec court-circuit)
+- [ ] Schémas 0, 2 et A et texte des deux chantiers : décrivent encore Éligibilité et Pièces « en parallèle » ; l'écart est consigné (journal des ajustements, entrée 1), l'alignement est prévu
 - [x] Trois vues d'ensemble (N0 enjeux et exigences, N1 système complet, N2 épreuve du réel), à jour de la conception au 07/10/2026
 - [ ] Dossier validé par le formateur, avant tout code
 
