@@ -80,6 +80,17 @@ class _Parcours:
                          appel_externe=getattr(resultat, "appel_externe", False))
         return resultat
 
+    def consulter_dans_le_budget(self, **donnees: Any) -> AvisFraude:
+        """Le partenaire reçoit le plus petit de ses 3 s et du temps restant à la demande (réserve de la fiche déduite).
+
+        Trop peu de temps : aucun appel, l'avis est indisponible et le mode dégradé du § 9 s'applique. Ce cas n'arrive
+        qu'à l'étape Anti-fraude, donc après Éligibilité, Pièces et Estimation : la règle des 1 500 € ne les saute jamais.
+        """
+        delai = min(self.bornes.delai_partenaire_s, self.limite - monotonic())
+        if delai < self.bornes.delai_partenaire_min_s:
+            return AvisFraude(statut="indisponible", raison="budget_epuise")
+        return self.consulter(**donnees, delai_s=delai)
+
     def conclure(self, motif: str, *, decision: str | None = None, montant: float | None = None,
                  file: str | None = None, avis: dict[str, Any] | None = None,
                  mode_degrade: bool = False, arret: dict[str, str] | None = None) -> dict[str, Any]:
@@ -127,7 +138,8 @@ class _Parcours:
                              date_souscription=contrat["date_souscription"],
                              sinistres_12_mois=demande["historique"]["sinistres_12_mois"],
                              code_postal=demande["assure"]["code_postal"],
-                             montant_justifie=estimation.montant_justifie, consulter=self.consulter)
+                             montant_justifie=estimation.montant_justifie,
+                             consulter=self.consulter_dans_le_budget)
         retenu, degrade = None, False
         if avis.statut == "avis":  # règle 4
             retenu = {"niveau": avis.niveau, "score": avis.score}

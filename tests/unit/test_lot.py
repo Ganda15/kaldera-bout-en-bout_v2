@@ -8,6 +8,8 @@ import time
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 import kaldera
 from kaldera.agents.antifraude import AvisFraude
 from kaldera.metriques import calculer_metriques
@@ -87,3 +89,25 @@ def test_le_calcul_des_metriques_depuis_des_traces_connues() -> None:
     metriques = calculer_metriques(fiches)
     assert metriques["antifraude"] == {"appels": 2, "echecs": 1, "latence_ms": 2.0, "appels_externes": 2}
     assert metriques["coordination"] == {"appels": 1, "echecs": 0, "latence_ms": 0.0, "appels_externes": 0}
+
+
+# ---------------------------------------------------------------- l'adresse du partenaire est bien utilisée
+
+def test_traiter_demande_utilise_l_adresse_du_partenaire(monkeypatch: pytest.MonkeyPatch) -> None:
+    from kaldera.a2a import client
+    adresses: list[str | None] = []
+
+    def fabrique(url: str | None, **_options: Any) -> Any:
+        adresses.append(url)
+        return lambda **_donnees: AvisFraude(statut="avis", niveau="faible", score=0.1, appel_externe=True)
+
+    monkeypatch.setattr(client, "partenaire_a2a", fabrique)
+    fiche = kaldera.traiter_demande(DEMANDES["KAL-26-0201"], partenaire_url="http://partenaire.test")
+    assert adresses == ["http://partenaire.test"] and fiche["avis_fraude"] == {"niveau": "faible", "score": 0.1}
+    resultat = kaldera.traiter_lot([DEMANDES["KAL-26-0201"]], partenaire_url="http://partenaire.test")
+    assert adresses == ["http://partenaire.test"] * 2 and resultat["fiches"][0]["decision"] == "acceptee"
+
+
+def test_sans_adresse_ni_consulter_le_bouchon_reste_en_place() -> None:
+    fiche = kaldera.traiter_demande(DEMANDES["KAL-26-0201"])
+    assert fiche["mode_degrade"] is True  # chantier 1 : avis indisponible, aucun réseau

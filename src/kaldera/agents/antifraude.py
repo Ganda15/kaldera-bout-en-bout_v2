@@ -29,6 +29,7 @@ class AvisFraude:
     score: float | None = None
     raison: str | None = None  # pourquoi l'avis est indisponible
     appel_externe: bool = False  # vrai seulement si le partenaire a réellement été appelé
+    evaluation_id: str | None = None  # identifiant de l'avis du partenaire, gardé pour audit (contrat § 3)
 
 
 def partenaire_bouchon(**_donnees: Any) -> AvisFraude:
@@ -68,4 +69,5 @@ def evaluer_risque(
         sinistres_12_mois=sinistres_12_mois,
         code_postal=code_postal,
     )
-    return AvisFraude(avis.statut, indicateurs, avis.niveau, avis.score, avis.raison, avis.appel_externe)
+    return AvisFraude(avis.statut, indicateurs, avis.niveau, avis.score, avis.raison, avis.appel_externe,
+                      avis.evaluation_id)

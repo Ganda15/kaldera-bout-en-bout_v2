@@ -18,6 +18,7 @@ class Bornes:
     complements_max: int = 2  # NOM-07 et PAN-01 en demandent un ; aucun scénario n'en justifie plus
     appels_partenaire_max: int = 1  # contrat § 6 : un seul appel par dossier, aucune relance
     delai_partenaire_s: float = 3  # contrat § 5 : abandon au plus tard 3 s après l'envoi
+    delai_partenaire_min_s: float = 0.1  # en dessous, pas d'appel (un seul permis) : avis indisponible ; provisoire
     delai_controle_interne_s: float = 1  # contrôles en code, sans réseau
     reserve_fiche_s: float = 0.5  # temps gardé pour produire la fiche ; provisoire, à mesurer (1.7)
 

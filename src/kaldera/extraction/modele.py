@@ -12,6 +12,8 @@ from pathlib import Path
 
 from openai import OpenAI
 
+from ..bornes import BORNES
+
 RACINE = Path(__file__).resolve().parents[3]
 DEPLOIEMENT_PAR_DEFAUT = "gpt-5.4-2"
 
@@ -57,4 +59,5 @@ def configuration(fichier_env: Path = RACINE / ".env") -> Configuration:
 
 def client(config: Configuration | None = None) -> OpenAI:
     config = config or configuration()
-    return OpenAI(base_url=config.point_d_acces, api_key=config.cle, timeout=60.0, max_retries=0)
+    # délai par défaut : la durée d'une demande ; chaque appel d'une demande reçoit en plus son temps restant
+    return OpenAI(base_url=config.point_d_acces, api_key=config.cle, timeout=BORNES.duree_max_s, max_retries=0)

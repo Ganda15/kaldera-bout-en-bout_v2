@@ -152,3 +152,55 @@ def test_une_erreur_imprevue_donne_une_escalade_motivee_avec_la_trace_partielle(
     assert (fiche["issue"], fiche["file"]) == ("escalade", "gestionnaire")
     assert "erreur interne" in fiche["motif"].lower()
     assert {"agent": "estimation", "ecrit": [], "statut": "echec"}.items() <= fiche["trace"][-2].items()
+
+
+# ---------------------------------------------------------------- le partenaire dans le budget de la demande (§ 12)
+
+def espion_du_delai(vus: list[float | None]) -> Any:
+    def consulter(*, delai_s: float | None = None, **_donnees: Any) -> AvisFraude:
+        vus.append(delai_s)
+        return AvisFraude(statut="avis", niveau="faible", score=0.1, appel_externe=True)
+    return consulter
+
+
+def test_le_partenaire_recoit_au_plus_3_s() -> None:
+    vus: list[float | None] = []
+    traiter(DEMANDES["KAL-26-0201"], consulter=espion_du_delai(vus))  # AF-01 : un indicateur
+    assert len(vus) == 1 and vus[0] is not None and 2.9 < vus[0] <= 3.0
+
+
+def test_le_partenaire_ne_recoit_que_le_temps_restant_de_la_demande() -> None:
+    from time import monotonic
+    vus: list[float | None] = []
+    traiter(DEMANDES["KAL-26-0201"], consulter=espion_du_delai(vus), limite=monotonic() + 1.0)
+    assert len(vus) == 1 and vus[0] is not None and vus[0] <= 1.0
+
+
+@pytest.mark.parametrize("reference, issue, file, montant", [
+    ("KAL-26-0502", "decision", None, 950.0),            # 1 500 € ou moins : continue, marquée mode dégradé
+    ("KAL-26-0503", "escalade", "cellule_fraude", None),  # au-delà : contrôle anti-fraude manuel
+])
+def test_sans_temps_pour_le_partenaire_aucun_appel_et_la_branche_indisponible(
+        reference: str, issue: str, file: str | None, montant: float | None) -> None:
+    from time import monotonic
+    vus: list[float | None] = []
+    fiche = traiter(DEMANDES[reference], consulter=espion_du_delai(vus), limite=monotonic() + 0.05)
+    assert vus == []  # aucun appel : le contrat ne permet qu'un appel, inutile de le gâcher
+    assert (fiche["issue"], fiche["file"], fiche["montant_rembourse"], fiche["mode_degrade"]) == (
+        issue, file, montant, True)
+    assert fiche["avis_fraude"] is None
+
+
+def test_la_regle_des_1500_euros_ne_saute_jamais_les_controles_precedents() -> None:
+    from time import monotonic
+    vus: list[float | None] = []
+    fiche = traiter(DEMANDES["KAL-26-0502"], consulter=espion_du_delai(vus), limite=monotonic() - 1)
+    assert vus == [] and fiche["arret"] == {"borne": "duree_max_s"}
+    assert (fiche["issue"], fiche["file"], fiche["decision"], fiche["mode_degrade"]) == (
+        "escalade", "gestionnaire", None, False)
+
+
+def test_sans_indicateur_la_demande_n_est_jamais_marquee_degradee() -> None:
+    vus: list[float | None] = []
+    fiche = traiter(DEMANDES["KAL-26-0101"], consulter=partenaire(None))  # NOM-01 : aucun indicateur
+    assert (fiche["decision"], fiche["mode_degrade"], vus) == ("acceptee", False, [])

@@ -1,8 +1,7 @@
 # Intégration continue : à chaque push et à chaque pull request, sous Python 3.11 (version exigée par pyproject.toml),
 # installe le projet, vérifie le style (ruff) puis lance les tests.
-# Tests lancés : nos tests unitaires et les tests d'acceptance du chantier 1. Les tests du chantier 2
-# (tests/acceptance/test_collaboration_a2a.py) rejoindront la chaîne quand le client A2A sera branché :
-# ils échouent aujourd'hui par construction (partenaire bouchon), la chaîne serait rouge pour une raison connue.
+# Tests lancés : nos tests unitaires, toute la suite d'acceptance (chantiers 1 et 2, 56 tests) et nos tests
+# d'intégration contre le partenaire simulé fourni (réseau local).
 name: tests
 
 on:
@@ -37,5 +36,8 @@ jobs:
       - name: Tests unitaires
         run: python -m pytest tests/unit -q
 
-      - name: Tests d'acceptance du chantier 1
-        run: python -m pytest tests/acceptance/test_equipe_orchestration.py -q
+      - name: Tests d'acceptance (chantiers 1 et 2)
+        run: python -m pytest tests/acceptance -q
+
+      - name: Tests d'intégration (partenaire simulé, réseau local)
+        run: python -m pytest tests/integration -q
