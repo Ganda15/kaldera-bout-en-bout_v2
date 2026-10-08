@@ -1,9 +1,10 @@
-"""Poste du gestionnaire (prototype) : lire un dossier, faire confirmer ce qui a été lu, décider, piloter le partenaire.
+"""Poste du gestionnaire (prototype) : lire un dossier, comparer chaque valeur au document, la faire confirmer, décider.
 
 Couche d'interface hors du moteur : elle n'appelle que des fonctions publiques (lire_dossier, traiter, le client A2A).
 Le serveur relit lui-même les fichiers ; le navigateur ne peut que corriger une valeur lue, et chaque correction est
-revérifiée par les mêmes schémas stricts que la lecture. Une pause humaine sépare la lecture de la décision : la
-lecture a son budget de 10 s, la décision le sien, à partir de la confirmation.
+revérifiée (types stricts, montant au centime). Budget : la lecture et la décision partagent les 10 s de traitement
+automatique ; la pause de la personne entre les deux n'est pas comptée, mais la décision ne reçoit que le temps
+automatique qui restait après la lecture. Une demande confirmée deux fois n'est décidée qu'une fois (contrat § 6).
 
 Lancement : python -m kaldera.web (adresse locale http://127.0.0.1:8200).
 """
@@ -14,30 +15,33 @@ import hashlib
 import json
 import math
 import re
+import threading
 import uuid
 from collections.abc import Callable
 from datetime import date
 from pathlib import Path
-from time import perf_counter
+from time import monotonic, perf_counter
 from typing import Any, Literal
 
 import httpx
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import HTMLResponse
-from pydantic import BaseModel, ConfigDict, Field
+from fastapi.responses import FileResponse, HTMLResponse
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, field_validator
 
 from ..a2a.filtre import RequeteNonConforme, construire_donnees
+from ..agents.antifraude import AvisFraude
+from ..bornes import BORNES, Bornes
 from ..coordination import escalade_directe, traiter
 from ..extraction.dossier import consulter_pour, lire_dossier, options
 from ..extraction.lecteurs import ContratLu, FactureLue
 from ..metriques import calculer_metriques
-from ..regles import jours_entre
 
 RACINE = Path(__file__).resolve().parents[3]
 DOSSIERS = RACINE / "dossiers"
 PAGE = Path(__file__).with_name("page.html")
 JAMAIS_ENVOYE = ["nom", "prénom", "e-mail", "téléphone", "adresse", "code postal complet", "IBAN",
                  "identifiant client", "numéro de contrat", "description", "pièces"]
+TYPES_MEDIA = {".pdf": "application/pdf", ".png": "image/png"}
 
 
 class ContratConfirme(BaseModel):
@@ -46,13 +50,25 @@ class ContratConfirme(BaseModel):
     formule: Literal["essentiel", "confort", "premium"]
     date_souscription: date
     statut: Literal["actif", "suspendu", "resilie"]
-    cotisations_a_jour: bool
+    cotisations_a_jour: StrictBool
 
 
 class PieceConfirmee(BaseModel):
+    """Types stricts : « false » en texte, 1 au lieu de vrai, ou vrai au lieu d'un montant sont refusés."""
+
     model_config = ConfigDict(extra="forbid")
-    lisible: bool
-    montant: float | None = Field(default=None, gt=0)
+    lisible: StrictBool
+    montant: StrictFloat | None = None
+
+    @field_validator("montant")
+    @classmethod
+    def _au_centime(cls, montant: float | None) -> float | None:
+        """Euros au centime près : au moins 0,01 €, au plus deux décimales, vérifié après conversion."""
+        if montant is None:
+            return None
+        if not math.isfinite(montant) or montant < 0.01 or abs(montant * 100 - round(montant * 100)) > 1e-6:
+            raise ValueError("montant en euros, au centime près, d'au moins 0,01 €")
+        return round(montant, 2)
 
 
 class Confirmation(BaseModel):
@@ -98,11 +114,16 @@ def appel_modele_reel() -> Callable[..., Any]:
     return lecteurs.appel_modele(modele.client(config), config.deploiement)
 
 
-def creer_app(partenaire_url: str | None = "auto") -> FastAPI:
-    """partenaire_url : "auto" lit .env (comme --partenaire) ; None garde le bouchon (tests)."""
+def creer_app(partenaire_url: str | None = "auto", *, consulter: Callable[..., AvisFraude] | None = None,
+              bornes: Bornes = BORNES, lecteurs: dict[str, Callable[[], Callable[..., Any]]] | None = None) -> FastAPI:
+    """partenaire_url : "auto" lit .env (comme --partenaire) ; None garde le bouchon. consulter, bornes et lecteurs
+    servent aux tests (partenaire compté, budget réduit, lecture lente)."""
     app = FastAPI(title="Kaldera · poste du gestionnaire (prototype)")
     sessions: dict[str, dict[str, Any]] = {}
+    verrou = threading.Lock()
     url = options([".", "--partenaire"])[1] if partenaire_url == "auto" else partenaire_url
+    partenaire_de_base = consulter or consulter_pour(url)
+    fabriques = {"modele": appel_modele_reel, "reference": appel_reference, **(lecteurs or {})}
 
     def dossier_connu(nom: str) -> Path:
         if nom not in {p.name for p in DOSSIERS.iterdir() if p.is_dir()}:
@@ -125,33 +146,60 @@ def creer_app(partenaire_url: str | None = "auto") -> FastAPI:
     @app.post("/api/lire")
     def lire(demande: Lecture) -> dict[str, Any]:
         chemin = dossier_connu(demande.dossier)
-        appeler = appel_modele_reel() if demande.mode == "modele" else appel_reference()
         debut = perf_counter()
-        lu = lire_dossier(chemin, appeler)
+        lu = lire_dossier(chemin, fabriques[demande.mode](), bornes=bornes)
         duree_ms = round((perf_counter() - debut) * 1000, 1)
         if lu["fiche"] is not None:  # escalade avant toute décision : rien à confirmer
-            return {"session": None, "lecture": lu["lecture"], "duree_lecture_ms": duree_ms, "fiche": lu["fiche"]}
+            return {"session": None, "mode": demande.mode, "lecture": lu["lecture"], "duree_lecture_ms": duree_ms,
+                    "fiche": lu["fiche"]}
         session = uuid.uuid4().hex
-        sessions[session] = {"demande": lu["demande"], "duree_lecture_ms": duree_ms}
+        sessions[session] = {"demande": lu["demande"], "duree_lecture_ms": duree_ms, "mode": demande.mode,
+                             "dossier": chemin, "fichiers": {ligne["fichier"] for ligne in lu["lecture"]},
+                             "restant_s": lu["limite"] - monotonic(), "etat": "a_confirmer"}
         d = lu["demande"]
-        appels = {ligne["fichier"]: ligne["appel_modele"] for ligne in lu["lecture"]}
         return {"session": session, "mode": demande.mode, "lecture": lu["lecture"], "duree_lecture_ms": duree_ms,
                 "contrat": d["contrat"], "pieces": d["pieces"], "depots": d["espace_assure"]["depots"],
                 "fichiers": {"pieces": [ligne["fichier"] for ligne in lu["lecture"] if ligne["agent"] == "lecteur_pieces"
                                         and not ligne["fichier"].startswith("depots/")],
                              "depots": [ligne["fichier"] for ligne in lu["lecture"]
                                         if ligne["fichier"].startswith("depots/")]},
-                "appel_modele": appels,
+                "appel_modele": {ligne["fichier"]: ligne["appel_modele"] for ligne in lu["lecture"]},
                 "declaration": {"reference": d["reference"], "sinistre": {k: v for k, v in d["sinistre"].items()
                                                                           if k != "description"},
                                 "sinistres_12_mois": d["historique"]["sinistres_12_mois"],
                                 "code_postal": d["assure"]["code_postal"]}}
 
+    @app.get("/api/document/{session}")
+    def document(session: str, fichier: str) -> FileResponse:
+        """Le document source d'une valeur, et seulement un fichier que le serveur a lui-même lu pour cette session."""
+        lu = sessions.get(session)
+        if lu is None or fichier not in lu["fichiers"]:
+            raise HTTPException(404, "document inconnu pour cette session")
+        chemin = (lu["dossier"] / fichier).resolve()
+        if not chemin.is_relative_to(lu["dossier"].resolve()) or chemin.suffix not in TYPES_MEDIA:
+            raise HTTPException(404, "document inconnu pour cette session")
+        return FileResponse(chemin, media_type=TYPES_MEDIA[chemin.suffix])
+
     @app.post("/api/decider")
     def decider(confirmation: Confirmation) -> dict[str, Any]:
-        lu = sessions.get(confirmation.session)
-        if lu is None:
-            raise HTTPException(404, "session inconnue : relire le dossier")
+        with verrou:  # une session n'est décidée qu'une fois, même si l'on clique deux fois
+            lu = sessions.get(confirmation.session)
+            if lu is None:
+                raise HTTPException(404, "session inconnue : relire le dossier")
+            if lu["etat"] == "termine":
+                return {**lu["resultat"], "deja_decide": True}
+            if lu["etat"] == "en_cours":
+                raise HTTPException(409, "décision déjà en cours pour cette session")
+            lu["etat"] = "en_cours"
+        try:
+            resultat = _decider(lu, confirmation)
+        except Exception:
+            lu["etat"] = "a_confirmer"
+            raise
+        lu["resultat"], lu["etat"] = resultat, "termine"
+        return {**resultat, "deja_decide": False}
+
+    def _decider(lu: dict[str, Any], confirmation: Confirmation) -> dict[str, Any]:
         demande = json.loads(json.dumps(lu["demande"]))  # copie : la lecture du serveur reste intacte
         if len(confirmation.pieces) != len(demande["pieces"]) or len(confirmation.depots) != len(
                 demande["espace_assure"]["depots"]):
@@ -168,39 +216,53 @@ def creer_app(partenaire_url: str | None = "auto") -> FastAPI:
             for i, (piece, conf) in enumerate(zip(lues, confirmees, strict=True)):
                 nouvelle = {"type": piece["type"], "lisible": conf.lisible}
                 if piece["type"] == "facture" and conf.lisible:
-                    if conf.montant is None or not math.isfinite(conf.montant):
-                        raise HTTPException(422, f"{nom}[{i}] : une facture lisible doit avoir un montant positif")
-                    nouvelle["montant"] = round(conf.montant, 2)
+                    if conf.montant is None:
+                        raise HTTPException(422, f"{nom}[{i}] : une facture lisible doit avoir un montant")
+                    nouvelle["montant"] = conf.montant
                 if nouvelle != piece:
                     corrections.append({"champ": f"{nom}[{i}] ({piece['type']})", "lu": piece, "retenu": nouvelle})
                 lues[i] = nouvelle
+        message: dict[str, Any] = {"donnees": None}
+
+        def capture(**donnees: Any) -> AvisFraude:
+            """À l'entrée du client A2A : le message que le filtre produit pour cet appel, gardé comme preuve."""
+            delai = donnees.pop("delai_s", None)
+            try:
+                message["donnees"] = construire_donnees(**donnees)
+            except RequeteNonConforme:
+                message["donnees"] = None
+            return partenaire_de_base(**donnees, **({"delai_s": delai} if delai is not None else {}))
+
         debut = perf_counter()
         if retenu["numero"] != declare:
             fiche = escalade_directe(demande["reference"], f"Contrat confirmé ({retenu['numero']}) différent du contrat "
                                                            f"déclaré ({declare}) : reprise manuelle")
-        else:
-            fiche = traiter(demande, consulter=consulter_pour(url))  # nouveau budget de 10 s, après la confirmation
+        else:  # la décision n'a que le temps automatique qui restait après la lecture (pause humaine non comptée)
+            fiche = traiter(demande, consulter=capture, bornes=bornes, limite=monotonic() + lu["restant_s"])
         duree_ms = round((perf_counter() - debut) * 1000, 1)
-        appel = any(x["agent"] == "antifraude" and x["appel_externe"] for x in fiche["trace"])
-        envoye = None
-        if appel:
-            s = demande["sinistre"]
-            try:
-                envoye = construire_donnees(reference=demande["reference"], type_sinistre=s["type"],
-                                            date_survenance=s["date_survenance"], montant_declare=s["montant_declare"],
-                                            anciennete_contrat_jours=jours_entre(retenu["date_souscription"],
-                                                                                 s["date_survenance"]),
-                                            sinistres_12_mois=demande["historique"]["sinistres_12_mois"],
-                                            code_postal=demande["assure"]["code_postal"])
-            except RequeteNonConforme:
-                envoye = None
         factures = [p["montant"] for p in demande["pieces"] + demande["espace_assure"]["depots"]
                     if p["type"] == "facture" and p.get("lisible") and p.get("montant")]
         return {"fiche": fiche, "metriques": calculer_metriques([fiche]), "corrections": corrections,
-                "envoye_au_partenaire": envoye, "jamais_envoye": JAMAIS_ENVOYE, "partenaire": url or "bouchon",
+                "message_partenaire": message["donnees"], "jamais_envoye": JAMAIS_ENVOYE,
+                "partenaire": f"{url} (simulé)" if url else "bouchon (aucun appel réseau)", "mode_lecture": lu["mode"],
                 "montants": {"declare": demande["sinistre"]["montant_declare"], "factures_lisibles": sum(factures),
-                             "paye": fiche["montant_rembourse"]},
+                             "accorde": fiche["montant_rembourse"]},
                 "duree_lecture_ms": lu["duree_lecture_ms"], "duree_decision_ms": duree_ms}
+
+    @app.post("/api/simulation/nouvel-essai")
+    def nouvel_essai() -> dict[str, Any]:
+        """Pour la démonstration seulement : oublie les sessions et vide le journal du partenaire simulé."""
+        with verrou:
+            effacees = len(sessions)
+            sessions.clear()
+        reinitialise = False
+        if url:
+            try:
+                httpx.post(f"{url}/_sim/reset", timeout=2).raise_for_status()
+                reinitialise = True
+            except httpx.HTTPError:
+                reinitialise = False
+        return {"sessions_effacees": effacees, "partenaire_simule_reinitialise": reinitialise}
 
     @app.get("/api/partenaire")
     def partenaire() -> dict[str, Any]:

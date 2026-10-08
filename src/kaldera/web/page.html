@@ -6,16 +6,16 @@
 <title>Kaldera · poste du gestionnaire</title>
 <style>
   :root { --fond:#f4f6f8; --carte:#ffffff; --texte:#1d2733; --doux:#5b6775; --ligne:#d9dee5; --vert:#2e7d4f;
-          --bleu:#1f5fa8; --cyan:#0f7c86; --orange:#b4690e; --rouge:#b3261e; --accent:#1f5fa8; }
+          --cyan:#0f7c86; --orange:#b4690e; --rouge:#b3261e; --accent:#1f5fa8; --gris:#eef1f4; }
   @media (prefers-color-scheme: dark) { :root { --fond:#12171d; --carte:#1b222b; --texte:#e6ebf1; --doux:#9aa6b4;
-          --ligne:#2c3642; --vert:#5cc28a; --bleu:#7fb0ee; --cyan:#4fc3cd; --orange:#f0a24b; --rouge:#ff8a80;
-          --accent:#7fb0ee; } }
+          --ligne:#2c3642; --vert:#5cc28a; --cyan:#4fc3cd; --orange:#f0a24b; --rouge:#ff8a80; --accent:#7fb0ee;
+          --gris:#232c36; } }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--fond); color:var(--texte); font:14px/1.5 system-ui, "Segoe UI", Arial, sans-serif; }
-  main { max-width:1100px; margin:0 auto; padding:24px 16px 60px; display:grid; gap:16px; }
-  h1 { font-size:20px; margin:0; } h2 { font-size:16px; margin:0 0 10px; }
+  main { max-width:1240px; margin:0 auto; padding:24px 16px 60px; display:grid; gap:16px; }
+  h1 { font-size:20px; margin:0; } h2 { font-size:16px; margin:0 0 10px; } h3 { font-size:14px; margin:12px 0 6px; }
   .sous { color:var(--doux); font-size:13px; }
-  section { background:var(--carte); border:1px solid var(--ligne); border-radius:10px; padding:16px; }
+  section, details { background:var(--carte); border:1px solid var(--ligne); border-radius:10px; padding:16px; }
   .num { display:inline-block; width:22px; height:22px; border-radius:50%; background:var(--accent); color:var(--carte);
          text-align:center; font-weight:700; font-size:13px; line-height:22px; margin-right:6px; }
   .ligne { display:flex; flex-wrap:wrap; gap:10px; align-items:end; }
@@ -24,6 +24,8 @@
           background:var(--carte); color:var(--texte); }
   button { cursor:pointer; background:var(--accent); color:var(--carte); border:none; font-weight:600; }
   button.second { background:transparent; color:var(--accent); border:1px solid var(--accent); }
+  button.onglet { background:var(--gris); color:var(--texte); border:1px solid var(--ligne); font-weight:500; }
+  button.onglet.actif { background:var(--accent); color:var(--carte); }
   button:disabled { opacity:.5; cursor:default; }
   table { width:100%; border-collapse:collapse; font-size:13px; }
   th, td { text-align:left; padding:5px 6px; border-bottom:1px solid var(--ligne); vertical-align:top; }
@@ -31,29 +33,36 @@
   .badge { display:inline-block; font-size:11px; padding:1px 7px; border-radius:10px; border:1px solid; margin-top:3px; }
   .modele { color:var(--cyan); } .code { color:var(--vert); } .registre { color:var(--orange); }
   .personne { color:var(--rouge); } .issue-decision { color:var(--vert); } .issue-escalade { color:var(--orange); }
-  .grand { font-size:18px; font-weight:700; } .cache { display:none; }
+  .grand { font-size:18px; font-weight:700; } .cache { display:none !important; }
   .boite { border:1px dashed var(--ligne); border-radius:8px; padding:10px; }
-  .deux { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:12px; }
-  .erreur { color:var(--rouge); } code { font-size:12px; }
-  .defile { overflow-x:auto; }
+  .deux { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:12px; }
+  .compare { display:grid; grid-template-columns:minmax(0, 1.1fr) minmax(0, 1fr); gap:16px; }
+  @media (max-width: 900px) { .compare { grid-template-columns:1fr; } }
+  .visionneuse { border:1px solid var(--ligne); border-radius:8px; background:var(--gris); min-height:520px;
+                 overflow:auto; display:flex; align-items:flex-start; justify-content:center; }
+  .visionneuse iframe { width:100%; height:620px; border:0; background:#fff; }
+  .visionneuse img { max-width:100%; cursor:zoom-in; display:block; }
+  .visionneuse img.zoom { max-width:none; width:200%; cursor:zoom-out; }
+  .defile { overflow-x:auto; } summary { cursor:pointer; font-weight:600; }
+  tr.selection td { background:var(--gris); }
 </style>
 </head>
 <body>
 <main>
   <header>
     <h1>Kaldera · poste du gestionnaire <span class="sous">(prototype)</span></h1>
-    <div class="sous">Les agents de lecture lisent, la personne confirme ou corrige, la Coordination décide en code.
-      Le serveur relit lui-même les fichiers ; une correction est revérifiée par les mêmes schémas que la lecture.</div>
+    <div class="sous">Les agents de lecture lisent, la personne compare au document et confirme ou corrige, la
+      Coordination décide en code. Le serveur relit lui-même les fichiers et revérifie chaque correction.</div>
   </header>
 
   <section>
-    <h2><span class="num">1</span>Dossier</h2>
+    <h2><span class="num">1</span>Documents</h2>
     <div class="ligne">
       <label>Dossier de l'assuré <select id="dossier"></select></label>
-      <label>Lecture
+      <label>Lecture des pièces
         <select id="mode">
           <option value="reference">valeurs de référence (aucun appel au modèle)</option>
-          <option value="modele">modèle Azure, réel (2 à 8 s)</option>
+          <option value="modele">modèle Azure, réel (observé le 08/10 : jusqu'à 8,9 s par dossier)</option>
         </select></label>
       <button id="lire">Lire les pièces</button>
       <span id="etat-lecture" class="sous"></span>
@@ -65,42 +74,51 @@
   </section>
 
   <section id="etape2" class="cache">
-    <h2><span class="num">2</span>Vérification par la personne</h2>
-    <div class="sous" style="margin-bottom:10px">Chaque champ dit d'où vient sa valeur. Corriger une valeur la marque
-      « corrigé par la personne » ; la valeur lue reste gardée pour l'audit.</div>
-    <div class="deux">
-      <div class="boite"><b>Déclaration de l'assuré</b> <span class="sous">(formulaire, non modifiable ici)</span>
-        <div id="declaration" class="sous" style="margin-top:6px"></div></div>
-      <div class="boite"><b>Contrat</b> <span class="sous">(contrat.pdf)</span><div id="contrat" class="ligne"></div></div>
+    <h2><span class="num">2</span>Vérification : le document à gauche, ce qui en a été extrait à droite</h2>
+    <div class="compare">
+      <div>
+        <div id="onglets" class="ligne" style="margin-bottom:8px"></div>
+        <div id="visionneuse" class="visionneuse"></div>
+        <div id="legende-doc" class="sous" style="margin-top:4px"></div>
+      </div>
+      <div>
+        <div class="boite"><b>Déclaration de l'assuré</b> <span class="sous">(formulaire, non modifiable ici)</span>
+          <div id="declaration" class="sous" style="margin-top:6px"></div></div>
+        <h3>Contrat <span class="sous">(contrat.pdf)</span></h3>
+        <div id="contrat" class="ligne"></div>
+        <h3>Pièces</h3>
+        <div class="defile"><table><thead><tr><th>pièce</th><th>lisible</th><th>montant TTC (€)</th><th>source</th></tr></thead>
+          <tbody id="pieces"></tbody></table></div>
+        <div class="sous" style="margin-top:6px">Cliquer une pièce l'affiche à gauche. Une correction est marquée
+          « corrigé par la personne » ; la valeur extraite reste gardée pour l'audit.</div>
+        <div class="ligne" style="margin-top:12px"><button id="decider">Confirmer et décider</button>
+          <span id="etat-decision" class="sous"></span></div>
+      </div>
     </div>
-    <div class="defile" style="margin-top:12px">
-      <table><thead><tr><th>pièce</th><th>fichier</th><th>lisible</th><th>montant TTC (€)</th><th>source</th></tr></thead>
-        <tbody id="pieces"></tbody></table>
-    </div>
-    <div class="ligne" style="margin-top:12px"><button id="decider">Confirmer et décider</button>
-      <span id="etat-decision" class="sous"></span></div>
   </section>
 
   <section id="etape3" class="cache">
-    <h2><span class="num">3</span>Décision</h2>
+    <h2><span class="num">3</span>Décision et preuves</h2>
+    <div id="deja" class="sous cache" style="margin-bottom:6px"></div>
     <div id="issue" class="grand"></div>
     <div id="motif"></div>
     <div id="chiffres" class="sous" style="margin:6px 0 12px"></div>
     <div class="deux">
-      <div class="boite"><b>Envoyé au partenaire</b><div id="envoye" class="sous"></div></div>
+      <div class="boite"><b>Message transmis au partenaire</b> <span class="sous">(simulé ; capturé à l'entrée du
+        client A2A)</span><div id="envoye" class="sous"></div></div>
       <div class="boite"><b>Corrections de la personne</b> <span class="sous">(audit)</span><div id="corrections" class="sous"></div></div>
     </div>
-    <h2 style="margin-top:14px">Trace de la Coordination</h2>
+    <h3>Contrôles dans l'ordre (trace de la Coordination)</h3>
     <div class="defile"><table><thead><tr><th>#</th><th>agent</th><th>section écrite</th><th>statut</th><th>durée (ms)</th>
       <th>appel externe</th><th>raison</th></tr></thead><tbody id="trace"></tbody></table></div>
-    <h2 style="margin-top:14px">Métriques par agent</h2>
+    <h3>Métriques par agent</h3>
     <div class="defile"><table><thead><tr><th>agent</th><th>appels</th><th>échecs</th><th>latence moyenne (ms)</th>
       <th>appels externes</th></tr></thead><tbody id="metriques"></tbody></table></div>
   </section>
 
-  <section>
-    <h2><span class="num">4</span>Partenaire anti-fraude</h2>
-    <div id="partenaire" class="sous" style="margin-bottom:8px"></div>
+  <details>
+    <summary>Panneau du présentateur : partenaire anti-fraude simulé</summary>
+    <div id="partenaire" class="sous" style="margin:8px 0"></div>
     <div class="ligne">
       <button class="second" data-action="normal">Normal</button>
       <button class="second" data-action="lent">Lent (5 s)</button>
@@ -110,11 +128,13 @@
           <option>non_json</option><option>enveloppe_invalide</option></select></label>
       <button class="second" data-action="invalide">Invalide</button>
       <button class="second" data-action="panne">Panne</button>
-      <button class="second" data-action="reset">Réinitialiser le journal</button>
+      <button id="nouvel-essai">Nouvel essai de simulation</button>
     </div>
-    <div class="sous" style="margin-top:8px">Le partenaire refuse un second appel pour le même dossier (-32029) :
-      réinitialiser avant de redécider un dossier déjà évalué.</div>
-  </section>
+    <div class="sous" style="margin-top:8px">« Nouvel essai de simulation » oublie les demandes en cours et vide le
+      journal du partenaire simulé : il refuse un second appel pour le même dossier (-32029). Ordre conseillé :
+      un cas normal ; une panne avec un montant estimé de 1 500 € ou moins (la demande continue vers les règles 5
+      et 6, marquée mode dégradé : une panne ne veut pas dire acceptation) ; une panne au-delà (cellule_fraude).</div>
+  </details>
 </main>
 
 <script>
@@ -122,17 +142,13 @@ const $ = (id) => document.getElementById(id);
 let lu = null;
 const euros = (x) => x === null || x === undefined ? "·" :
   new Intl.NumberFormat("fr-FR", {maximumFractionDigits: 2}).format(x) + " €";
+const MODE = {reference: "valeurs de référence (aucun appel au modèle)", modele: "modèle Azure, réel"};
 
-function cellule(tr, texte, classe) {
-  const td = document.createElement("td"); td.textContent = texte ?? "·";
-  if (classe) td.className = classe; tr.appendChild(td); return td;
-}
-function badge(texte, classe) {
-  const b = document.createElement("span"); b.className = "badge " + classe; b.textContent = texte; return b;
-}
+function cellule(tr, texte) { const td = document.createElement("td"); td.textContent = texte ?? "·"; tr.appendChild(td); return td; }
+function badge(texte, classe) { const b = document.createElement("span"); b.className = "badge " + classe; b.textContent = texte; return b; }
 async function appel(chemin, corps) {
-  const r = await fetch(chemin, corps ? {method: "POST", headers: {"Content-Type": "application/json"},
-                                         body: JSON.stringify(corps)} : {});
+  const r = await fetch(chemin, corps !== undefined ? {method: "POST", headers: {"Content-Type": "application/json"},
+                                                      body: JSON.stringify(corps)} : {});
   const json = await r.json();
   if (!r.ok) throw new Error(typeof json.detail === "string" ? json.detail : JSON.stringify(json.detail));
   return json;
@@ -145,10 +161,30 @@ async function chargerDossiers() {
   }
 }
 
+function montrer(fichier) {
+  const url = `/api/document/${lu.session}?fichier=${encodeURIComponent(fichier)}`;
+  const v = $("visionneuse");
+  if (fichier.endsWith(".pdf")) {
+    const f = document.createElement("iframe"); f.src = url; f.title = fichier; v.replaceChildren(f);
+    $("legende-doc").textContent = `${fichier} · document original servi par le serveur`;
+  } else {
+    const img = document.createElement("img"); img.src = url; img.alt = fichier;
+    img.addEventListener("click", () => img.classList.toggle("zoom")); v.replaceChildren(img);
+    $("legende-doc").textContent = `${fichier} · document original ; cliquer l'image pour zoomer`;
+  }
+  for (const b of $("onglets").children) b.classList.toggle("actif", b.dataset.fichier === fichier);
+  for (const tr of $("pieces").children) tr.classList.toggle("selection", tr.dataset.fichier === fichier);
+}
+
+function sourceLue(appelModele) {
+  if (!appelModele) return ["mesuré par le code (netteté)", "code"];
+  return lu.mode === "reference" ? ["valeur de référence (pas de modèle)", "modele"] : ["extrait par le modèle", "modele"];
+}
+
 function champContrat(nom, valeur, source) {
   const label = document.createElement("label"); label.textContent = nom;
   let input;
-  if (nom === "formule" || nom === "statut" || nom === "cotisations_a_jour") {
+  if (["formule", "statut", "cotisations_a_jour"].includes(nom)) {
     input = document.createElement("select");
     const choix = {formule: ["essentiel", "confort", "premium"], statut: ["actif", "suspendu", "resilie"],
                    cotisations_a_jour: ["true", "false"]}[nom];
@@ -159,32 +195,31 @@ function champContrat(nom, valeur, source) {
   const b = badge(source[0], source[1]); label.append(input, b);
   input.addEventListener("input", () => {
     const corrige = input.value !== input.dataset.lu;
-    b.textContent = corrige ? `corrigé par la personne (lu : ${input.dataset.lu})` : source[0];
+    b.textContent = corrige ? `corrigé par la personne (extrait : ${input.dataset.lu})` : source[0];
     b.className = "badge " + (corrige ? "personne" : source[1]);
   });
+  input.addEventListener("focus", () => montrer("contrat.pdf"));
   return label;
 }
 
 function lignePiece(piece, fichier, appelModele, groupe, index) {
-  const tr = document.createElement("tr");
-  cellule(tr, (groupe === "depots" ? "dépôt · " : "") + piece.type.replaceAll("_", " "));
-  cellule(tr, fichier);
+  const tr = document.createElement("tr"); tr.dataset.fichier = fichier; tr.style.cursor = "pointer";
+  const nom = cellule(tr, (groupe === "depots" ? "dépôt · " : "") + piece.type.replaceAll("_", " "));
+  const f = document.createElement("div"); f.className = "sous"; f.textContent = fichier; nom.appendChild(f);
   const tdL = cellule(tr, ""); const sel = document.createElement("select");
   for (const [v, t] of [["true", "lisible"], ["false", "illisible"]]) {
     const o = document.createElement("option"); o.value = v; o.textContent = t; sel.appendChild(o);
   }
   sel.value = String(piece.lisible); tdL.appendChild(sel);
   const tdM = cellule(tr, ""); const mont = document.createElement("input"); mont.type = "number"; mont.step = "0.01";
-  mont.style.width = "120px"; mont.value = piece.montant ?? ""; mont.disabled = piece.type !== "facture"; tdM.appendChild(mont);
-  const source = !appelModele ? ["mesuré par le code (netteté)", "code"] :
-    lu.mode === "reference" ? ["valeur de référence (pas de modèle)", "modele"] : ["lu par le modèle", "modele"];
-  const tdS = cellule(tr, ""); const b = badge(source[0], source[1]); tdS.appendChild(b);
+  mont.min = "0.01"; mont.style.width = "120px"; mont.value = piece.montant ?? ""; mont.disabled = piece.type !== "facture";
+  tdM.appendChild(mont);
+  const source = sourceLue(appelModele); const tdS = cellule(tr, ""); const b = badge(source[0], source[1]); tdS.appendChild(b);
   const lu0 = JSON.stringify([String(piece.lisible), String(piece.montant ?? "")]);
-  const maj = () => {
-    const corrige = JSON.stringify([sel.value, mont.value]) !== lu0;
-    b.textContent = corrige ? "corrigé par la personne" : source[0]; b.className = "badge " + (corrige ? "personne" : source[1]);
-  };
+  const maj = () => { const corrige = JSON.stringify([sel.value, mont.value]) !== lu0;
+    b.textContent = corrige ? "corrigé par la personne" : source[0]; b.className = "badge " + (corrige ? "personne" : source[1]); };
   sel.addEventListener("change", maj); mont.addEventListener("input", maj);
+  tr.addEventListener("click", () => montrer(fichier));
   tr.dataset.groupe = groupe; tr.dataset.index = index;
   return tr;
 }
@@ -196,12 +231,12 @@ $("lire").addEventListener("click", async () => {
     lu = await appel("/api/lire", {dossier: $("dossier").value, mode: $("mode").value});
     $("lecture").replaceChildren(...lu.lecture.map((l) => { const tr = document.createElement("tr");
       cellule(tr, l.agent); cellule(tr, l.fichier); cellule(tr, l.statut); cellule(tr, l.duree_ms);
-      cellule(tr, !l.appel_modele ? "non" : lu.mode === "reference" ? "non : valeur de référence" : "oui"); cellule(tr, `${l.jetons_entree} / ${l.jetons_sortie}`); return tr; }));
+      cellule(tr, !l.appel_modele ? "non" : lu.mode === "reference" ? "non : valeur de référence" : "oui");
+      cellule(tr, `${l.jetons_entree} / ${l.jetons_sortie}`); return tr; }));
     $("bloc-lecture").classList.remove("cache");
-    $("etat-lecture").textContent = `lecture en ${lu.duree_lecture_ms} ms` +
-      (lu.mode === "reference" ? " · valeurs de référence, aucun appel au modèle" : "");
-    if (!lu.session) { afficherDecision({fiche: lu.fiche, metriques: {}, corrections: [], envoye_au_partenaire: null,
-                         jamais_envoye: [], montants: {}, partenaire: ""}); return; }
+    $("etat-lecture").textContent = `lecture en ${lu.duree_lecture_ms} ms · ${MODE[lu.mode]}`;
+    if (!lu.session) { afficherDecision({fiche: lu.fiche, metriques: {}, corrections: [], message_partenaire: null,
+      jamais_envoye: [], montants: {}, mode_lecture: lu.mode, deja_decide: false}); return; }
     const d = lu.declaration, s = d.sinistre;
     $("declaration").replaceChildren(...[
       `Dossier ${d.reference} · ${s.type.replaceAll("_", " ")}`,
@@ -209,16 +244,19 @@ $("lire").addEventListener("click", async () => {
       `Montant déclaré ${euros(s.montant_declare)} · sinistres sur 12 mois : ${d.sinistres_12_mois}`,
       `Code postal ${d.code_postal} (le partenaire ne reçoit que le département)`].map((t) => {
         const div = document.createElement("div"); div.textContent = t; return div; }));
-    const LU = lu.mode === "reference" ? ["valeur de référence (pas de modèle)", "modele"] : ["lu par le modèle", "modele"];
-    const sources = {numero: LU, formule: LU, date_souscription: LU,
-      statut: ["à confirmer : registre de l'assureur", "registre"], cotisations_a_jour: ["à confirmer : registre de l'assureur", "registre"]};
+    const LU = sourceLue(true), REGISTRE = ["Valeur extraite du document : non vérifiée dans le registre de l'assureur", "registre"];
+    const sources = {numero: LU, formule: LU, date_souscription: LU, statut: REGISTRE, cotisations_a_jour: REGISTRE};
     $("contrat").replaceChildren(...Object.entries(lu.contrat).map(([k, v]) => champContrat(k, v, sources[k])));
     const lignes = [];
     lu.pieces.forEach((p, i) => lignes.push(lignePiece(p, lu.fichiers.pieces[i], lu.appel_modele[lu.fichiers.pieces[i]], "pieces", i)));
     lu.depots.forEach((p, i) => lignes.push(lignePiece(p, lu.fichiers.depots[i], lu.appel_modele[lu.fichiers.depots[i]], "depots", i)));
     $("pieces").replaceChildren(...lignes);
+    const docs = ["contrat.pdf", ...lu.fichiers.pieces, ...lu.fichiers.depots];
+    $("onglets").replaceChildren(...docs.map((f) => { const b = document.createElement("button");
+      b.className = "onglet"; b.dataset.fichier = f; b.textContent = f; b.addEventListener("click", () => montrer(f)); return b; }));
     $("etape2").classList.remove("cache");
-  } catch (e) { $("etat-lecture").textContent = ""; $("etat-lecture").append(badge("erreur : " + e.message, "personne")); }
+    montrer(lu.fichiers.pieces.find((f) => f.includes("facture")) || "contrat.pdf");
+  } catch (e) { $("etat-lecture").replaceChildren(badge("erreur : " + e.message, "personne")); }
   finally { $("lire").disabled = false; }
 });
 
@@ -234,31 +272,35 @@ $("decider").addEventListener("click", async () => {
   }
   $("decider").disabled = true; $("etat-decision").textContent = "décision en cours…";
   try { afficherDecision(await appel("/api/decider", corps)); $("etat-decision").textContent = ""; }
-  catch (e) { $("etat-decision").textContent = ""; $("etat-decision").append(badge("refusé : " + e.message, "personne")); }
+  catch (e) { $("etat-decision").replaceChildren(badge("refusé : " + e.message, "personne")); }
   finally { $("decider").disabled = false; chargerPartenaire(); }
 });
 
 function afficherDecision(r) {
   const f = r.fiche;
+  $("deja").textContent = "Cette demande a déjà été décidée : résultat enregistré, aucun nouvel appel au partenaire.";
+  $("deja").classList.toggle("cache", !r.deja_decide);
   $("issue").textContent = f.issue === "decision" ? `décision : ${f.decision}` : `escalade → ${f.file}`;
   $("issue").className = "grand issue-" + f.issue;
   $("motif").textContent = f.motif;
   const m = r.montants || {};
-  $("chiffres").textContent = [`déclaré ${euros(m.declare)}`, `factures lisibles ${euros(m.factures_lisibles)}`,
-    `payé ${euros(f.montant_rembourse)}`, `avis anti-fraude : ${f.avis_fraude ? f.avis_fraude.niveau + " (" + f.avis_fraude.score + ")" : "aucun"}`,
+  $("chiffres").textContent = [`lecture : ${MODE[r.mode_lecture] || "·"}`, `déclaré ${euros(m.declare)}`,
+    `factures lisibles ${euros(m.factures_lisibles)}`, `montant accordé ${euros(f.montant_rembourse)} (aucun paiement exécuté)`,
+    `avis anti-fraude : ${f.avis_fraude ? f.avis_fraude.niveau + " (" + f.avis_fraude.score + ")" : "aucun"}`,
     `mode dégradé : ${f.mode_degrade ? "oui" : "non"}`, f.arret ? `arrêt : ${f.arret.borne}` : null,
-    r.duree_decision_ms !== undefined ? `décision en ${r.duree_decision_ms} ms` : null].filter(Boolean).join(" · ");
+    r.duree_lecture_ms !== undefined ? `lecture ${r.duree_lecture_ms} ms + décision ${r.duree_decision_ms} ms (budget automatique commun de 10 s)` : null,
+    r.partenaire ? `partenaire : ${r.partenaire}` : null].filter(Boolean).join(" · ");
   const env = $("envoye");
-  if (r.envoye_au_partenaire) {
-    env.replaceChildren(...Object.entries(r.envoye_au_partenaire).map(([k, v]) => {
+  if (r.message_partenaire) {
+    env.replaceChildren(...Object.entries(r.message_partenaire).map(([k, v]) => {
       const div = document.createElement("div"); div.textContent = `${k} : ${v}`; return div; }));
     const jamais = document.createElement("div"); jamais.style.marginTop = "6px";
-    jamais.textContent = "Jamais envoyé : " + r.jamais_envoye.join(", "); env.appendChild(jamais);
-  } else { env.textContent = "Aucun appel au partenaire pour ce dossier (aucun indicateur F1 à F4, ou décision prise avant)."; }
+    jamais.textContent = "Jamais transmis : " + r.jamais_envoye.join(", "); env.appendChild(jamais);
+  } else { env.textContent = "Aucun message : pas d'appel au partenaire pour ce dossier (aucun indicateur F1 à F4, temps insuffisant, ou décision prise avant)."; }
   const cor = $("corrections");
   cor.replaceChildren(...(r.corrections.length ? r.corrections.map((c) => { const div = document.createElement("div");
-    div.textContent = `${c.champ} : lu ${JSON.stringify(c.lu)}, retenu ${JSON.stringify(c.retenu)}`; return div; })
-    : [Object.assign(document.createElement("div"), {textContent: "Aucune : la personne a confirmé ce qui a été lu."})]));
+    div.textContent = `${c.champ} : extrait ${JSON.stringify(c.lu)}, retenu ${JSON.stringify(c.retenu)}`; return div; })
+    : [Object.assign(document.createElement("div"), {textContent: "Aucune : la personne a confirmé ce qui a été extrait."})]));
   $("trace").replaceChildren(...f.trace.map((x, i) => { const tr = document.createElement("tr");
     cellule(tr, i + 1); cellule(tr, x.agent); cellule(tr, x.ecrit.join(", ")); cellule(tr, x.statut); cellule(tr, x.duree_ms);
     cellule(tr, x.appel_externe ? "oui" : "non"); cellule(tr, x.raison); return tr; }));
@@ -270,10 +312,9 @@ function afficherDecision(r) {
 async function chargerPartenaire() {
   const p = await appel("/api/partenaire");
   $("partenaire").textContent = !p.adresse ? "Aucun partenaire configuré : bouchon (toujours indisponible)." :
-    !p.joignable ? `Partenaire ${p.adresse} injoignable : le lancer avec python -m external_agent --port 8100.` :
-    `Partenaire ${p.adresse} · mode ${p.etat.mode}` + (p.etat.mode === "lent" ? ` (${p.etat.delai_s} s)` : "") +
-    ` · appels reçus : ${p.etat.appels_recus}` +
-    (p.etat.mode === "invalide" ? ` · variante ${p.etat.variante}` : "");
+    !p.joignable ? `Partenaire simulé ${p.adresse} injoignable : le lancer avec python -m external_agent --port 8100.` :
+    `Partenaire simulé ${p.adresse} · mode ${p.etat.mode}` + (p.etat.mode === "lent" ? ` (${p.etat.delai_s} s)` : "") +
+    (p.etat.mode === "invalide" ? ` · variante ${p.etat.variante}` : "") + ` · appels reçus : ${p.etat.appels_recus}`;
 }
 for (const b of document.querySelectorAll("[data-action]")) {
   b.addEventListener("click", async () => {
@@ -284,6 +325,13 @@ for (const b of document.querySelectorAll("[data-action]")) {
     chargerPartenaire();
   });
 }
+$("nouvel-essai").addEventListener("click", async () => {
+  const r = await appel("/api/simulation/nouvel-essai", {});
+  for (const id of ["etape2", "etape3", "bloc-lecture"]) $(id).classList.add("cache");
+  $("etat-lecture").textContent = `Nouvel essai : ${r.sessions_effacees} demande(s) oubliée(s) ; journal du partenaire simulé ` +
+    (r.partenaire_simule_reinitialise ? "vidé." : "non vidé (partenaire injoignable).");
+  lu = null; chargerPartenaire();
+});
 chargerDossiers(); chargerPartenaire();
 </script>
 </body>
