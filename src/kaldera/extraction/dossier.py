@@ -198,7 +198,10 @@ def options(argv: list[str], fichier_env: Path | None = None) -> tuple[Path, str
     fichier = _lire_env(fichier_env or RACINE / ".env")
     if not os.environ.get("PARTENAIRE_JETON") and fichier.get("PARTENAIRE_JETON"):
         os.environ["PARTENAIRE_JETON"] = fichier["PARTENAIRE_JETON"]
-    return args.dossier, args.partenaire or os.environ.get("PARTENAIRE_URL") or fichier.get("PARTENAIRE_URL")
+    adresse = args.partenaire or os.environ.get("PARTENAIRE_URL") or fichier.get("PARTENAIRE_URL")
+    # Sous Windows, « localhost » est d'abord essayé en IPv6 alors que le partenaire n'écoute que 127.0.0.1 :
+    # mesuré le 08/10, 2,1 s par requête au lieu de 0,03 s, pris sur les 3 s de l'appel. Même machine, sans détour.
+    return args.dossier, adresse.replace("://localhost", "://127.0.0.1", 1) if adresse else adresse
 
 
 def consulter_pour(url: str | None) -> Callable[..., AvisFraude]:
