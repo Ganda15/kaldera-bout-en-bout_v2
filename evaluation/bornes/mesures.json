@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-08 19:46",
+  "commit": "ec5dae9",
+  "essais_depassement": 70,
+  "depassement_max_s": 0.038,
+  "depassement_median_s": 0.022,
+  "depassement_partenaire_max_s": 0.038,
+  "depassement_lecture_max_s": 0.016,
+  "essais_appel": 65,
+  "appel_reussi_max_s": 0.1036,
+  "appel_reussi_median_s": 0.081,
+  "valeurs": {
+    "reserve_fiche_s": 0.4,
+    "delai_partenaire_min_s": 0.15
+  },
+  "valeurs_en_vigueur": {
+    "reserve_fiche_s": 0.5,
+    "delai_partenaire_min_s": 0.1
+  }
+}

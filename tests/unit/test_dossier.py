@@ -247,7 +247,9 @@ def test_chaque_appel_au_modele_recoit_le_temps_restant_du_budget() -> None:
         return appeler(consigne, schema, image_png)
 
     traiter_dossier(DOSSIERS / "KAL-26-0101", mesure)
-    assert len(delais) == 2 and all(d is not None and 0 < d <= 9.5 for d in delais)
+    from kaldera.bornes import BORNES
+    plafond = BORNES.duree_max_s - BORNES.reserve_fiche_s  # 10 s moins la réserve de la fiche
+    assert len(delais) == 2 and all(d is not None and 0 < d <= plafond for d in delais)
     assert delais[1] <= delais[0]  # le temps restant ne remonte jamais
 
 

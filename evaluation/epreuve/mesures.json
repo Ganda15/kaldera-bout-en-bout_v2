@@ -7,16 +7,16 @@
     "doublons_recus": 0,
     "max_appels_par_dossier": 1,
     "trace_max": 6,
-    "date": "2026-10-08 19:20",
+    "date": "2026-10-08 19:50",
     "bornes": {
       "etapes_max": 8,
       "duree_max_s": 10,
       "complements_max": 2,
       "appels_partenaire_max": 1,
       "delai_partenaire_s": 3,
-      "delai_partenaire_min_s": 0.1,
+      "delai_partenaire_min_s": 0.15,
       "delai_controle_interne_s": 1,
-      "reserve_fiche_s": 0.5
+      "reserve_fiche_s": 0.4
     }
   },
   "scenarios": [
@@ -34,7 +34,7 @@
       "echecs": 0,
       "raisons": [],
       "trace_max": 5,
-      "duree_lot_s": 0.0
+      "duree_lot_s": 0.001
     },
     {
       "id": "NOM-02",
@@ -50,7 +50,7 @@
       "echecs": 0,
       "raisons": [],
       "trace_max": 2,
-      "duree_lot_s": 0.0
+      "duree_lot_s": 0.001
     },
     {
       "id": "NOM-03",
@@ -194,7 +194,7 @@
       "echecs": 0,
       "raisons": [],
       "trace_max": 2,
-      "duree_lot_s": 0.001
+      "duree_lot_s": 0.0
     },
     {
       "id": "AF-01",
@@ -210,7 +210,7 @@
       "echecs": 0,
       "raisons": [],
       "trace_max": 5,
-      "duree_lot_s": 0.086
+      "duree_lot_s": 0.072
     },
     {
       "id": "AF-02",
@@ -226,7 +226,7 @@
       "echecs": 0,
       "raisons": [],
       "trace_max": 5,
-      "duree_lot_s": 0.092
+      "duree_lot_s": 0.09
     },
     {
       "id": "AF-03",
@@ -242,7 +242,7 @@
       "echecs": 0,
       "raisons": [],
       "trace_max": 5,
-      "duree_lot_s": 0.093
+      "duree_lot_s": 0.075
     },
     {
       "id": "AF-04",
@@ -258,7 +258,7 @@
       "echecs": 0,
       "raisons": [],
       "trace_max": 5,
-      "duree_lot_s": 0.1
+      "duree_lot_s": 0.094
     },
     {
       "id": "AF-05",
@@ -274,7 +274,7 @@
       "echecs": 0,
       "raisons": [],
       "trace_max": 5,
-      "duree_lot_s": 0.074
+      "duree_lot_s": 0.071
     },
     {
       "id": "AF-06",
@@ -290,7 +290,7 @@
       "echecs": 0,
       "raisons": [],
       "trace_max": 5,
-      "duree_lot_s": 0.091
+      "duree_lot_s": 0.09
     },
     {
       "id": "AF-07",
@@ -306,7 +306,7 @@
       "echecs": 0,
       "raisons": [],
       "trace_max": 5,
-      "duree_lot_s": 0.09
+      "duree_lot_s": 0.08
     },
     {
       "id": "INV-01",
@@ -325,7 +325,7 @@
         "schema"
       ],
       "trace_max": 5,
-      "duree_lot_s": 0.075
+      "duree_lot_s": 0.1
     },
     {
       "id": "INV-02",
@@ -344,7 +344,7 @@
         "incoherence"
       ],
       "trace_max": 5,
-      "duree_lot_s": 0.074
+      "duree_lot_s": 0.073
     },
     {
       "id": "INV-03",
@@ -363,7 +363,7 @@
         "schema"
       ],
       "trace_max": 5,
-      "duree_lot_s": 0.074
+      "duree_lot_s": 0.077
     },
     {
       "id": "INV-04",
@@ -382,7 +382,7 @@
         "incoherence"
       ],
       "trace_max": 5,
-      "duree_lot_s": 0.09
+      "duree_lot_s": 0.088
     },
     {
       "id": "INV-05",
@@ -401,7 +401,7 @@
         "schema"
       ],
       "trace_max": 5,
-      "duree_lot_s": 0.072
+      "duree_lot_s": 0.089
     },
     {
       "id": "INV-06",
@@ -420,7 +420,7 @@
         "reponse_non_json"
       ],
       "trace_max": 5,
-      "duree_lot_s": 0.077
+      "duree_lot_s": 0.075
     },
     {
       "id": "INV-07",
@@ -439,7 +439,7 @@
         "enveloppe_invalide"
       ],
       "trace_max": 5,
-      "duree_lot_s": 0.075
+      "duree_lot_s": 0.083
     },
     {
       "id": "PAN-01",
@@ -458,10 +458,10 @@
         "http_503"
       ],
       "trace_max": 6,
-      "duree_lot_s": 0.014,
+      "duree_lot_s": 0.029,
       "rejeux": 5,
       "duree_lot_min_s": 0.012,
-      "duree_lot_max_s": 0.016,
+      "duree_lot_max_s": 0.029,
       "conformes_tous_rejeux": true
     },
     {
@@ -482,10 +482,10 @@
         "delai_depasse"
       ],
       "trace_max": 5,
-      "duree_lot_s": 3.032,
+      "duree_lot_s": 3.029,
       "rejeux": 5,
-      "duree_lot_min_s": 3.021,
-      "duree_lot_max_s": 3.033,
+      "duree_lot_min_s": 3.024,
+      "duree_lot_max_s": 3.042,
       "conformes_tous_rejeux": true
     },
     {
