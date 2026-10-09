@@ -111,6 +111,8 @@
         client A2A)</span><div id="envoye" class="sous"></div></div>
       <div class="boite"><b>Corrections de la personne</b> <span class="sous">(audit)</span><div id="corrections" class="sous"></div></div>
     </div>
+    <div class="boite" style="margin-top:10px"><b>Où passe le temps</b> <span class="sous">(séparé par nature : modèle,
+      partenaire, code)</span><div id="durees" class="sous"></div></div>
     <h3>Contrôles dans l'ordre (trace de la Coordination)</h3>
     <div class="defile"><table><thead><tr><th>#</th><th>agent</th><th>section écrite</th><th>statut</th><th>durée (ms)</th>
       <th>appel externe</th><th>raison</th></tr></thead><tbody id="trace"></tbody></table></div>
@@ -314,9 +316,20 @@ function afficherDecision(r) {
   cor.replaceChildren(...(r.corrections.length ? r.corrections.map((c) => { const div = document.createElement("div");
     div.textContent = `${c.champ} : extrait ${JSON.stringify(c.lu)}, retenu ${JSON.stringify(c.retenu)}`; return div; })
     : [Object.assign(document.createElement("div"), {textContent: "Aucune : la personne a confirmé ce qui a été extrait."})]));
+  const d = r.durees;
+  $("durees").replaceChildren(...(d ? [
+    `Modèle (Azure) : ${d.modele.appels} appel(s) · ${d.modele.ms} ms cumulés · jetons ${d.modele.jetons_entree} / ${d.modele.jetons_sortie}` +
+      (r.mode_lecture === "reference" ? " (valeurs de référence : aucun modèle appelé)"
+        : d.modele.appels > 1 ? " (la cohérence tourne en parallèle de la lecture : le cumul dépasse la durée réelle)" : ""),
+    `Partenaire anti-fraude (A2A) : ${d.partenaire.appels} appel(s) · ${d.partenaire.ms} ms`,
+    `Contrôles en code : ${d.code.etapes} étape(s) · ${d.code.ms} ms`] : ["Aucune décision automatique : rien à mesurer."])
+    .map((t) => Object.assign(document.createElement("div"), {textContent: t})));
+  // l'appel externe dit vers quoi : le modèle (cohérence, dont la durée ici n'est que l'attente) ou le partenaire
+  const NATURE = {coherence: "oui · modèle", antifraude: "oui · partenaire"};
   $("trace").replaceChildren(...f.trace.map((x, i) => { const tr = document.createElement("tr");
-    cellule(tr, i + 1); cellule(tr, x.agent); cellule(tr, x.ecrit.join(", ")); cellule(tr, x.statut); cellule(tr, x.duree_ms);
-    cellule(tr, x.appel_externe ? "oui" : "non"); cellule(tr, x.raison); return tr; }));
+    cellule(tr, i + 1); cellule(tr, x.agent); cellule(tr, x.ecrit.join(", ")); cellule(tr, x.statut);
+    cellule(tr, x.agent === "coherence" && x.appel_externe ? `${x.duree_ms} (attente du modèle)` : x.duree_ms);
+    cellule(tr, x.appel_externe ? (NATURE[x.agent] || "oui") : "non"); cellule(tr, x.raison); return tr; }));
   $("metriques").replaceChildren(...Object.entries(r.metriques).map(([a, v]) => { const tr = document.createElement("tr");
     cellule(tr, a); cellule(tr, v.appels); cellule(tr, v.echecs); cellule(tr, v.latence_ms); cellule(tr, v.appels_externes); return tr; }));
   $("etape3").classList.remove("cache");

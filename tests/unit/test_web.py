@@ -241,3 +241,39 @@ def test_une_facture_de_miroiterie_va_a_un_gestionnaire_dans_le_poste() -> None:
     assert (r["fiche"]["issue"], r["fiche"]["file"], r["fiche"]["decision"]) == ("escalade", "gestionnaire", None)
     assert "incohérentes" in r["fiche"]["motif"] and "piece-1-facture.png" in r["fiche"]["motif"]
     assert r["coherence"]["verdict"] == "contradiction"
+
+
+# ---------------------------------------------------------------- le temps du modèle, du partenaire et du code (09/10)
+
+def avec_jetons(fabrique: Any) -> Any:
+    """Le faux modèle, mais chaque réponse porte ses jetons, comme l'appel réel (lecteurs.Reponse)."""
+    from kaldera.agents.coherence import Interpretation
+    from kaldera.extraction.lecteurs import ContratLu, FactureLue, Reponse
+
+    jetons = {ContratLu: (300, 40), FactureLue: (600, 20), Interpretation: (900, 30)}
+
+    def nouvelle() -> Any:
+        appeler = fabrique()
+
+        def compte(consigne: str, schema: type, images: Any = None, *, delai_s: float | None = None) -> Any:
+            return Reponse(appeler(consigne, schema, images, delai_s=delai_s), *jetons[schema])
+        return compte
+    return nouvelle
+
+
+def test_le_poste_separe_le_temps_du_modele_celui_du_partenaire_et_celui_du_code() -> None:
+    appels, consulter = compteur()
+    client = TestClient(creer_app(partenaire_url=None, consulter=consulter,
+                                  lecteurs={"modele": avec_jetons(faux_modele_coherence())}))
+    lu = client.post("/api/lire", json={"dossier": "KAL-26-0201", "mode": "modele"}).json()
+    durees = client.post("/api/decider", json=confirmer(lu)).json()["durees"]
+    # contrat, facture et cohérence : trois appels au modèle ; la photo est jugée par le code (netteté)
+    assert (durees["modele"]["appels"], durees["modele"]["jetons_entree"], durees["modele"]["jetons_sortie"]) == (3, 1800, 90)
+    assert durees["partenaire"]["appels"] == 1 and appels == [1]  # F2 : contrat de 71 jours
+    assert durees["code"]["etapes"] == 4  # éligibilité, pièces, estimation, coordination
+    assert all(durees[k]["ms"] >= 0 for k in ("modele", "partenaire", "code"))
+
+
+def test_en_valeurs_de_reference_aucun_appel_au_modele_n_est_compte(client: TestClient) -> None:
+    durees = client.post("/api/decider", json=confirmer(lire(client, "KAL-26-0201"))).json()["durees"]
+    assert (durees["modele"]["appels"], durees["modele"]["jetons_entree"], durees["modele"]["ms"]) == (0, 0, 0)

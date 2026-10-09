@@ -115,6 +115,20 @@ def appel_reference() -> Callable[..., Any]:
     return appeler
 
 
+def durees_par_nature(lecture: list[dict[str, Any]], fiche: dict[str, Any], mode: str) -> dict[str, Any]:
+    """Où passe le temps d'une demande, séparé par nature : les appels au modèle (lecture du contrat et des factures,
+    cohérence), l'appel au partenaire anti-fraude, et les contrôles en code. En valeurs de référence, aucun modèle
+    n'est appelé : rien n'est compté côté modèle."""
+    modele = [ligne for ligne in lecture if ligne.get("appel_modele")] if mode == "modele" else []
+    partenaire = [e for e in fiche["trace"] if e["agent"] == "antifraude" and e.get("appel_externe")]
+    code = [e for e in fiche["trace"] if not e.get("appel_externe")]
+    return {"modele": {"appels": len(modele), "ms": round(sum(ligne["duree_ms"] for ligne in modele), 2),
+                       "jetons_entree": sum(ligne.get("jetons_entree", 0) for ligne in modele),
+                       "jetons_sortie": sum(ligne.get("jetons_sortie", 0) for ligne in modele)},
+            "partenaire": {"appels": len(partenaire), "ms": round(sum(e["duree_ms"] for e in partenaire), 2)},
+            "code": {"etapes": len(code), "ms": round(sum(e["duree_ms"] for e in code), 2)}}
+
+
 def appel_modele_reel() -> Callable[..., Any]:
     from ..extraction import lecteurs, modele
 
@@ -175,7 +189,8 @@ def creer_app(partenaire_url: str | None = "auto", *, consulter: Callable[..., A
         sessions[session] = {"demande": lu["demande"], "duree_lecture_ms": duree_ms, "mode": demande.mode,
                              "dossier": chemin, "fichiers": {ligne["fichier"] for ligne in lu["lecture"]},
                              "restant_s": lu["limite"] - monotonic(), "etat": "a_confirmer",
-                             "coherence": lu["coherence"]}  # son appel au modèle tourne pendant la confirmation
+                             "coherence": lu["coherence"],  # son appel au modèle tourne pendant la confirmation
+                             "lecture": lu["lecture"]}  # même liste : la ligne de cohérence s'y ajoute à la clôture
         d = lu["demande"]
         return {"session": session, "mode": demande.mode, "lecture": lu["lecture"], "duree_lecture_ms": duree_ms,
                 "contrat": d["contrat"], "pieces": d["pieces"], "depots": d["espace_assure"]["depots"],
@@ -274,7 +289,7 @@ def creer_app(partenaire_url: str | None = "auto", *, consulter: Callable[..., A
                 "montants": {"declare": demande["sinistre"]["montant_declare"], "factures_lisibles": sum(factures),
                              "accorde": fiche["montant_rembourse"]},
                 "duree_lecture_ms": lu["duree_lecture_ms"], "duree_decision_ms": duree_ms,
-                "coherence": ligne_coherence}
+                "coherence": ligne_coherence, "durees": durees_par_nature(lu["lecture"], fiche, lu["mode"])}
 
     @app.post("/api/simulation/nouvel-essai")
     def nouvel_essai() -> dict[str, Any]:
