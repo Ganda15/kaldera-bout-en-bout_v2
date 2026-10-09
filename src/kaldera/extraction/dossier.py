@@ -121,32 +121,47 @@ def traiter_dossier(dossier: Path, appeler: Appeler, *, consulter: Callable[...,
     """Rend {"demande": JSON § 3 extrait, "lecture": une ligne par pièce lue, "fiche": fiche de décision}.
 
     Aucune erreur brute (exigence N1) : un dossier inexploitable donne une escalade motivée vers un gestionnaire ;
-    une pièce illisible suit, elle, la demande de complément du § 5.
+    une pièce illisible suit, elle, la demande de complément du § 5. La lecture puis la décision, sans pause : le poste
+    du gestionnaire fait la même chose en deux temps, avec la confirmation d'une personne entre les deux.
+    """
+    lu = lire_dossier(dossier, appeler, bornes=bornes)
+    coherence = lu["coherence"]
+    try:
+        if lu["fiche"] is not None:
+            return {"demande": None, "lecture": lu["lecture"], "fiche": lu["fiche"]}
+        fiche = traiter(lu["demande"], consulter=consulter, registre=registre, bornes=bornes, limite=lu["limite"],
+                        coherence=coherence.verifier_coherence if coherence is not None else None)
+        return {"demande": lu["demande"], "lecture": lu["lecture"], "fiche": fiche}
+    finally:
+        if coherence is not None:
+            coherence.clore()
+
+
+def lire_dossier(dossier: Path, appeler: Appeler, *, bornes: Bornes = BORNES) -> dict[str, Any]:
+    """La lecture seule, sans décider : {"demande", "lecture", "fiche" (escalade avant décision, sinon None),
+    "limite" (échéance de la demande, horloge monotonic), "coherence" (l'agent Documents et cohérence, dont l'appel au
+    modèle est déjà parti, ou None si le dossier est écarté avant toute lecture)}.
+
+    Qui reçoit `coherence` passe `coherence.verifier_coherence` à la Coordination, puis appelle `coherence.clore()`
+    une fois la demande conclue : un appel parti mais jamais utilisé est alors noté, avec son coût.
     """
     limite = monotonic() + bornes.duree_max_s - bornes.reserve_fiche_s  # le budget commence à l'arrivée du dossier
+
+    def escalade(lecture: list[dict[str, Any]], reference: str, motif: str,
+                 coherence: _CoherenceAnticipee | None = None) -> dict[str, Any]:
+        return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif), "limite": limite,
+                "coherence": coherence}
+
     declaration, reference, motif = lire_declaration(dossier)
     if motif:
-        return {"demande": None, "lecture": [], "fiche": escalade_directe(reference, motif)}
+        return escalade([], reference, motif)
     inconnus = fichiers_non_reconnus(dossier)
     if inconnus:
-        motif = f"Fichier non pris en charge ({', '.join(inconnus)}) : reprise manuelle"
-        return {"demande": None, "lecture": [], "fiche": escalade_directe(reference, motif)}
+        return escalade([], reference, f"Fichier non pris en charge ({', '.join(inconnus)}) : reprise manuelle")
     if not (dossier / "contrat.pdf").is_file():
-        motif = "Contrat absent du dossier : reprise manuelle"
-        return {"demande": None, "lecture": [], "fiche": escalade_directe(reference, motif)}
+        return escalade([], reference, "Contrat absent du dossier : reprise manuelle")
     lecture: list[dict[str, Any]] = []
     coherence = _CoherenceAnticipee(dossier, declaration["sinistre"], appeler, limite, bornes, lecture)
-    try:
-        return _lire_et_decider(dossier, declaration, reference, appeler, lecture, coherence, consulter=consulter,
-                                registre=registre, bornes=bornes, limite=limite)
-    finally:
-        coherence.clore()
-
-
-def _lire_et_decider(dossier: Path, declaration: dict[str, Any], reference: str, appeler: Appeler,
-                     lecture: list[dict[str, Any]], coherence: _CoherenceAnticipee, *,
-                     consulter: Callable[..., AvisFraude], registre: RegistreAppels | None, bornes: Bornes,
-                     limite: float) -> dict[str, Any]:
     appels, jetons = [0], [0, 0]
 
     def compte(*args: Any) -> Any:
@@ -184,24 +199,19 @@ def _lire_et_decider(dossier: Path, declaration: dict[str, Any], reference: str,
     try:
         contrat = lire("lecteur_contrat", dossier / "contrat.pdf", lecteurs.lire_contrat)
         if contrat["numero"] != declaration["numero_contrat"]:
-            motif = (f"Contrat lu ({contrat['numero']}) différent du contrat déclaré "
-                     f"({declaration['numero_contrat']}) : reprise manuelle")
-            return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif)}
-        lues = [(chemin, lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece))
-                for type_piece, chemin in lister_images(dossier)]
-        deposees = [(chemin, lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece))
-                    for type_piece, chemin in lister_images(dossier / "depots")]
+            return escalade(lecture, reference, f"Contrat lu ({contrat['numero']}) différent du contrat déclaré "
+                                                f"({declaration['numero_contrat']}) : reprise manuelle", coherence)
+        pieces = [lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece)
+                  for type_piece, chemin in lister_images(dossier)]
+        depots = [lire("lecteur_pieces", chemin, lecteurs.lire_piece, type_piece)
+                  for type_piece, chemin in lister_images(dossier / "depots")]
     except ExtractionImpossible as erreur:
-        motif = f"Lecture des pièces impossible ({erreur}) : reprise manuelle"
-        return {"demande": None, "lecture": lecture, "fiche": escalade_directe(reference, motif)}
+        return escalade(lecture, reference, f"Lecture des pièces impossible ({erreur}) : reprise manuelle", coherence)
 
     demande = {"reference": reference, "assure": declaration["assure"], "contrat": contrat,
-               "sinistre": declaration["sinistre"], "pieces": [piece for _, piece in lues],
-               "historique": declaration["historique"],
-               "espace_assure": {"depots": [piece for _, piece in deposees]}}
-    return {"demande": demande, "lecture": lecture,
-            "fiche": traiter(demande, consulter=consulter, registre=registre, bornes=bornes, limite=limite,
-                             coherence=coherence.verifier_coherence)}
+               "sinistre": declaration["sinistre"], "pieces": pieces, "historique": declaration["historique"],
+               "espace_assure": {"depots": depots}}
+    return {"demande": demande, "lecture": lecture, "fiche": None, "limite": limite, "coherence": coherence}
 
 
 def _nette(chemin: Path) -> bool:
@@ -227,7 +237,7 @@ class _CoherenceAnticipee:
                        if _nette(chemin)]  # netteté mesurée en code ; une image floue suit le complément
         self.sinistre, self.appeler, self.limite, self.bornes, self.lecture = sinistre, appeler, limite, bornes, lecture
         self.jetons, self.duree_s, self.utilise = [0, 0], 0.0, False
-        self.futur = None
+        self.futur, self.depart = None, perf_counter()  # départ de l'appel : sa durée, même s'il n'est pas fini
         if self.nettes:
             executeur = ThreadPoolExecutor(max_workers=1)
             self.futur = executeur.submit(self._interpreter, sinistre)
@@ -267,8 +277,11 @@ class _CoherenceAnticipee:
             return ResultatCoherence("non_effectue", raison="delai_depasse", statut="indisponible", appel_externe=True)
 
     def _noter(self, resultat: ResultatCoherence, statut: str, attente_s: float) -> None:
+        # un appel encore en cours (modèle plus lent que le budget) : le temps écoulé depuis son départ, pas 0
+        termine = self.futur is None or self.futur.done()
+        duree_s = self.duree_s if termine else perf_counter() - self.depart
         self.lecture.append({"agent": "coherence", "fichier": ", ".join(f for f, _, _ in self.nettes),
-                             "statut": statut, "duree_ms": round(self.duree_s * 1000, 2),
+                             "statut": statut, "duree_ms": round(duree_s * 1000, 2), "termine": termine,
                              "attente_ms": round(attente_s * 1000, 2), "appel_modele": self.futur is not None,
                              "jetons_entree": self.jetons[0], "jetons_sortie": self.jetons[1],
                              "verdict": resultat.verdict})
