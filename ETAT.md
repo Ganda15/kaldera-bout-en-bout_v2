@@ -5,8 +5,8 @@
 **État au 09/10/2026 (soir), vérifié avant fusion.**
 
 - PR #3 (`coherence` vers `main`) : l'agent Documents et cohérence ; CI success.
-- PR #4 (`ui-coherence` vers `coherence`) : le poste du gestionnaire avec la cohérence et le temps séparé par nature (modèle, partenaire, code) ; le dossier de conception aligné sur le système (28 pages, § 2.5 : où un modèle est utilisé et pourquoi) ; les 13 schémas à jour ; la preuve d'acceptance régénérée sur `e83f320` (56/56, `--verifier` conforme).
-- Mesuré le 09/10 : 416 tests, 56/56 en acceptance, 37/37 en intégration, ruff propre.
+- PR #4 (`ui-coherence` vers `coherence`) : le poste du gestionnaire avec la cohérence et le temps séparé par nature (modèle, partenaire, code) ; le dossier de conception aligné sur le système (28 pages, § 2.5 : où un modèle est utilisé et pourquoi) ; les 13 schémas à jour ; la preuve d'acceptance régénérée sur `c2ddda3` (56/56, `--verifier` conforme).
+- Mesuré le 09/10 : 417 tests, 56/56 en acceptance, 37/37 en intégration, ruff propre.
 
 **Prochaine action** : Era fusionne la PR #3, puis la PR #4 (base passée à `main` si GitHub ne le fait pas). Ensuite, sur `main` : `.venv\Scripts\python.exe -m outils.preuve_acceptance --verifier`.
 
