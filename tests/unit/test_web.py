@@ -34,7 +34,7 @@ def confirmer(lu: dict[str, Any], **changements: Any) -> dict[str, Any]:
 
 def test_la_page_et_la_liste_des_34_dossiers(client: TestClient) -> None:
     assert "poste du gestionnaire" in client.get("/").text
-    assert len(client.get("/api/dossiers").json()) == 34
+    assert len([d for d in client.get("/api/dossiers").json() if d["jeu"] == "scenarios"]) == 34
 
 
 def test_un_dossier_hors_de_la_liste_est_refuse(client: TestClient) -> None:
@@ -189,3 +189,55 @@ def test_nouvel_essai_de_simulation_oublie_les_sessions(client: TestClient) -> N
     lu = lire(client)
     assert client.post("/api/simulation/nouvel-essai").status_code == 200
     assert client.post("/api/decider", json=confirmer(lu)).status_code == 404
+
+
+# ---------------------------------------------------------------- l'agent Documents et cohérence dans le poste
+
+def faux_modele_coherence(**ecarts: str) -> Any:
+    """Un faux modèle pour le mode « modele » : contrat d'après son numéro, facture à 1 850 €, cohérence d'après
+    `ecarts` (fichier -> sinistre évoqué ; les autres pièces concordent)."""
+    import json
+    import re
+    from pathlib import Path
+
+    from kaldera.agents.coherence import Interpretation
+    from kaldera.extraction.lecteurs import ContratLu, FactureLue
+    from tests.faux_coherence import interpretation
+
+    verite = json.loads((Path(__file__).resolve().parents[2] / "dossiers" / "verite.json").read_text(encoding="utf-8"))
+    contrats = {v["contrat"]["numero"]: v["contrat"] for v in verite.values()}
+
+    def fabrique() -> Any:
+        def appeler(consigne: str, schema: type, images: Any = None, *, delai_s: float | None = None) -> Any:
+            if schema is ContratLu:
+                return ContratLu(**contrats[re.search(r"CTR-\d{6}", consigne).group(0)])
+            if schema is Interpretation:
+                return interpretation(consigne, **ecarts)
+            return FactureLue(lisible=True, montant_total_ttc=1850.0)
+        return appeler
+    return fabrique
+
+
+def test_la_decision_du_poste_passe_par_la_coherence(client: TestClient) -> None:
+    r = client.post("/api/decider", json=confirmer(lire(client))).json()
+    etapes = [(ligne["agent"], ligne["raison"]) for ligne in r["fiche"]["trace"]]
+    assert ("coherence", "coherent") in etapes  # la Coordination a délégué la cohérence avant l'Estimation
+    assert r["coherence"]["verdict"] == "coherent" and r["fiche"]["decision"] == "acceptee"
+
+
+def test_les_dossiers_du_jeu_de_coherence_sont_listes_et_lus_par_le_modele_seulement(client: TestClient) -> None:
+    liste = client.get("/api/dossiers").json()
+    assert sum(d["jeu"] == "scenarios" for d in liste) == 34 and sum(d["jeu"] == "coherence" for d in liste) == 8
+    reponse = client.post("/api/lire", json={"dossier": "KAL-26-0701", "mode": "reference"})
+    assert reponse.status_code == 422 and "modèle" in reponse.json()["detail"]
+
+
+def test_une_facture_de_miroiterie_va_a_un_gestionnaire_dans_le_poste() -> None:
+    app = creer_app(partenaire_url=None,
+                    lecteurs={"modele": faux_modele_coherence(**{"piece-1-facture.png": "bris_de_glace"})})
+    client = TestClient(app)
+    lu = client.post("/api/lire", json={"dossier": "KAL-26-0701", "mode": "modele"}).json()
+    r = client.post("/api/decider", json=confirmer(lu)).json()
+    assert (r["fiche"]["issue"], r["fiche"]["file"], r["fiche"]["decision"]) == ("escalade", "gestionnaire", None)
+    assert "incohérentes" in r["fiche"]["motif"] and "piece-1-facture.png" in r["fiche"]["motif"]
+    assert r["coherence"]["verdict"] == "contradiction"

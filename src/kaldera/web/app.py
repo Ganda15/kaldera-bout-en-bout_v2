@@ -30,6 +30,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, fiel
 
 from ..a2a.filtre import RequeteNonConforme, construire_donnees
 from ..agents.antifraude import AvisFraude
+from ..agents.coherence import DocumentInterprete, Interpretation
 from ..bornes import BORNES, Bornes
 from ..coordination import escalade_directe, traiter
 from ..extraction.dossier import consulter_pour, lire_dossier, options
@@ -38,6 +39,8 @@ from ..metriques import calculer_metriques
 
 RACINE = Path(__file__).resolve().parents[3]
 DOSSIERS = RACINE / "dossiers"
+# le jeu d'évaluation de la cohérence : 6 contradictions et 2 cas ambigus construits, lus par le modèle seulement
+JEU_COHERENCE = RACINE / "evaluation" / "coherence" / "dossiers"
 PAGE = Path(__file__).with_name("page.html")
 JAMAIS_ENVOYE = ["nom", "prénom", "e-mail", "téléphone", "adresse", "code postal complet", "IBAN",
                  "identifiant client", "numéro de contrat", "description", "pièces"]
@@ -99,9 +102,14 @@ def appel_reference() -> Callable[..., Any]:
     factures = {hashlib.sha256((DOSSIERS / ref / nom).read_bytes()).hexdigest(): f
                 for ref, v in verite.items() for nom, f in v["fichiers"].items() if f["type"] == "facture"}
 
-    def appeler(consigne: str, schema: type, image_png: bytes | None = None, *, delai_s: float | None = None) -> Any:
+    def appeler(consigne: str, schema: type, image_png: Any = None, *, delai_s: float | None = None) -> Any:
         if schema is ContratLu:
             return ContratLu(**contrats[re.search(r"CTR-\d{6}", consigne).group(0)])
+        if schema is Interpretation:  # les 34 dossiers sont étiquetés cohérents (evaluation/coherence/attendus.json)
+            annonces = re.findall(r"^\d+\. (\S+\.png) \(déposé comme (\w+)\)$", consigne, flags=re.MULTILINE)
+            return Interpretation(documents=[DocumentInterprete(
+                fichier=f, nature=t, sinistre_evoque="indetermine", date_document=None, objet="pièce",
+                concorde="oui", justification="valeur de référence : dossier étiqueté cohérent") for f, t in annonces])
         vraie = factures[hashlib.sha256(image_png).hexdigest()]
         return FactureLue(lisible=True, montant_total_ttc=vraie["montant"])
     return appeler
@@ -125,10 +133,16 @@ def creer_app(partenaire_url: str | None = "auto", *, consulter: Callable[..., A
     partenaire_de_base = consulter or consulter_pour(url)
     fabriques = {"modele": appel_modele_reel, "reference": appel_reference, **(lecteurs or {})}
 
-    def dossier_connu(nom: str) -> Path:
-        if nom not in {p.name for p in DOSSIERS.iterdir() if p.is_dir()}:
-            raise HTTPException(404, "dossier inconnu")
-        return DOSSIERS / nom
+    def jeux() -> list[tuple[str, Path]]:
+        """Les dossiers proposés : les 34 des scénarios, puis le jeu d'évaluation de la cohérence."""
+        return [(jeu, p) for jeu, racine in (("scenarios", DOSSIERS), ("coherence", JEU_COHERENCE))
+                if racine.is_dir() for p in sorted(racine.iterdir()) if p.is_dir()]
+
+    def dossier_connu(nom: str) -> tuple[str, Path]:
+        for jeu, chemin in jeux():
+            if chemin.name == nom:
+                return jeu, chemin
+        raise HTTPException(404, "dossier inconnu")
 
     @app.get("/", response_class=HTMLResponse)
     def page() -> str:
@@ -137,25 +151,31 @@ def creer_app(partenaire_url: str | None = "auto", *, consulter: Callable[..., A
     @app.get("/api/dossiers")
     def dossiers() -> list[dict[str, Any]]:
         resultat = []
-        for chemin in sorted(p for p in DOSSIERS.iterdir() if p.is_dir()):
+        for jeu, chemin in jeux():
             declaration = json.loads((chemin / "declaration.json").read_text(encoding="utf-8"))
             sinistre = declaration["sinistre"]
-            resultat.append({"dossier": chemin.name, "type": sinistre["type"], "montant": sinistre["montant_declare"]})
+            resultat.append({"dossier": chemin.name, "type": sinistre["type"], "montant": sinistre["montant_declare"],
+                             "jeu": jeu})
         return resultat
 
     @app.post("/api/lire")
     def lire(demande: Lecture) -> dict[str, Any]:
-        chemin = dossier_connu(demande.dossier)
+        jeu, chemin = dossier_connu(demande.dossier)
+        if jeu == "coherence" and demande.mode == "reference":  # images construites : aucune valeur de référence
+            raise HTTPException(422, "dossier du jeu de cohérence : lecture par le modèle seulement")
         debut = perf_counter()
         lu = lire_dossier(chemin, fabriques[demande.mode](), bornes=bornes)
         duree_ms = round((perf_counter() - debut) * 1000, 1)
         if lu["fiche"] is not None:  # escalade avant toute décision : rien à confirmer
+            if lu["coherence"] is not None:
+                lu["coherence"].clore()  # l'appel de cohérence parti à l'arrivée est noté, avec son coût
             return {"session": None, "mode": demande.mode, "lecture": lu["lecture"], "duree_lecture_ms": duree_ms,
                     "fiche": lu["fiche"]}
         session = uuid.uuid4().hex
         sessions[session] = {"demande": lu["demande"], "duree_lecture_ms": duree_ms, "mode": demande.mode,
                              "dossier": chemin, "fichiers": {ligne["fichier"] for ligne in lu["lecture"]},
-                             "restant_s": lu["limite"] - monotonic(), "etat": "a_confirmer"}
+                             "restant_s": lu["limite"] - monotonic(), "etat": "a_confirmer",
+                             "coherence": lu["coherence"]}  # son appel au modèle tourne pendant la confirmation
         d = lu["demande"]
         return {"session": session, "mode": demande.mode, "lecture": lu["lecture"], "duree_lecture_ms": duree_ms,
                 "contrat": d["contrat"], "pieces": d["pieces"], "depots": d["espace_assure"]["depots"],
@@ -233,13 +253,19 @@ def creer_app(partenaire_url: str | None = "auto", *, consulter: Callable[..., A
                 message["donnees"] = None
             return partenaire_de_base(**donnees, **({"delai_s": delai} if delai is not None else {}))
 
+        coherence = lu.get("coherence")
         debut = perf_counter()
         if retenu["numero"] != declare:
             fiche = escalade_directe(demande["reference"], f"Contrat confirmé ({retenu['numero']}) différent du contrat "
                                                            f"déclaré ({declare}) : reprise manuelle")
         else:  # la décision n'a que le temps automatique qui restait après la lecture (pause humaine non comptée)
-            fiche = traiter(demande, consulter=capture, bornes=bornes, limite=monotonic() + lu["restant_s"])
+            fiche = traiter(demande, consulter=capture, bornes=bornes, limite=monotonic() + lu["restant_s"],
+                            coherence=coherence.verifier_coherence if coherence is not None else None)
         duree_ms = round((perf_counter() - debut) * 1000, 1)
+        ligne_coherence = None
+        if coherence is not None:
+            coherence.clore()  # sans effet si la Coordination s'en est servie ; sinon l'appel est noté, non utilisé
+            ligne_coherence = next((x for x in reversed(coherence.lecture) if x["agent"] == "coherence"), None)
         factures = [p["montant"] for p in demande["pieces"] + demande["espace_assure"]["depots"]
                     if p["type"] == "facture" and p.get("lisible") and p.get("montant")]
         return {"fiche": fiche, "metriques": calculer_metriques([fiche]), "corrections": corrections,
@@ -247,7 +273,8 @@ def creer_app(partenaire_url: str | None = "auto", *, consulter: Callable[..., A
                 "partenaire": f"{url} (simulé)" if url else "bouchon (aucun appel réseau)", "mode_lecture": lu["mode"],
                 "montants": {"declare": demande["sinistre"]["montant_declare"], "factures_lisibles": sum(factures),
                              "accorde": fiche["montant_rembourse"]},
-                "duree_lecture_ms": lu["duree_lecture_ms"], "duree_decision_ms": duree_ms}
+                "duree_lecture_ms": lu["duree_lecture_ms"], "duree_decision_ms": duree_ms,
+                "coherence": ligne_coherence}
 
     @app.post("/api/simulation/nouvel-essai")
     def nouvel_essai() -> dict[str, Any]:

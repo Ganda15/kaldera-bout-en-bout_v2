@@ -168,7 +168,8 @@ async function appel(chemin, corps) {
 async function chargerDossiers() {
   for (const d of await appel("/api/dossiers")) {
     const o = document.createElement("option"); o.value = d.dossier;
-    o.textContent = `${d.dossier} · ${d.type.replaceAll("_", " ")} · ${euros(d.montant)}`; $("dossier").appendChild(o);
+    o.textContent = `${d.dossier} · ${d.type.replaceAll("_", " ")} · ${euros(d.montant)}` +
+      (d.jeu === "coherence" ? " · jeu de cohérence, lecture par le modèle" : ""); $("dossier").appendChild(o);
   }
 }
 
@@ -299,6 +300,7 @@ function afficherDecision(r) {
     `factures lisibles ${euros(m.factures_lisibles)}`, `montant accordé ${euros(f.montant_rembourse)} (aucun paiement exécuté)`,
     `avis anti-fraude : ${f.avis_fraude ? f.avis_fraude.niveau + " (" + f.avis_fraude.score + ")" : "aucun"}`,
     `mode dégradé : ${f.mode_degrade ? "oui" : "non"}`, f.arret ? `arrêt : ${f.arret.borne}` : null,
+    r.coherence ? `cohérence des pièces : ${r.coherence.verdict} (appel ${r.coherence.duree_ms} ms, attente ${r.coherence.attente_ms} ms${r.coherence.statut === "non_utilise" ? ", non utilisée" : ""})` : null,
     r.duree_lecture_ms !== undefined ? `lecture ${r.duree_lecture_ms} ms + décision ${r.duree_decision_ms} ms (budget automatique commun de 10 s)` : null,
     r.partenaire ? `partenaire : ${r.partenaire}` : null].filter(Boolean).join(" · ");
   const env = $("envoye");
