@@ -15,7 +15,10 @@ from kaldera.agents.estimation import ResultatEstimation
 from kaldera.agents.pieces import ResultatPieces
 from kaldera.etat import SECTION_DE, ErreurDeDroits, EtatDemande
 
-SECTIONS_METIER = {"eligibilite", "pieces", "estimation", "avis_fraude", "issue"}
+SECTIONS_METIER = {"eligibilite", "pieces", "estimation", "avis_fraude", "issue"}  # docs/interface.md
+# § 5 : la cohérence des pièces a son agent et sa section, hors des cinq sections métier : la section « pieces »
+# reste au seul agent Pièces, comme l'exige interface.md.
+SECTIONS_DE_TRAVAIL = {"coherence"}
 
 
 def nouvel_etat() -> EtatDemande:
@@ -23,7 +26,7 @@ def nouvel_etat() -> EtatDemande:
 
 
 def test_une_section_par_agent_et_un_agent_par_section() -> None:
-    assert set(SECTION_DE.values()) == SECTIONS_METIER
+    assert set(SECTION_DE.values()) == SECTIONS_METIER | SECTIONS_DE_TRAVAIL
     assert len(set(SECTION_DE.values())) == len(SECTION_DE)
 
 

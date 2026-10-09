@@ -1,11 +1,11 @@
 {
  "contexte": {
-  "date": "2026-10-08 18:56",
+  "date": "2026-10-08 23:03",
   "modele": "gpt-5.4",
-  "commit": "0922f9b",
+  "commit": "5cb2a4e",
   "python": "3.11.15",
   "lectures_en_parallele": 6,
-  "duree_totale_s": 21.7
+  "duree_totale_s": 27.4
  },
  "synthese": {
   "dossiers": 34,
@@ -47,33 +47,39 @@
    }
   },
   "decisions_identiques": {
-   "justes": 34,
+   "justes": 32,
    "total": 34
   },
   "extractions_impossibles": 0,
   "appels_modele": {
    "contrat": {
     "appels": 34,
-    "moyenne_s": 1.81,
-    "p95_s": 2.93,
-    "max_s": 6.98
+    "moyenne_s": 1.69,
+    "p95_s": 2.68,
+    "max_s": 3.49
    },
    "facture": {
     "appels": 33,
-    "moyenne_s": 1.97,
-    "p95_s": 2.9,
-    "max_s": 2.99
+    "moyenne_s": 2.1,
+    "p95_s": 4.68,
+    "max_s": 5.73
+   },
+   "coherence": {
+    "appels": 34,
+    "moyenne_s": 3.97,
+    "p95_s": 7.76,
+    "max_s": 8.59
    }
   },
   "jetons": {
-   "entree": 32180,
-   "sortie": 2486
+   "entree": 85719,
+   "sortie": 8300
   },
   "metriques_lecture": {
    "lecteur_contrat": {
     "appels": 34,
     "echecs": 0,
-    "latence_ms": 1807.91,
+    "latence_ms": 1693.38,
     "appels_externes": 34,
     "jetons_entree": 10763,
     "jetons_sortie": 1653
@@ -81,17 +87,25 @@
    "lecteur_pieces": {
     "appels": 68,
     "echecs": 0,
-    "latence_ms": 959.68,
+    "latence_ms": 1025.48,
     "appels_externes": 33,
     "jetons_entree": 21417,
-    "jetons_sortie": 833
+    "jetons_sortie": 835
+   },
+   "coherence": {
+    "appels": 34,
+    "echecs": 0,
+    "latence_ms": 3976.27,
+    "appels_externes": 34,
+    "jetons_entree": 53539,
+    "jetons_sortie": 5812
    }
   },
   "seuils": {
    "champ": 0.95,
    "decisions": 0.95
   },
-  "verdict": "réussi"
+  "verdict": "échoué"
  },
  "details": [
   {
@@ -132,11 +146,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.412
+     "duree_s": 2.095
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.681
     },
     {
      "schema": "facture",
-     "duree_s": 2.22
+     "duree_s": 1.767
     }
    ],
    "lecture": [
@@ -144,7 +162,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2423.01,
+     "duree_ms": 2110.81,
      "appel_modele": true,
      "jetons_entree": 305,
      "jetons_sortie": 49
@@ -153,7 +171,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2223.73,
+     "duree_ms": 1770.81,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 27
@@ -162,10 +180,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.45,
+     "duree_ms": 3.66,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 3690.7,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 173,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -208,11 +237,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.13
+     "duree_s": 2.288
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.691
     },
     {
      "schema": "facture",
-     "duree_s": 1.548
+     "duree_s": 3.263
     }
    ],
    "lecture": [
@@ -220,7 +253,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2136.37,
+     "duree_ms": 2301.14,
      "appel_modele": true,
      "jetons_entree": 330,
      "jetons_sortie": 49
@@ -229,7 +262,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1555.88,
+     "duree_ms": 3266.51,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -238,10 +271,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.52,
+     "duree_ms": 4.16,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "non_utilise",
+     "duree_ms": 3701.97,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 172,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -284,11 +328,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 6.982
+     "duree_s": 2.06
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 4.361
     },
     {
      "schema": "facture",
-     "duree_s": 1.94
+     "duree_s": 3.946
     }
    ],
    "lecture": [
@@ -296,7 +344,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 6988.66,
+     "duree_ms": 2067.2,
      "appel_modele": true,
      "jetons_entree": 307,
      "jetons_sortie": 49
@@ -305,7 +353,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1946.08,
+     "duree_ms": 3953.51,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
@@ -314,10 +362,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-depot_plainte.png",
      "statut": "ok",
-     "duree_ms": 4.76,
+     "duree_ms": 4.26,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-depot_plainte.png",
+     "statut": "non_utilise",
+     "duree_ms": 4367.86,
+     "attente_ms": 0.02,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 179,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -360,11 +419,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.63
+     "duree_s": 2.677
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 4.034
     },
     {
      "schema": "facture",
-     "duree_s": 2.164
+     "duree_s": 2.012
     }
    ],
    "lecture": [
@@ -372,7 +435,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2638.89,
+     "duree_ms": 2689.88,
      "appel_modele": true,
      "jetons_entree": 307,
      "jetons_sortie": 49
@@ -381,7 +444,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2167.62,
+     "duree_ms": 2015.14,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -390,10 +453,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.75,
+     "duree_ms": 3.46,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "non_utilise",
+     "duree_ms": 4044.35,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 182,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -436,11 +510,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.113
+     "duree_s": 2.094
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.7
     },
     {
      "schema": "facture",
-     "duree_s": 2.267
+     "duree_s": 3.569
     }
    ],
    "lecture": [
@@ -448,7 +526,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2119.41,
+     "duree_ms": 2109.75,
      "appel_modele": true,
      "jetons_entree": 315,
      "jetons_sortie": 49
@@ -457,7 +535,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2280.75,
+     "duree_ms": 3578.77,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -466,10 +544,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.73,
+     "duree_ms": 4.21,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 3710.89,
+     "attente_ms": 0.02,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 168,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -512,11 +601,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.427
+     "duree_s": 2.171
     },
     {
      "schema": "facture",
-     "duree_s": 2.314
+     "duree_s": 4.677
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 8.591
     }
    ],
    "lecture": [
@@ -524,7 +617,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2432.2,
+     "duree_ms": 2192.75,
      "appel_modele": true,
      "jetons_entree": 315,
      "jetons_sortie": 49
@@ -533,19 +626,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2317.86,
+     "duree_ms": 4680.23,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 24
+     "jetons_sortie": 26
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 5.11,
+     "duree_ms": 4.29,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 8601.61,
+     "attente_ms": 1723.69,
+     "appel_modele": true,
+     "jetons_entree": 1604,
+     "jetons_sortie": 183,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -588,11 +692,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.318
+     "duree_s": 1.525
     },
     {
      "schema": "facture",
-     "duree_s": 1.847
+     "duree_s": 1.32
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 7.762
     }
    ],
    "lecture": [
@@ -600,7 +708,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1320.1,
+     "duree_ms": 1531.51,
      "appel_modele": true,
      "jetons_entree": 326,
      "jetons_sortie": 48
@@ -609,19 +717,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1851.19,
+     "duree_ms": 1325.13,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 25
+     "jetons_sortie": 27
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "depots/1-photo.png",
      "statut": "ok",
-     "duree_ms": 3.57,
+     "duree_ms": 3.46,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, depots/1-photo.png",
+     "statut": "ok",
+     "duree_ms": 7761.99,
+     "attente_ms": 4901.34,
+     "appel_modele": true,
+     "jetons_entree": 1610,
+     "jetons_sortie": 173,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -664,11 +783,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.373
+     "duree_s": 1.664
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 2.893
     },
     {
      "schema": "facture",
-     "duree_s": 2.092
+     "duree_s": 2.091
     }
    ],
    "lecture": [
@@ -676,7 +799,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1374.78,
+     "duree_ms": 1666.3,
      "appel_modele": true,
      "jetons_entree": 314,
      "jetons_sortie": 49
@@ -685,7 +808,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2096.33,
+     "duree_ms": 2096.4,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -694,10 +817,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-depot_plainte.png",
      "statut": "ok",
-     "duree_ms": 3.8,
+     "duree_ms": 3.61,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-depot_plainte.png",
+     "statut": "ok",
+     "duree_ms": 2896.63,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 173,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -739,12 +873,16 @@
    "erreurs": [],
    "appels": [
     {
+     "schema": "coherence",
+     "duree_s": 2.282
+    },
+    {
      "schema": "contrat",
-     "duree_s": 1.366
+     "duree_s": 3.489
     },
     {
      "schema": "facture",
-     "duree_s": 1.848
+     "duree_s": 2.309
     }
    ],
    "lecture": [
@@ -752,7 +890,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1368.15,
+     "duree_ms": 3494.71,
      "appel_modele": true,
      "jetons_entree": 327,
      "jetons_sortie": 49
@@ -761,10 +899,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1852.11,
+     "duree_ms": 2313.2,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png",
+     "statut": "non_utilise",
+     "duree_ms": 2282.71,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1080,
+     "jetons_sortie": 103,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -807,11 +956,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.489
+     "duree_s": 0.935
     },
     {
      "schema": "facture",
-     "duree_s": 2.228
+     "duree_s": 2.896
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.863
     }
    ],
    "lecture": [
@@ -819,7 +972,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1490.76,
+     "duree_ms": 936.64,
      "appel_modele": true,
      "jetons_entree": 329,
      "jetons_sortie": 49
@@ -828,7 +981,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2231.62,
+     "duree_ms": 2900.93,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -837,10 +990,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.34,
+     "duree_ms": 4.21,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "non_utilise",
+     "duree_ms": 3867.61,
+     "attente_ms": 24.59,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 171,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -883,11 +1047,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.564
+     "duree_s": 1.554
     },
     {
      "schema": "facture",
-     "duree_s": 1.509
+     "duree_s": 1.334
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.02
     }
    ],
    "lecture": [
@@ -895,7 +1063,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1565.43,
+     "duree_ms": 1556.87,
      "appel_modele": true,
      "jetons_entree": 306,
      "jetons_sortie": 48
@@ -904,19 +1072,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1512.57,
+     "duree_ms": 1338.17,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 25
+     "jetons_sortie": 27
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.69,
+     "duree_ms": 3.94,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "non_utilise",
+     "duree_ms": 3026.09,
+     "attente_ms": 125.87,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 168,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -959,11 +1138,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.933
+     "duree_s": 1.296
     },
     {
      "schema": "facture",
-     "duree_s": 2.989
+     "duree_s": 1.814
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.546
     }
    ],
    "lecture": [
@@ -971,7 +1154,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2934.51,
+     "duree_ms": 1298.45,
      "appel_modele": true,
      "jetons_entree": 316,
      "jetons_sortie": 49
@@ -980,19 +1163,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2992.99,
+     "duree_ms": 1818.96,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 27
+     "jetons_sortie": 25
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.92,
+     "duree_ms": 3.86,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 3549.88,
+     "attente_ms": 427.62,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 169,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1035,11 +1229,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.353
+     "duree_s": 2.156
     },
     {
      "schema": "facture",
-     "duree_s": 1.789
+     "duree_s": 1.144
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.527
     }
    ],
    "lecture": [
@@ -1047,7 +1245,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1354.83,
+     "duree_ms": 2158.23,
      "appel_modele": true,
      "jetons_entree": 328,
      "jetons_sortie": 48
@@ -1056,7 +1254,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1793.39,
+     "duree_ms": 1148.24,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1065,10 +1263,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.79,
+     "duree_ms": 4.36,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 3532.32,
+     "attente_ms": 220.73,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 176,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1111,11 +1320,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.389
+     "duree_s": 1.876
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.099
     },
     {
      "schema": "facture",
-     "duree_s": 1.894
+     "duree_s": 1.514
     }
    ],
    "lecture": [
@@ -1123,7 +1336,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1390.84,
+     "duree_ms": 1880.65,
      "appel_modele": true,
      "jetons_entree": 304,
      "jetons_sortie": 48
@@ -1132,7 +1345,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1897.7,
+     "duree_ms": 1517.98,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 27
@@ -1141,10 +1354,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.37,
+     "duree_ms": 3.81,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 3099.27,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 169,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1152,7 +1376,7 @@
   {
    "reference": "KAL-26-0204",
    "impossible": false,
-   "decision_identique": true,
+   "decision_identique": false,
    "champs": {
     "contrat.numero": [
      1,
@@ -1187,11 +1411,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 2.217
+     "duree_s": 1.524
     },
     {
      "schema": "facture",
-     "duree_s": 2.897
+     "duree_s": 2.372
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 6.32
     }
    ],
    "lecture": [
@@ -1199,7 +1427,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 2218.12,
+     "duree_ms": 1529.59,
      "appel_modele": true,
      "jetons_entree": 327,
      "jetons_sortie": 49
@@ -1208,19 +1436,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2900.69,
+     "duree_ms": 2375.78,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 27
+     "jetons_sortie": 25
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.42,
+     "duree_ms": 3.36,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 6320.49,
+     "attente_ms": 2411.23,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 182,
+     "verdict": "insuffisant"
     }
    ],
    "motif_si_impossible": null
@@ -1263,11 +1502,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.452
+     "duree_s": 1.563
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 2.588
     },
     {
      "schema": "facture",
-     "duree_s": 2.169
+     "duree_s": 1.744
     }
    ],
    "lecture": [
@@ -1275,7 +1518,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1454.64,
+     "duree_ms": 1564.68,
      "appel_modele": true,
      "jetons_entree": 314,
      "jetons_sortie": 48
@@ -1284,7 +1527,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2173.13,
+     "duree_ms": 1748.41,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1293,10 +1536,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.34,
+     "duree_ms": 4.33,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 2591.0,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 173,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1339,11 +1593,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.319
+     "duree_s": 1.731
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 2.489
     },
     {
      "schema": "facture",
-     "duree_s": 1.943
+     "duree_s": 1.611
     }
    ],
    "lecture": [
@@ -1351,7 +1609,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1322.42,
+     "duree_ms": 1733.23,
      "appel_modele": true,
      "jetons_entree": 305,
      "jetons_sortie": 49
@@ -1360,7 +1618,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1947.29,
+     "duree_ms": 1614.9,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1369,10 +1627,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.51,
+     "duree_ms": 4.16,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 2493.81,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1604,
+     "jetons_sortie": 181,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1415,11 +1684,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.609
+     "duree_s": 2.214
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.512
     },
     {
      "schema": "facture",
-     "duree_s": 2.377
+     "duree_s": 2.323
     }
    ],
    "lecture": [
@@ -1427,7 +1700,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1610.05,
+     "duree_ms": 2219.57,
      "appel_modele": true,
      "jetons_entree": 328,
      "jetons_sortie": 48
@@ -1436,19 +1709,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2380.71,
+     "duree_ms": 2327.32,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 25
+     "jetons_sortie": 27
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-depot_plainte.png",
      "statut": "ok",
-     "duree_ms": 3.86,
+     "duree_ms": 3.69,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-depot_plainte.png",
+     "statut": "ok",
+     "duree_ms": 3512.31,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 174,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1491,11 +1775,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.278
+     "duree_s": 1.332
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.158
     },
     {
      "schema": "facture",
-     "duree_s": 2.154
+     "duree_s": 2.138
     }
    ],
    "lecture": [
@@ -1503,7 +1791,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1279.1,
+     "duree_ms": 1334.55,
      "appel_modele": true,
      "jetons_entree": 328,
      "jetons_sortie": 49
@@ -1512,19 +1800,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2158.21,
+     "duree_ms": 2141.5,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 27
+     "jetons_sortie": 25
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.65,
+     "duree_ms": 3.75,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 3161.77,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 173,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1567,11 +1866,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.586
+     "duree_s": 1.553
     },
     {
      "schema": "facture",
-     "duree_s": 1.646
+     "duree_s": 1.481
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.555
     }
    ],
    "lecture": [
@@ -1579,7 +1882,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1586.78,
+     "duree_ms": 1556.11,
      "appel_modele": true,
      "jetons_entree": 316,
      "jetons_sortie": 48
@@ -1588,7 +1891,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1651.08,
+     "duree_ms": 1485.37,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 27
@@ -1597,10 +1900,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.96,
+     "duree_ms": 4.15,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 3560.61,
+     "attente_ms": 514.04,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 171,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1643,11 +1957,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.304
+     "duree_s": 1.249
     },
     {
      "schema": "facture",
-     "duree_s": 1.756
+     "duree_s": 1.987
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 4.137
     }
    ],
    "lecture": [
@@ -1655,7 +1973,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1305.68,
+     "duree_ms": 1252.92,
      "appel_modele": true,
      "jetons_entree": 315,
      "jetons_sortie": 49
@@ -1664,7 +1982,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1759.82,
+     "duree_ms": 1991.49,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
@@ -1673,10 +1991,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.21,
+     "duree_ms": 3.82,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 4143.29,
+     "attente_ms": 893.37,
+     "appel_modele": true,
+     "jetons_entree": 1604,
+     "jetons_sortie": 180,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1719,11 +2048,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.536
+     "duree_s": 1.934
     },
     {
      "schema": "facture",
-     "duree_s": 1.899
+     "duree_s": 1.316
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 6.242
     }
    ],
    "lecture": [
@@ -1731,7 +2064,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1538.04,
+     "duree_ms": 1940.33,
      "appel_modele": true,
      "jetons_entree": 315,
      "jetons_sortie": 48
@@ -1740,7 +2073,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1903.72,
+     "duree_ms": 1320.14,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1749,10 +2082,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.05,
+     "duree_ms": 3.34,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 6242.84,
+     "attente_ms": 2978.32,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 171,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1795,11 +2139,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.335
+     "duree_s": 1.412
     },
     {
      "schema": "facture",
-     "duree_s": 1.703
+     "duree_s": 1.162
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 2.913
     }
    ],
    "lecture": [
@@ -1807,7 +2155,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1336.3,
+     "duree_ms": 1414.6,
      "appel_modele": true,
      "jetons_entree": 315,
      "jetons_sortie": 49
@@ -1816,7 +2164,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1707.82,
+     "duree_ms": 1165.73,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
@@ -1825,10 +2173,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.34,
+     "duree_ms": 3.74,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 2917.03,
+     "attente_ms": 332.31,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 171,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1871,11 +2230,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.371
+     "duree_s": 1.256
     },
     {
      "schema": "facture",
-     "duree_s": 2.3
+     "duree_s": 1.339
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 5.071
     }
    ],
    "lecture": [
@@ -1883,7 +2246,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1372.82,
+     "duree_ms": 1259.38,
      "appel_modele": true,
      "jetons_entree": 325,
      "jetons_sortie": 48
@@ -1892,19 +2255,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2304.72,
+     "duree_ms": 1343.54,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 27
+     "jetons_sortie": 25
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.09,
+     "duree_ms": 3.46,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 5077.12,
+     "attente_ms": 2470.26,
+     "appel_modele": true,
+     "jetons_entree": 1604,
+     "jetons_sortie": 183,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -1947,11 +2321,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.198
+     "duree_s": 1.528
     },
     {
      "schema": "facture",
-     "duree_s": 1.947
+     "duree_s": 1.263
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 4.554
     }
    ],
    "lecture": [
@@ -1959,7 +2337,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1199.96,
+     "duree_ms": 1529.67,
      "appel_modele": true,
      "jetons_entree": 304,
      "jetons_sortie": 48
@@ -1968,7 +2346,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1952.02,
+     "duree_ms": 1266.66,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -1977,10 +2355,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-depot_plainte.png",
      "statut": "ok",
-     "duree_ms": 4.07,
+     "duree_ms": 4.43,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-depot_plainte.png",
+     "statut": "ok",
+     "duree_ms": 4557.1,
+     "attente_ms": 1755.48,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 173,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -2023,11 +2412,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.447
+     "duree_s": 1.356
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 4.171
     },
     {
      "schema": "facture",
-     "duree_s": 1.978
+     "duree_s": 5.728
     }
    ],
    "lecture": [
@@ -2035,7 +2428,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1448.95,
+     "duree_ms": 1358.76,
      "appel_modele": true,
      "jetons_entree": 306,
      "jetons_sortie": 49
@@ -2044,19 +2437,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1983.12,
+     "duree_ms": 5732.25,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 24
+     "jetons_sortie": 26
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.16,
+     "duree_ms": 3.47,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 4175.17,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 175,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -2099,11 +2503,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.326
+     "duree_s": 1.739
     },
     {
      "schema": "facture",
-     "duree_s": 1.669
+     "duree_s": 1.307
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.454
     }
    ],
    "lecture": [
@@ -2111,7 +2519,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1327.72,
+     "duree_ms": 1740.55,
      "appel_modele": true,
      "jetons_entree": 314,
      "jetons_sortie": 49
@@ -2120,19 +2528,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1672.85,
+     "duree_ms": 1311.26,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 24
+     "jetons_sortie": 26
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.29,
+     "duree_ms": 5.03,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "non_utilise",
+     "duree_ms": 3458.58,
+     "attente_ms": 400.46,
+     "appel_modele": true,
+     "jetons_entree": 1604,
+     "jetons_sortie": 176,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -2175,11 +2594,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.813
+     "duree_s": 1.19
     },
     {
      "schema": "facture",
-     "duree_s": 1.791
+     "duree_s": 1.856
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.697
     }
    ],
    "lecture": [
@@ -2187,7 +2610,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1814.72,
+     "duree_ms": 1192.63,
      "appel_modele": true,
      "jetons_entree": 329,
      "jetons_sortie": 49
@@ -2196,7 +2619,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1796.51,
+     "duree_ms": 1860.8,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -2205,10 +2628,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.96,
+     "duree_ms": 3.94,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 3702.0,
+     "attente_ms": 643.81,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 172,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -2251,11 +2685,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.518
+     "duree_s": 1.386
     },
     {
      "schema": "facture",
-     "duree_s": 1.921
+     "duree_s": 1.33
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 2.726
     }
    ],
    "lecture": [
@@ -2263,7 +2701,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1520.06,
+     "duree_ms": 1390.87,
      "appel_modele": true,
      "jetons_entree": 328,
      "jetons_sortie": 48
@@ -2272,19 +2710,30 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1925.93,
+     "duree_ms": 1333.84,
      "appel_modele": true,
      "jetons_entree": 649,
-     "jetons_sortie": 27
+     "jetons_sortie": 25
     },
     {
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.3,
+     "duree_ms": 5.96,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 2726.6,
+     "attente_ms": 0.01,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 177,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -2327,11 +2776,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.455
+     "duree_s": 1.424
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 3.027
     },
     {
      "schema": "facture",
-     "duree_s": 2.017
+     "duree_s": 1.77
     }
    ],
    "lecture": [
@@ -2339,7 +2792,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1456.76,
+     "duree_ms": 1426.51,
      "appel_modele": true,
      "jetons_entree": 304,
      "jetons_sortie": 48
@@ -2348,7 +2801,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 2021.63,
+     "duree_ms": 1773.41,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 24
@@ -2357,10 +2810,21 @@
      "agent": "lecteur_pieces",
      "fichier": "depots/1-photo.png",
      "statut": "ok",
-     "duree_ms": 3.46,
+     "duree_ms": 3.36,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, depots/1-photo.png",
+     "statut": "ok",
+     "duree_ms": 3033.46,
+     "attente_ms": 0.0,
+     "appel_modele": true,
+     "jetons_entree": 1605,
+     "jetons_sortie": 184,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -2403,11 +2867,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.78
+     "duree_s": 0.87
     },
     {
      "schema": "facture",
-     "duree_s": 1.553
+     "duree_s": 1.463
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 2.658
     }
    ],
    "lecture": [
@@ -2415,7 +2883,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1782.51,
+     "duree_ms": 872.02,
      "appel_modele": true,
      "jetons_entree": 327,
      "jetons_sortie": 49
@@ -2424,7 +2892,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1558.28,
+     "duree_ms": 1467.2,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -2433,10 +2901,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.44,
+     "duree_ms": 3.8,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 2662.41,
+     "attente_ms": 318.46,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 176,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -2479,11 +2958,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.44
+     "duree_s": 1.548
     },
     {
      "schema": "facture",
-     "duree_s": 1.237
+     "duree_s": 1.613
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 5.336
     }
    ],
    "lecture": [
@@ -2491,7 +2974,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1441.92,
+     "duree_ms": 1549.38,
      "appel_modele": true,
      "jetons_entree": 314,
      "jetons_sortie": 49
@@ -2500,7 +2983,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1240.78,
+     "duree_ms": 1616.74,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -2509,10 +2992,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.79,
+     "duree_ms": 4.86,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 5339.8,
+     "attente_ms": 2168.12,
+     "appel_modele": true,
+     "jetons_entree": 1609,
+     "jetons_sortie": 171,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null
@@ -2520,7 +3014,7 @@
   {
    "reference": "KAL-26-0503",
    "impossible": false,
-   "decision_identique": true,
+   "decision_identique": false,
    "champs": {
     "contrat.numero": [
      1,
@@ -2555,11 +3049,15 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.63
+     "duree_s": 1.392
     },
     {
      "schema": "facture",
-     "duree_s": 1.355
+     "duree_s": 1.99
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 4.528
     }
    ],
    "lecture": [
@@ -2567,7 +3065,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1631.35,
+     "duree_ms": 1398.66,
      "appel_modele": true,
      "jetons_entree": 314,
      "jetons_sortie": 48
@@ -2576,7 +3074,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 1359.7,
+     "duree_ms": 1993.08,
      "appel_modele": true,
      "jetons_entree": 649,
      "jetons_sortie": 25
@@ -2585,10 +3083,21 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 4.45,
+     "duree_ms": 3.59,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-1-facture.png, piece-2-photo.png",
+     "statut": "ok",
+     "duree_ms": 4528.71,
+     "attente_ms": 1132.64,
+     "appel_modele": true,
+     "jetons_entree": 1602,
+     "jetons_sortie": 198,
+     "verdict": "insuffisant"
     }
    ],
    "motif_si_impossible": null
@@ -2627,7 +3136,11 @@
    "appels": [
     {
      "schema": "contrat",
-     "duree_s": 1.281
+     "duree_s": 1.31
+    },
+    {
+     "schema": "coherence",
+     "duree_s": 2.855
     }
    ],
    "lecture": [
@@ -2635,7 +3148,7 @@
      "agent": "lecteur_contrat",
      "fichier": "contrat.pdf",
      "statut": "ok",
-     "duree_ms": 1282.95,
+     "duree_ms": 1315.97,
      "appel_modele": true,
      "jetons_entree": 306,
      "jetons_sortie": 49
@@ -2644,7 +3157,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-1-facture.png",
      "statut": "ok",
-     "duree_ms": 5.45,
+     "duree_ms": 4.14,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2653,7 +3166,7 @@
      "agent": "lecteur_pieces",
      "fichier": "piece-2-photo.png",
      "statut": "ok",
-     "duree_ms": 3.49,
+     "duree_ms": 3.29,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
@@ -2662,10 +3175,21 @@
      "agent": "lecteur_pieces",
      "fichier": "depots/1-facture.png",
      "statut": "ok",
-     "duree_ms": 4.02,
+     "duree_ms": 4.52,
      "appel_modele": false,
      "jetons_entree": 0,
      "jetons_sortie": 0
+    },
+    {
+     "agent": "coherence",
+     "fichier": "piece-2-photo.png",
+     "statut": "non_utilise",
+     "duree_ms": 2855.13,
+     "attente_ms": 1525.94,
+     "appel_modele": true,
+     "jetons_entree": 1083,
+     "jetons_sortie": 92,
+     "verdict": "coherent"
     }
    ],
    "motif_si_impossible": null

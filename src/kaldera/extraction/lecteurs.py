@@ -35,7 +35,13 @@ Appeler = Callable[..., Any]
 
 
 class ExtractionImpossible(Exception):
-    """La pièce n'a pas pu être lue pour une raison technique (modèle indisponible, réponse hors schéma)."""
+    """La pièce n'a pas pu être lue pour une raison technique (modèle indisponible, réponse hors schéma).
+
+    `code` : la raison en un mot (modele_indisponible, hors_schema, delai_depasse), pour la trace."""
+
+    def __init__(self, message: str, code: str = "modele_indisponible") -> None:
+        super().__init__(message)
+        self.code = code
 
 
 @dataclass(frozen=True)
@@ -71,7 +77,7 @@ def _demander(appeler: Appeler, consigne: str, schema: type[BaseModel], image_pn
     except ExtractionImpossible:  # budget de temps épuisé : la raison est déjà la bonne
         raise
     except ValidationError as erreur:
-        raise ExtractionImpossible(f"réponse hors schéma {schema.__name__}") from erreur
+        raise ExtractionImpossible(f"réponse hors schéma {schema.__name__}", "hors_schema") from erreur
     except Exception as erreur:  # réseau, délai, service : jamais d'invention
         raise ExtractionImpossible(f"modèle indisponible ({type(erreur).__name__})") from erreur
 
@@ -125,12 +131,13 @@ def appel_modele(client: Any, deploiement: str) -> Appeler:
 
     `delai_s` : le temps restant du budget de la demande ; l'appel est abandonné au-delà (sinon, délai du client).
     """
-    def appeler(consigne: str, schema: type[BaseModel], image_png: bytes | None = None, *,
+    def appeler(consigne: str, schema: type[BaseModel], image_png: bytes | list[bytes] | None = None, *,
                 delai_s: float | None = None) -> Any:
         contenu: list[dict[str, str]] = [{"type": "input_text", "text": consigne}]
-        if image_png is not None:
+        images = [] if image_png is None else image_png if isinstance(image_png, list) else [image_png]
+        for image in images:  # plusieurs images pour la cohérence, dans l'ordre annoncé par la consigne
             contenu.append({"type": "input_image",
-                            "image_url": "data:image/png;base64," + base64.b64encode(image_png).decode("ascii")})
+                            "image_url": "data:image/png;base64," + base64.b64encode(image).decode("ascii")})
         cible = client.with_options(timeout=delai_s) if delai_s is not None else client
         reponse = cible.responses.parse(model=deploiement, input=[{"role": "user", "content": contenu}],
                                          text_format=schema)

@@ -23,7 +23,9 @@ import uvicorn
 import kaldera
 from kaldera.bornes import Bornes
 from kaldera.extraction.dossier import traiter_dossier
+from kaldera.agents.coherence import Interpretation
 from kaldera.extraction.lecteurs import ContratLu, FactureLue
+from tests.faux_coherence import interpretation
 
 RACINE = Path(__file__).resolve().parents[2]
 DEMANDES = {d["reference"]: d for ligne in (RACINE / "eval" / "scenarios.jsonl").read_text(encoding="utf-8").splitlines()
@@ -125,6 +127,8 @@ def test_un_seul_budget_traverse_lecture_coordination_et_partenaire(partenaire: 
         time.sleep(0.3)  # un appel au modèle qui prend du temps
         if schema is ContratLu:
             return ContratLu(**verite["contrat"])
+        if schema is Interpretation:
+            return interpretation(consigne)
         montant = next(f["montant"] for f in verite["fichiers"].values() if f["type"] == "facture")
         return FactureLue(lisible=True, montant_total_ttc=montant)
 

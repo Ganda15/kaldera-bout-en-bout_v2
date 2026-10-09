@@ -13,6 +13,7 @@ from time import monotonic, perf_counter
 from typing import Any
 
 from .agents.antifraude import AvisFraude, evaluer_risque, partenaire_bouchon
+from .agents.coherence import ResultatCoherence
 from .agents.eligibilite import verifier_eligibilite
 from .agents.estimation import estimer
 from .agents.pieces import demander_complement, verifier_pieces
@@ -56,10 +57,12 @@ class _BorneAtteinte(Exception):
 
 class _Parcours:
     def __init__(self, demande: dict[str, Any], bornes: Bornes, consulter: Callable[..., AvisFraude],
-                 limite: float | None = None) -> None:
+                 limite: float | None = None,
+                 coherence: Callable[..., ResultatCoherence] | None = None) -> None:
         self.etat = EtatDemande(demande)
         self.bornes = bornes
         self.consulter = consulter
+        self.coherence = coherence  # l'agent Documents et cohérence, fourni quand la demande vient de pièces
         # une seule limite par demande : reçue de la lecture des pièces si elle a eu lieu, sinon posée ici
         self.limite = limite if limite is not None else monotonic() + bornes.duree_max_s - bornes.reserve_fiche_s
 
@@ -134,6 +137,21 @@ class _Parcours:
         if not pieces.complet:
             raise _BorneAtteinte("complements_max")
 
+        # § 5 : cohérence des pièces avec la déclaration. Seulement depuis des pièces réelles (une demande JSON n'a
+        # que leur type et leur montant) et après un contrôle complet : une pièce manquante suit d'abord le complément.
+        # Aucune issue n'est une décision : contradiction ou doute vont à une personne, avec la preuve.
+        if self.coherence is not None:
+            coherence = self.deleguer("coherence", self.coherence, sinistre=sinistre)
+            if coherence.verdict == "contradiction":
+                return self.conclure("Pièces incohérentes avec la déclaration (" + " ; ".join(coherence.constats)
+                                     + ") : examen par un gestionnaire", file="gestionnaire")
+            if coherence.verdict == "insuffisant":
+                return self.conclure("Cohérence des pièces incertaine (" + " ; ".join(coherence.constats)
+                                     + ") : vérification par un gestionnaire", file="gestionnaire")
+            if coherence.verdict != "coherent":
+                return self.conclure(f"Contrôle de cohérence impossible ({coherence.raison}) : reprise manuelle",
+                                     file="gestionnaire")
+
         estimation = self.deleguer("estimation", estimer, montant_declare=sinistre["montant_declare"],
                                    formule=contrat["formule"], factures_lisibles=pieces.factures_lisibles)
         if estimation.montant_estime == 0:  # règle 3
@@ -179,12 +197,14 @@ def escalade_directe(reference: str, motif: str) -> dict[str, Any]:
 
 def traiter(demande: dict[str, Any], *, consulter: Callable[..., AvisFraude] = partenaire_bouchon,
             registre: RegistreAppels | None = None, bornes: Bornes = BORNES,
-            limite: float | None = None) -> dict[str, Any]:
+            limite: float | None = None,
+            coherence: Callable[..., ResultatCoherence] | None = None) -> dict[str, Any]:
     """Traite une demande jusqu'à sa fiche de décision, quoi qu'il arrive.
 
     `limite` (horloge monotonic) : fin du budget de 10 s déjà commencé, par exemple pendant la lecture des pièces.
+    `coherence` : l'agent Documents et cohérence, appelé avec le sinistre déclaré (chemin des pièces seulement).
     """
-    parcours = _Parcours(demande, bornes, appel_unique(consulter, registre or RegistreAppels()), limite)
+    parcours = _Parcours(demande, bornes, appel_unique(consulter, registre or RegistreAppels()), limite, coherence)
     try:
         return parcours.derouler()
     except _BorneAtteinte as atteinte:
