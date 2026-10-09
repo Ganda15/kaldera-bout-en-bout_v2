@@ -19,11 +19,11 @@ Chaque ajustement de l'orchestration (borne, frontière ou routage) y est consig
 
 ## Effets sur le dossier de conception
 
-Le dossier (`livrable/dossier-de-conception.pdf`) et les schémas reflètent la conception présentée ; ce journal fait foi pour les écarts décidés depuis. À aligner en phase 4 :
+Le dossier (`livrable/dossier-de-conception.pdf`) et les schémas reflètent la conception présentée ; ce journal fait foi pour les écarts décidés depuis. Le PDF a été régénéré le 09/10/2026 avec toutes les entrées ci-dessous (`6ea2370`, `d5dc7d1`, `9693608`, `e83f320`). Suivi de l'alignement :
 
-- entrée 1 : texte aligné le 08/10 (`6b4c2cc`) ; schémas 1 et N1 alignés le 08/10, schémas 0, 2 et A alignés le 08/10 (séquence avec court-circuit) ; reste le PDF du dossier, régénéré en fin de projet ;
+- entrée 1 : texte aligné le 08/10 (`6b4c2cc`) ; schémas 1 et N1 alignés le 08/10, schémas 0, 2 et A alignés le 08/10 (séquence avec court-circuit) ; PDF régénéré le 09/10 ;
 - entrées 2 et 3 : paragraphe « Reprise après incident » aligné le 08/10 dans la conception et dans le livrable (registre des appels, portée : une exécution ; limite après redémarrage écrite) ;
 - entrée 4 : schéma E aligné le 08/10 (contrôles avant toute lecture, image qui ne s'ouvre pas) ;
 - entrée 8 : schémas 5, 6, 7 et N2, tableau des bornes, textes de la conception et du livrable alignés le 08/10 (0,15 s et 0,4 s) ;
-- entrées 5 et 6 : schémas 1, 2, E et N1 et tableau des bornes alignés le 08/10 (`bd883ff`) ; reste le PDF.
-- entrées 10 à 12 : tableau des rôles, carte des agents, point ambigu du § 5 et borne `etapes_max` alignés le 08/10 dans `chantier-1-equipe-orchestration.md` ; schémas 1, A, E et N1 alignés le 08/10, la nuit (agent 2 bis, appel lancé à l'arrivée, mesures relancées ; dépôt de conception `b1b75a5`), puis 0, 2, 3, 7 et N0 (`9387fa4`) : les 13 schémas du dossier sont à jour ; reste le PDF.
+- entrées 5 et 6 : schémas 1, 2, E et N1 et tableau des bornes alignés le 08/10 (`bd883ff`) ; PDF régénéré le 09/10.
+- entrées 10 à 12 : tableau des rôles, carte des agents, point ambigu du § 5 et borne `etapes_max` alignés le 08/10 dans `chantier-1-equipe-orchestration.md` ; schémas 1, A, E et N1 alignés le 08/10, la nuit (agent 2 bis, appel lancé à l'arrivée, mesures relancées ; dépôt de conception `b1b75a5`), puis 0, 2, 3, 7 et N0 (`9387fa4`) : les 13 schémas du dossier sont à jour ; PDF régénéré le 09/10.
