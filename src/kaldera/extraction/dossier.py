@@ -237,7 +237,7 @@ class _CoherenceAnticipee:
                        if _nette(chemin)]  # netteté mesurée en code ; une image floue suit le complément
         self.sinistre, self.appeler, self.limite, self.bornes, self.lecture = sinistre, appeler, limite, bornes, lecture
         self.jetons, self.duree_s, self.utilise = [0, 0], 0.0, False
-        self.futur = None
+        self.futur, self.depart = None, perf_counter()  # départ de l'appel : sa durée, même s'il n'est pas fini
         if self.nettes:
             executeur = ThreadPoolExecutor(max_workers=1)
             self.futur = executeur.submit(self._interpreter, sinistre)
@@ -277,8 +277,11 @@ class _CoherenceAnticipee:
             return ResultatCoherence("non_effectue", raison="delai_depasse", statut="indisponible", appel_externe=True)
 
     def _noter(self, resultat: ResultatCoherence, statut: str, attente_s: float) -> None:
+        # un appel encore en cours (modèle plus lent que le budget) : le temps écoulé depuis son départ, pas 0
+        termine = self.futur is None or self.futur.done()
+        duree_s = self.duree_s if termine else perf_counter() - self.depart
         self.lecture.append({"agent": "coherence", "fichier": ", ".join(f for f, _, _ in self.nettes),
-                             "statut": statut, "duree_ms": round(self.duree_s * 1000, 2),
+                             "statut": statut, "duree_ms": round(duree_s * 1000, 2), "termine": termine,
                              "attente_ms": round(attente_s * 1000, 2), "appel_modele": self.futur is not None,
                              "jetons_entree": self.jetons[0], "jetons_sortie": self.jetons[1],
                              "verdict": resultat.verdict})
