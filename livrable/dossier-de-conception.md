@@ -209,28 +209,28 @@ Le filtre s'applique dans l'agent Anti-fraude, juste avant l'appel : c'est le se
 | `sinistres_12_mois` | `historique.sinistres_12_mois` | recopié |
 | `departement` | `assure.code_postal` | calculé : 2 premiers caractères ; `2A` ou `2B` pour la Corse ; 3 chiffres pour l'outre-mer |
 
-Le message est un objet neuf construit champ par champ depuis cette liste blanche, puis vérifié contre un schéma strict avant l'envoi. On ne part jamais de la demande complète pour en retirer des champs : un champ ajouté plus tard à la demande ne passerait pas. La trace note l'appel, sa durée et son statut, jamais le message ni le jeton.
+Le message est un objet neuf construit champ par champ depuis cette liste blanche, puis vérifié contre un schéma strict avant l'envoi. On ne part jamais de la demande complète pour en retirer des champs : un champ ajouté plus tard à la demande ne passerait pas. Une donnée qui ne respecte pas le schéma bloque l'envoi : aucun appel ne part, l'avis est « indisponible » avec la raison `requete_non_conforme`. La trace note l'appel, sa durée et son statut, jamais le message ni le jeton. Sur le poste du gestionnaire, l'encadré « Message transmis au partenaire » montre ces sept champs, capturés à l'entrée du client A2A, et la liste de ce qui n'est jamais transmis (figure 5).
 
 ### 4.3 La validation de chaque réponse [E4]
 
 Une réponse n'est exploitée que si elle passe les cinq niveaux, dans l'ordre. Au premier échec, elle est écartée : l'avis est « indisponible », seule la raison est gardée, et rien du contenu reçu n'entre dans la fiche.
 
-| Niveau | Ce qui est vérifié | Scénario |
-|---|---|---|
-| 1. Transport | HTTP 200, corps JSON lisible | INV-06 |
-| 2. Enveloppe JSON-RPC | `jsonrpc` vaut `"2.0"`, même `id` que la requête, `result` ou `error` | INV-07 |
-| 3. Forme A2A | tâche à l'état `completed`, avec un artefact `data` | tests unitaires |
-| 4. Schéma | exactement les six champs, types et valeurs permises | INV-03, INV-05 |
-| 5. Cohérence | même dossier que celui envoyé ; score entre 0 et 1 ; niveau cohérent avec le score | INV-04, INV-01, INV-02 |
+| Niveau | Ce qui est vérifié | Raison si l'avis est écarté | Scénario (raison mesurée) |
+|---|---|---|---|
+| 1. Transport | HTTP 200 | `http_503`, `http_401`... | PAN-01 (`http_503`) |
+| 2. JSON et enveloppe JSON-RPC | corps JSON lisible ; `jsonrpc` vaut `"2.0"` ; même `id` que la requête ; un HTTP 200 qui porte une `error` reste une erreur ; `result` présent | `reponse_non_json`, `enveloppe_invalide`, `erreur_rpc_<code>` | INV-06 (`reponse_non_json`), INV-07 (`enveloppe_invalide`) |
+| 3. Forme A2A | une tâche à l'état `completed`, un seul artefact, une seule partie `data` | `forme_a2a` | tests unitaires |
+| 4. Schéma | exactement les six champs ; score entre 0 et 1 ; niveau et indicateurs parmi les valeurs permises | `schema` | INV-01, INV-03, INV-05 (`schema`) |
+| 5. Cohérence | même dossier que celui envoyé ; niveau conforme au score | `incoherence` | INV-02, INV-04 (`incoherence`) |
 
 | Erreur reçue | Réaction |
 |---|---|
-| délai de 3 s dépassé, HTTP 503 | avis indisponible, mode dégradé |
-| HTTP 401 | avis indisponible et alerte : jeton à corriger |
-| `-32700`, `-32600`, `-32601`, `-32602` | avis indisponible et alerte : notre requête est fautive |
-| `-32029` (dossier déjà évalué) | avis indisponible et alerte : un doublon ne doit jamais arriver |
+| délai de 3 s dépassé, HTTP 503 | avis indisponible (`delai_depasse`, `http_503`), mode dégradé |
+| HTTP 401 | avis indisponible (`http_401`), mode dégradé : le jeton est à corriger |
+| `-32700`, `-32600`, `-32601`, `-32602` | avis indisponible (`erreur_rpc_<code>`), mode dégradé : notre requête est fautive |
+| `-32029` (dossier déjà évalué) | avis indisponible (`erreur_rpc_-32029`), mode dégradé : un doublon ne doit jamais arriver |
 
-Aucune de ces erreurs ne déclenche de relance.
+Aucune de ces erreurs ne déclenche de relance. Chacune laisse sa raison dans la trace et compte comme un échec de l'agent `antifraude` dans les métriques. Aucune alerte n'est émise automatiquement vers l'exploitation : c'est une limite écrite (section 6.2).
 
 ### 4.4 Le mode dégradé [E5]
 
@@ -241,7 +241,7 @@ Le partenaire est indisponible pour une demande quand son avis n'a pas pu être 
 | 1 500 € ou moins | la demande continue sans avis et reçoit sa décision selon les règles 5 et 6 | `mode_degrade: true`, pour contrôle a posteriori |
 | plus de 1 500 € | escalade `cellule_fraude`, motif « contrôle anti-fraude manuel » | `mode_degrade: true` |
 
-L'agent Anti-fraude renvoie « indisponible » et sa raison ; la Coordination range ce résultat et applique la règle. Trois mécanismes empêchent de bloquer le reste : l'appel dure au plus 3 s et jamais au-delà du temps restant de la demande (aucun appel s'il reste moins de 0,15 s) ; les demandes d'un lot sont traitées en concurrence ; une demande sans indicateur n'appelle jamais le partenaire. Une réponse arrivée après l'abandon n'est jamais lue.
+L'agent Anti-fraude renvoie « indisponible » et sa raison ; la Coordination range ce résultat et applique la règle. Trois mécanismes empêchent de bloquer le reste : l'appel dure au plus 3 s et jamais au-delà du temps restant de la demande (aucun appel s'il reste moins de 0,15 s) ; les demandes d'un lot sont traitées en concurrence ; une demande sans indicateur n'appelle jamais le partenaire. Une réponse arrivée après l'abandon n'est jamais lue. Mesuré le 08/10 : partenaire en panne sur un lot de cinq demandes (PAN-01), 2 appels, 2 échecs `http_503`, aucune relance, les trois demandes sans indicateur non touchées ; partenaire à 5 s sur un lot de trois (PAN-02), 2 abandons `delai_depasse` à 3 s, et le lot entier en 3,02 à 3,04 s sur cinq rejeux, et non 6 s.
 
 ![Échange A2A : filtre, appel unique, validation et chemin de mode dégradé](../conception/schemas/schema-5-echange-a2a.png)
 
@@ -251,18 +251,22 @@ L'agent Anti-fraude renvoie « indisponible » et sa raison ; la Coordination ra
 
 Chaque scénario de `eval/scenarios.jsonl` est soumis à `traiter_lot` avec le partenaire simulé réglé selon le scénario (`normal`, `lent`, `invalide`, `panne`). Le test compare chaque fiche au champ `attendu`, et observe la trace et les métriques, pas seulement l'issue. Le chemin de décision est déterministe : un rejeu suffit pour juger une issue. Seules les durées varient ; les scénarios `panne` sont rejoués cinq fois, et c'est la plus lente des cinq mesures qui est comparée aux 10 s.
 
-Les métriques par agent (`appels`, `echecs`, `latence_ms`, `appels_externes`) sont calculées depuis la trace : la trace et les métriques ne peuvent pas se contredire.
+Les métriques par agent (`appels`, `echecs`, `latence_ms`, `appels_externes`) sont calculées depuis la trace : la trace et les métriques ne peuvent pas se contredire. Les étapes consommées se lisent dans la longueur de la trace, comparée à `etapes_max`.
+
+Ce plan est exécuté par les tests d'intégration. `tests/integration/test_scenarios_28.py` rejoue chacun des 28 scénarios dans toute l'équipe, contre le partenaire simulé, par le réseau local (28 cas). Au-delà de l'issue, que vérifie déjà la suite d'acceptance, il contrôle la trace et les métriques, la raison de chaque avis indisponible, l'absence de toute donnée personnelle et de tout contenu écarté, même dans la trace, et les délais du lot. Pour vérifier que ces tests attrapent vraiment un défaut, trois défauts volontaires ont été introduits puis retirés : une raison perdue, une mauvaise raison, une métrique fausse ; chacun a fait échouer des tests (9, 5 et 16 échecs, commit `e34d7ac`). `tests/integration/test_chemin_public_a2a.py` complète avec neuf cas sur le chemin public vers le partenaire : filtre, réponse tardive, erreur portée par un HTTP 200, contenu écarté, budget commun.
+
+Les scénarios passent par le chemin JSON, où l'agent Documents et cohérence n'intervient pas : les pièces n'y portent que leur type et leur montant. Cet agent a sa propre évaluation, sur 42 dossiers de pièces (section 2.5).
 
 ### 5.2 Scénarios, signaux et ajustements possibles
 
-| Scénarios | Signaux observés | Critère de réussite | Ajustement possible du chantier 1 |
-|---|---|---|---|
-| NOM-01 à 11 | issue, trace, étapes | 11 fiches conformes, chaque section remplie par son seul agent, aucun appel au partenaire | droits d'écriture, `etapes_max` |
-| AF-01 à 07 | appels externes, message envoyé, avis | 7 appels, 7 messages de sept champs, avis et issue conformes | routage des règles 4 et 5 |
-| INV-01 à 07 | échecs et raison, avis, `mode_degrade` | 7 réponses écartées au bon niveau, aucun avis recopié, mode dégradé selon le montant | règles de validation |
-| PAN-01 (lot de 5, panne) | appels, échecs, issues du lot | 2 appels, 2 échecs, aucune relance, les 3 autres demandes non touchées | routage du mode dégradé |
-| PAN-02 (lot de 3, partenaire à 5 s) | durée de chaque appel et du lot | 2 appels abandonnés à 3 s, chaque demande sous 10 s, lot d'environ 3 s | `duree_max_s`, concurrence du lot |
-| BCL-01 (piège à boucle) | longueur de la trace, `arret` | escalade avec `arret`, trace de 8 étapes au plus | `etapes_max`, borne « même état » |
+| Scénarios | Signaux observés | Critère de réussite | Mesuré le 08/10 | Ajustement possible du chantier 1 |
+|---|---|---|---|---|
+| NOM-01 à 11 | issue, trace, étapes | 11 fiches conformes, chaque section remplie par son seul agent, aucun appel au partenaire | 11 sur 11 ; 0 appel ; trace de 2 à 6 étapes | droits d'écriture, `etapes_max` |
+| AF-01 à 07 | appels externes, message envoyé, avis | 7 appels, 7 messages de sept champs, avis et issue conformes | 7 sur 7 ; 7 appels, 0 échec | routage des règles 4 et 5 |
+| INV-01 à 07 | échecs et raison, avis, `mode_degrade` | 7 réponses écartées au bon niveau, aucun avis recopié, mode dégradé selon le montant | 7 sur 7 ; `schema` ×3, `incoherence` ×2, `reponse_non_json`, `enveloppe_invalide` | règles de validation |
+| PAN-01 (lot de 5, panne) | appels, échecs, issues du lot | 2 appels, 2 échecs, aucune relance, les 3 autres demandes non touchées | 5 sur 5 à chacun des 5 rejeux ; 2 appels, 2 échecs `http_503` | routage du mode dégradé |
+| PAN-02 (lot de 3, partenaire à 5 s) | durée de chaque appel et du lot | 2 appels abandonnés à 3 s, chaque demande sous 10 s, lot d'environ 3 s | 3 sur 3 ; `delai_depasse` ×2 ; lot de 3,02 à 3,04 s sur 5 rejeux | `duree_max_s`, concurrence du lot |
+| BCL-01 (piège à boucle) | longueur de la trace, `arret` | escalade avec `arret`, trace de 8 étapes au plus | conforme ; arrêt `etat_repete` ; trace de 4 étapes | `etapes_max`, borne « même état » |
 
 ### 5.3 Invariants et chiffres attendus
 
@@ -279,9 +283,13 @@ Un invariant est vérifié sur chaque scénario, quelle que soit sa famille :
 
 Sur les 34 demandes des 28 scénarios, les totaux attendus sont : 16 acceptées, 7 refusées, 4 escalades `gestionnaire`, 6 escalades `cellule_fraude` et 1 escalade sur borne (BCL-01) ; 11 demandes en mode dégradé ; 18 appels au partenaire et 11 échecs pour l'agent `antifraude` ; 0 échec pour les agents internes. Un écart sur un total signale un changement de comportement, même si chaque scénario pris seul semble passer.
 
+Mesuré le 08/10 (`evaluation/epreuve/rapport.md`, généré par `outils/mesurer_epreuve.py`, non modifiable à la main) : 34 demandes sur 34 conformes à `attendu`, 18 appels reçus par le partenaire, 0 doublon, au plus un appel par dossier, trace la plus longue de 6 étapes. Les 56 tests d'acceptance fournis passent, dont les 16 de la liaison avec le partenaire (`evaluation/acceptance/preuve-execution.md`).
+
 ### 5.4 Le journal des ajustements
 
-Quand un scénario échoue ou qu'un signal sort de son critère : on identifie l'élément du chantier 1 en cause (borne, frontière ou routage) ; on change un seul élément ; on rejoue les 28 scénarios et les tests unitaires ; on consigne une ligne dans `conception/journal-ajustements.md`, avec le signal observé, la valeur avant et après, le résultat du rejeu et le commit. Ajustements déjà repérés comme possibles, à décider uniquement sur mesure : `duree_max_s` de 10 à 8 s, `etapes_max`, la file de l'escalade sur borne.
+Quand un scénario échoue ou qu'un signal sort de son critère : on identifie l'élément du chantier 1 en cause (borne, frontière ou routage) ; on change un seul élément ; on rejoue les 28 scénarios et les tests unitaires ; on consigne une ligne dans `conception/journal-ajustements.md`, avec le signal observé, la valeur avant et après, le résultat du rejeu et le commit.
+
+Le journal compte 12 entrées au 09/10/2026. Deux viennent directement de l'épreuve. L'entrée 8 : la mesure montre que l'appel réussi le plus long dure 0,10 s, donc le seuil provisoire de 0,1 s gâchait le seul appel permis ; les bornes passent à 0,15 s et 0,4 s, tirées de la mesure par deux règles écrites. L'entrée 9 : des saisies extrêmes révèlent une déclaration antérieure au sinistre payée 1 700 € ; elle part désormais en escalade. Les autres viennent de la lecture du banc d'essai du formateur (entrée 3 : registre des appels limité à une exécution), des revues et des retours du formateur (entrées 1, 2, 4 à 7) et de l'agent Documents et cohérence, réglé par sa propre évaluation (entrées 10 à 12). Le passage de `duree_max_s` de 10 à 8 s, envisagé, n'a pas été retenu : le dépassement mesuré après l'échéance ne dépasse pas 38 ms.
 
 ![Plan d'épreuve : rejouer, observer, comparer, ajuster, consigner](../conception/schemas/schema-6-plan-epreuve.png)
 
@@ -303,6 +311,7 @@ Quand un scénario échoue ou qu'un signal sort de son critère : on identifie l
 - **Le volume** : aucun test de charge ; le volume journalier et les pics n'ont pas été fournis.
 - **Le vrai partenaire** : tous ses comportements sont simulés ; seule la production montrerait la distribution réelle de ses délais.
 - **Les cas rares** : les 28 scénarios sont ceux du client ; un dépôt très tardif ou une panne partielle n'y figurent pas.
+- **Les alertes** : une erreur du partenaire (jeton refusé, requête jugée fautive, doublon) laisse sa raison dans la trace et compte dans les métriques, mais aucune alerte n'est envoyée automatiquement à l'exploitation. Un outil de supervision externe brancherait ces signaux.
 - **La lecture des documents** : mesurée sur des documents générés à partir des 34 demandes, pas sur de vrais scans. Un appel au modèle plus long que le budget envoie la demande à une personne avec un motif technique : c'est arrivé une fois sur 42 dans l'essai officiel de cohérence.
 
 ### 6.3 Démarche et statut
