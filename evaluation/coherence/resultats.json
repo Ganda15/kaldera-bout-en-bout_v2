@@ -1,0 +1,895 @@
+{
+ "contexte": {
+  "date": "2026-10-08 23:00",
+  "modele": "gpt-5.4",
+  "commit": "5cb2a4e",
+  "python": "3.11.15",
+  "dossiers_en_parallele": 3,
+  "duree_totale_s": 116.8
+ },
+ "synthese": {
+  "dossiers": 42,
+  "matrice": {
+   "coherent": {
+    "coherent": 32,
+    "contradiction": 0,
+    "insuffisant": 2,
+    "non_effectue": 0
+   },
+   "non_coherent": {
+    "coherent": 0,
+    "contradiction": 6,
+    "insuffisant": 0,
+    "non_effectue": 0
+   },
+   "ambigu": {
+    "coherent": 0,
+    "contradiction": 0,
+    "insuffisant": 2,
+    "non_effectue": 0
+   }
+  },
+  "detections": {
+   "justes": 6,
+   "total": 6
+  },
+  "detections_strictes": 6,
+  "fausses_alertes": 0,
+  "examens_inutiles": 2,
+  "echecs_techniques": 1,
+  "au_dela_du_budget": 0,
+  "verdicts_differents_entre_passages": 2,
+  "dossiers_ou_la_chaine_atteint_la_coherence": 34,
+  "decisions_attendues": {
+   "justes": 40,
+   "total": 42
+  },
+  "duree_coherence": {
+   "appels": 42,
+   "moyenne_s": 3.75,
+   "p95_s": 5.08,
+   "max_s": 7.07
+  },
+  "duree_dossier": {
+   "appels": 42,
+   "moyenne_s": 4.4,
+   "p95_s": 6.89,
+   "max_s": 9.61
+  },
+  "jetons": {
+   "entree": 66385,
+   "sortie": 7256
+  },
+  "portes": {
+   "fausses_alertes_max": 0,
+   "examens_inutiles_max": 3,
+   "echecs_techniques_max": 0,
+   "au_dela_du_budget_max": 0
+  },
+  "verdict": "échoué"
+ },
+ "details": [
+  {
+   "reference": "KAL-26-0101",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.285,
+   "duree_dossier_s": 4.482,
+   "jetons_entree": 1609,
+   "jetons_sortie": 170,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0102",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.257,
+   "duree_dossier_s": 4.747,
+   "jetons_entree": 1602,
+   "jetons_sortie": 172,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E1 contrat non actif"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0103",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.448,
+   "duree_dossier_s": 6.388,
+   "jetons_entree": 1602,
+   "jetons_sortie": 176,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E5 sinistre non couvert par la formule"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0104",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.152,
+   "duree_dossier_s": 4.231,
+   "jetons_entree": 1609,
+   "jetons_sortie": 183,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E3 sinistre pendant la carence de 30 jours"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0105",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.245,
+   "duree_dossier_s": 3.152,
+   "jetons_entree": 1609,
+   "jetons_sortie": 174,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0106",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.869,
+   "duree_dossier_s": 7.863,
+   "jetons_entree": 1604,
+   "jetons_sortie": 181,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Dommage inférieur ou égal à la franchise"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0107",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.366,
+   "duree_dossier_s": 3.204,
+   "jetons_entree": 1610,
+   "jetons_sortie": 173,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0108",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.868,
+   "duree_dossier_s": 5.625,
+   "jetons_entree": 1602,
+   "jetons_sortie": 172,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0109",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.899,
+   "duree_dossier_s": 4.61,
+   "jetons_entree": 1080,
+   "jetons_sortie": 111,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces manquantes, aucun dépôt de l'assuré : photo"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0110",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.388,
+   "duree_dossier_s": 4.28,
+   "jetons_entree": 1609,
+   "jetons_sortie": 173,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E4 déclaration au-delà de 30 jours"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0111",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.254,
+   "duree_dossier_s": 3.944,
+   "jetons_entree": 1602,
+   "jetons_sortie": 175,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E2 cotisations non à jour"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0201",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.183,
+   "duree_dossier_s": 3.092,
+   "jetons_entree": 1609,
+   "jetons_sortie": 174,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée sans avis anti-fraude (mode dégradé, contrôle a posteriori)"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0202",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.709,
+   "duree_dossier_s": 3.389,
+   "jetons_entree": 1602,
+   "jetons_sortie": 175,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0203",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.505,
+   "duree_dossier_s": 3.287,
+   "jetons_entree": 1609,
+   "jetons_sortie": 171,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0204",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.366,
+   "duree_dossier_s": 5.12,
+   "jetons_entree": 1602,
+   "jetons_sortie": 173,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0205",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.714,
+   "duree_dossier_s": 4.371,
+   "jetons_entree": 1609,
+   "jetons_sortie": 168,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0206",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.728,
+   "duree_dossier_s": 4.695,
+   "jetons_entree": 1604,
+   "jetons_sortie": 175,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée sans avis anti-fraude (mode dégradé, contrôle a posteriori)"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0207",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.871,
+   "duree_dossier_s": 3.455,
+   "jetons_entree": 1602,
+   "jetons_sortie": 179,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0301",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.621,
+   "duree_dossier_s": 4.52,
+   "jetons_entree": 1609,
+   "jetons_sortie": 175,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée sans avis anti-fraude (mode dégradé, contrôle a posteriori)"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0302",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-1-facture.png : Facture de travaux après sinistre, mais le libellé ne mentionne pas explicitement un incendie ni la cuisine."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 2.882,
+   "duree_dossier_s": 2.88,
+   "jetons_entree": 1602,
+   "jetons_sortie": 170,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-1-facture.png : Facture de travaux de remise en état après sinistre, mais sans mention explicite d’un incendie ni de la cuisine déclarée.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0303",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.263,
+   "duree_dossier_s": 4.729,
+   "jetons_entree": 1604,
+   "jetons_sortie": 184,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée sans avis anti-fraude (mode dégradé, contrôle a posteriori)"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0304",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.284,
+   "duree_dossier_s": 3.309,
+   "jetons_entree": 1609,
+   "jetons_sortie": 172,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0305",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.897,
+   "duree_dossier_s": 4.025,
+   "jetons_entree": 1609,
+   "jetons_sortie": 176,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée sans avis anti-fraude (mode dégradé, contrôle a posteriori)"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0306",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.905,
+   "duree_dossier_s": 4.088,
+   "jetons_entree": 1604,
+   "jetons_sortie": 193,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée sans avis anti-fraude (mode dégradé, contrôle a posteriori)"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0307",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 5.085,
+   "duree_dossier_s": 2.954,
+   "jetons_entree": 1602,
+   "jetons_sortie": 179,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0401",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.609,
+   "duree_dossier_s": 3.249,
+   "jetons_entree": 1609,
+   "jetons_sortie": 174,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0402",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.813,
+   "duree_dossier_s": 4.957,
+   "jetons_entree": 1604,
+   "jetons_sortie": 174,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E5 sinistre non couvert par la formule"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0403",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.816,
+   "duree_dossier_s": 9.611,
+   "jetons_entree": 1602,
+   "jetons_sortie": 181,
+   "verdict_chaine": "non_effectue",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Contrôle de cohérence impossible (delai_depasse) : reprise manuelle"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0404",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.287,
+   "duree_dossier_s": 6.293,
+   "jetons_entree": 1609,
+   "jetons_sortie": 173,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0405",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.123,
+   "duree_dossier_s": 3.26,
+   "jetons_entree": 1605,
+   "jetons_sortie": 195,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0501",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-1-facture.png : Facture datée après le sinistre, mais travaux génériques sans mention explicite d’un incendie, de la cuisine, du plan de travail ou de la hotte."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 3.505,
+   "duree_dossier_s": 4.546,
+   "jetons_entree": 1602,
+   "jetons_sortie": 188,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0502",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 5.255,
+   "duree_dossier_s": 4.361,
+   "jetons_entree": 1609,
+   "jetons_sortie": 172,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée sans avis anti-fraude (mode dégradé, contrôle a posteriori)"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0503",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.337,
+   "duree_dossier_s": 3.046,
+   "jetons_entree": 1602,
+   "jetons_sortie": 174,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0601",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.412,
+   "duree_dossier_s": 2.194,
+   "jetons_entree": 1083,
+   "jetons_sortie": 96,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Arrêt par la borne « etat_repete » : reprise manuelle"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0701",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-1-facture.png : évoque bris_de_glace, déclaré degat_des_eaux (Facture de dépose et pose d'un double vitrage)",
+    "piece-1-facture.png : La facture concerne un vitrage endommagé, ce qui évoque un bris de glace et non le dégât des eaux déclaré."
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 4.927,
+   "duree_dossier_s": 3.786,
+   "jetons_entree": 1609,
+   "jetons_sortie": 176,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-1-facture.png : évoque bris_de_glace, déclaré degat_des_eaux (Facture de dépose et pose de double vitrage) ; piece-1-facture.png : La facture concerne un vitrage endommagé, ce qui évoque un bris de glace et non le dégât des eaux déclaré.) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0702",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-1-facture.png : facture du 2026-07-25, antérieure au sinistre du 2026-08-14"
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 3.05,
+   "duree_dossier_s": 3.809,
+   "jetons_entree": 1609,
+   "jetons_sortie": 172,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-1-facture.png : facture du 2026-07-25, antérieure au sinistre du 2026-08-14) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0703",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-2-photo.png : évoque incendie, déclaré degat_des_eaux (Photo indiquée comme sinistre incendie)",
+    "piece-2-photo.png : L'image mentionne explicitement un incendie, ce qui contredit le dégât des eaux déclaré."
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 3.461,
+   "duree_dossier_s": 6.895,
+   "jetons_entree": 1609,
+   "jetons_sortie": 165,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-2-photo.png : évoque incendie, déclaré degat_des_eaux (photo légendée sinistre incendie) ; piece-2-photo.png : L'image évoque explicitement un incendie, ce qui contredit le dégât des eaux déclaré.) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0704",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-1-facture.png : évoque degat_des_eaux, déclaré incendie (Facture de recherche et réparation de fuite, remplacement du parquet)",
+    "piece-1-facture.png : La facture mentionne une fuite et un parquet, ce qui évoque un dégât des eaux, pas l'incendie déclaré en cuisine."
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 3.054,
+   "duree_dossier_s": 4.227,
+   "jetons_entree": 1602,
+   "jetons_sortie": 183,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-1-facture.png : évoque degat_des_eaux, déclaré incendie (Facture de recherche et réparation de fuite, remplacement du parquet) ; piece-1-facture.png : La facture concerne une fuite et un parquet, pas un incendie de cuisine avec hotte et plan de travail.) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0705",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-2-depot_plainte.png : La plainte concerne un vol de véhicule, différent du cambriolage d'habitation avec vol d'ordinateur et d'appareil photo déclaré."
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 3.145,
+   "duree_dossier_s": 3.523,
+   "jetons_entree": 1602,
+   "jetons_sortie": 185,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-2-depot_plainte.png : La plainte concerne un vol de véhicule sur la voie publique, différent du cambriolage d'habitation déclaré.) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0706",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-1-facture.png : évoque degat_des_eaux, déclaré bris_de_glace (Facture plomberie pour recherche et réparation de fuite et remplacement de parquet)",
+    "piece-1-facture.png : La facture mentionne une fuite et du parquet, ce qui évoque un dégât des eaux, pas un bris de glace."
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 3.536,
+   "duree_dossier_s": 6.123,
+   "jetons_entree": 1604,
+   "jetons_sortie": 178,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-1-facture.png : évoque degat_des_eaux, déclaré bris_de_glace (Facture de recherche et réparation de fuite et remplacement du parquet) ; piece-1-facture.png : La facture mentionne une fuite et un parquet remplacé, ce qui évoque un dégât des eaux, pas un bris de glace.) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0707",
+   "attendu": "ambigu",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-1-facture.png : facture du 2026-03-06, antérieure au vol (achat, pas remplacement)"
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 4.084,
+   "duree_dossier_s": 3.761,
+   "jetons_entree": 1602,
+   "jetons_sortie": 175,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-1-facture.png : facture du 2026-03-06, antérieure au vol (achat, pas remplacement)) : vérification par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0708",
+   "attendu": "ambigu",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-1-facture.png : Facture datée après le sinistre, mais libellé trop vague pour la relier clairement au dégât des eaux déclaré."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 7.073,
+   "duree_dossier_s": 4.522,
+   "jetons_entree": 1609,
+   "jetons_sortie": 171,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-1-facture.png : Facture datée après le sinistre déclaré, mais le libellé 'fournitures diverses' est trop vague pour la relier clairement au dégât des eaux.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": true
+  }
+ ]
+}

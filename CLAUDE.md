@@ -33,7 +33,7 @@ Les règles de travail et les pièges de la machine sont dans `C:\Users\kanda\.c
 
 ## 3. Ce qu'on ne fait jamais
 
-- **Jamais** un LLM dans une décision : la Coordination et les quatre agents sont du code déterministe. Un LLM ne peut servir qu'à lire un document (phase 3), et sa sortie est validée par un schéma.
+- **Jamais** une règle chiffrée de la spec (§ 4 à § 10) confiée à un LLM : ces règles restent dans des fonctions testées, que les agents et la Coordination appellent comme outils. Un LLM sert là où il faut interpréter un document ou un contexte (lecture, cohérence avec la déclaration), toujours avec une sortie validée par un schéma, une politique d'échec écrite et une évaluation mesurée. Seule la Coordination conclut une demande (§ 10). *(Règle corrigée le 08/10/2026, accord d'Era : l'ancienne, « un LLM ne peut servir qu'à lire un document », venait de nous, ni du formateur ni de la spec.)*
 - **Jamais** LangGraph ni autre framework d'agents avant que les 56 tests soient verts (décision d'Era du 07/10/2026).
 - **Jamais** modifier `tests/acceptance/`, `docs/`, `eval/`, `external_agent/` : ce sont les documents du formateur.
 - **Jamais** un fichier ouvert sans `encoding="utf-8"` : sous Windows, les accents se corrompent.

@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from .agents.antifraude import AvisFraude
+from .agents.coherence import ResultatCoherence
 from .agents.eligibilite import ResultatEligibilite
 from .agents.estimation import ResultatEstimation
 from .agents.pieces import ResultatPieces
@@ -14,6 +15,7 @@ from .agents.pieces import ResultatPieces
 SECTION_DE = {
     "eligibilite": "eligibilite",
     "pieces": "pieces",
+    "coherence": "coherence",
     "estimation": "estimation",
     "antifraude": "avis_fraude",
     "coordination": "issue",
@@ -23,6 +25,7 @@ SECTION_DE = {
 TYPE_DE = {
     "eligibilite": ResultatEligibilite,
     "pieces": ResultatPieces,
+    "coherence": ResultatCoherence,
     "estimation": ResultatEstimation,
     "antifraude": AvisFraude,
     "coordination": dict,

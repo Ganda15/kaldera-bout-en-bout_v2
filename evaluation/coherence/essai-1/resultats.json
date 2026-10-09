@@ -1,0 +1,926 @@
+{
+ "contexte": {
+  "date": "2026-10-08 22:47",
+  "modele": "gpt-5.4",
+  "commit": "22c2c5b",
+  "python": "3.11.15",
+  "dossiers_en_parallele": 3,
+  "duree_totale_s": 151.1
+ },
+ "synthese": {
+  "dossiers": 42,
+  "matrice": {
+   "coherent": {
+    "coherent": 17,
+    "contradiction": 0,
+    "insuffisant": 17,
+    "non_effectue": 0
+   },
+   "non_coherent": {
+    "coherent": 0,
+    "contradiction": 6,
+    "insuffisant": 0,
+    "non_effectue": 0
+   },
+   "ambigu": {
+    "coherent": 0,
+    "contradiction": 0,
+    "insuffisant": 2,
+    "non_effectue": 0
+   }
+  },
+  "detections": {
+   "justes": 6,
+   "total": 6
+  },
+  "detections_strictes": 6,
+  "fausses_alertes": 0,
+  "examens_inutiles": 17,
+  "echecs_techniques": 3,
+  "au_dela_du_budget": 0,
+  "verdicts_differents_entre_passages": 6,
+  "dossiers_ou_la_chaine_atteint_la_coherence": 34,
+  "decisions_attendues": {
+   "justes": 26,
+   "total": 42
+  },
+  "duree_coherence": {
+   "appels": 42,
+   "moyenne_s": 4.01,
+   "p95_s": 5.97,
+   "max_s": 8.23
+  },
+  "duree_dossier": {
+   "appels": 42,
+   "moyenne_s": 6.58,
+   "p95_s": 9.6,
+   "max_s": 9.62
+  },
+  "jetons": {
+   "entree": 63823,
+   "sortie": 7374
+  },
+  "portes": {
+   "fausses_alertes_max": 0,
+   "examens_inutiles_max": 3,
+   "echecs_techniques_max": 0,
+   "au_dela_du_budget_max": 0
+  },
+  "verdict": "échoué"
+ },
+ "details": [
+  {
+   "reference": "KAL-26-0101",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : Le visuel ne montre pas clairement de dommages identifiables ; seul le texte évoque un dégât des eaux."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 5.804,
+   "duree_dossier_s": 6.876,
+   "jetons_entree": 1548,
+   "jetons_sortie": 175,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-2-photo.png : L'image ne montre pas clairement des dommages identifiables ; seul le libellé évoque un dégât des eaux.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0102",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 5.972,
+   "duree_dossier_s": 3.302,
+   "jetons_entree": 1541,
+   "jetons_sortie": 176,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E1 contrat non actif"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0103",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 8.234,
+   "duree_dossier_s": 3.593,
+   "jetons_entree": 1541,
+   "jetons_sortie": 177,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E5 sinistre non couvert par la formule"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0104",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : Le visuel ne montre pas clairement des dommages identifiables ni le lieu ; seul le libellé évoque un dégât des eaux."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 4.54,
+   "duree_dossier_s": 3.613,
+   "jetons_entree": 1548,
+   "jetons_sortie": 178,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E3 sinistre pendant la carence de 30 jours"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0105",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : Le visuel ne montre pas clairement des dommages identifiables malgré le libellé mentionnant un dégât des eaux."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 3.111,
+   "duree_dossier_s": 7.846,
+   "jetons_entree": 1548,
+   "jetons_sortie": 176,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-2-photo.png : Le visuel est schématique et ne permet pas de vérifier le lieu ni les dommages décrits dans la déclaration.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0106",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.103,
+   "duree_dossier_s": 9.599,
+   "jetons_entree": 1543,
+   "jetons_sortie": 179,
+   "verdict_chaine": "non_effectue",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Contrôle de cohérence impossible (delai_depasse) : reprise manuelle"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0107",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "depots/1-photo.png : L'image porte la mention dégât des eaux mais ne montre pas clairement des dommages ou le lieu décrit dans la déclaration."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 5.409,
+   "duree_dossier_s": 7.156,
+   "jetons_entree": 1549,
+   "jetons_sortie": 176,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (depots/1-photo.png : L'image est schématique et ne permet pas de vérifier le lieu ni les dommages décrits, malgré le libellé compatible.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0108",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.385,
+   "duree_dossier_s": 7.486,
+   "jetons_entree": 1541,
+   "jetons_sortie": 177,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0109",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.735,
+   "duree_dossier_s": 3.441,
+   "jetons_entree": 1019,
+   "jetons_sortie": 113,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces manquantes, aucun dépôt de l'assuré : photo"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0110",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.53,
+   "duree_dossier_s": 3.499,
+   "jetons_entree": 1548,
+   "jetons_sortie": 173,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E4 déclaration au-delà de 30 jours"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0111",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 6.149,
+   "duree_dossier_s": 3.412,
+   "jetons_entree": 1541,
+   "jetons_sortie": 183,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E2 cotisations non à jour"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0201",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : L'image comporte seulement une mention textuelle et un visuel schématique, sans dommage identifiable ni lieu vérifiable."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 4.154,
+   "duree_dossier_s": 7.66,
+   "jetons_entree": 1548,
+   "jetons_sortie": 174,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-2-photo.png : L'image est schématique et ne permet pas de vérifier le lieu ni les dommages décrits dans la déclaration.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0202",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : L'image est très schématique et ne montre pas clairement une cuisine ni les éléments déclarés ; seul le libellé évoque un incendie."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 3.972,
+   "duree_dossier_s": 9.61,
+   "jetons_entree": 1541,
+   "jetons_sortie": 188,
+   "verdict_chaine": "non_effectue",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Contrôle de cohérence impossible (delai_depasse) : reprise manuelle"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0203",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : Le visuel est schématique et ne permet pas de vérifier clairement des dommages correspondant au sinistre déclaré."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 4.151,
+   "duree_dossier_s": 7.079,
+   "jetons_entree": 1548,
+   "jetons_sortie": 171,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-2-photo.png : L'image est schématique et ne montre pas clairement les dommages décrits ni le lieu, même si le libellé évoque un dégât des eaux.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0204",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.826,
+   "duree_dossier_s": 9.615,
+   "jetons_entree": 1541,
+   "jetons_sortie": 177,
+   "verdict_chaine": "non_effectue",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Contrôle de cohérence impossible (delai_depasse) : reprise manuelle"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0205",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.692,
+   "duree_dossier_s": 6.397,
+   "jetons_entree": 1548,
+   "jetons_sortie": 174,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-2-photo.png : Le visuel est schématique et ne permet pas de confirmer des dommages au parquet ou aux plinthes du couloir.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0206",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.939,
+   "duree_dossier_s": 6.932,
+   "jetons_entree": 1543,
+   "jetons_sortie": 183,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée sans avis anti-fraude (mode dégradé, contrôle a posteriori)"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0207",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.364,
+   "duree_dossier_s": 7.316,
+   "jetons_entree": 1541,
+   "jetons_sortie": 178,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0301",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : L'image est très schématique et ne permet pas de vérifier le lieu ni les dommages décrits, malgré la mention de dégât des eaux."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 3.959,
+   "duree_dossier_s": 7.162,
+   "jetons_entree": 1548,
+   "jetons_sortie": 179,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-2-photo.png : L'image est très schématique et ne montre pas clairement des dommages identifiables ; seul le texte évoque un dégât des eaux.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0302",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : L'image est très schématique et ne montre pas clairement une cuisine, un plan de travail ou une hotte endommagés."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 4.485,
+   "duree_dossier_s": 8.593,
+   "jetons_entree": 1541,
+   "jetons_sortie": 185,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-1-facture.png : La facture mentionne des travaux compatibles avec un incendie après le 2026-08-01, mais ne cite ni la cuisine, ni la hotte, ni le plan de travail. ; piece-2-photo.png : L'image est très schématique et ne permet pas d'identifier clairement une cuisine, une hotte ou un plan de travail détruits.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0303",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 2.986,
+   "duree_dossier_s": 6.243,
+   "jetons_entree": 1543,
+   "jetons_sortie": 173,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée sans avis anti-fraude (mode dégradé, contrôle a posteriori)"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0304",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : Le visuel est schématique et ne permet pas de relier clairement les dommages au couloir, au parquet ou à la salle de bains déclarés."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 4.319,
+   "duree_dossier_s": 6.787,
+   "jetons_entree": 1548,
+   "jetons_sortie": 184,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0305",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : Le visuel ne montre pas clairement des dommages identifiables ni le lieu décrit, malgré le libellé indiquant un dégât des eaux."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 3.893,
+   "duree_dossier_s": 6.649,
+   "jetons_entree": 1548,
+   "jetons_sortie": 183,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-2-photo.png : L'image porte la mention dégât des eaux, mais le visuel est schématique et ne permet pas de vérifier les dommages décrits.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0306",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 3.784,
+   "duree_dossier_s": 6.739,
+   "jetons_entree": 1543,
+   "jetons_sortie": 190,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée sans avis anti-fraude (mode dégradé, contrôle a posteriori)"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0307",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.127,
+   "duree_dossier_s": 6.65,
+   "jetons_entree": 1541,
+   "jetons_sortie": 177,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0401",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.232,
+   "duree_dossier_s": 6.793,
+   "jetons_entree": 1548,
+   "jetons_sortie": 173,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0402",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : Le document est présenté comme une photo de bris de glace, mais l'image fournie ne montre pas clairement une baie vitrée fissurée ni le lieu."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 4.035,
+   "duree_dossier_s": 6.052,
+   "jetons_entree": 1543,
+   "jetons_sortie": 191,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "decision",
+    "decision": "refusee",
+    "file": null,
+    "motif": "Non éligible : E5 sinistre non couvert par la formule"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0403",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : L'image est étiquetée 'incendie' mais ne montre pas clairement une cuisine, une hotte ou un plan de travail détruits."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 5.436,
+   "duree_dossier_s": 7.156,
+   "jetons_entree": 1541,
+   "jetons_sortie": 189,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-1-facture.png : Facture postérieure au sinistre, compatible avec des réparations après incendie, mais le document ne mentionne pas explicitement un incendie ni la cuisine, la hotte ou le plan de travail.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0404",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : Le visuel est schématique et ne permet pas de vérifier clairement des dommages au parquet, aux plinthes ou à la salle de bains."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 4.115,
+   "duree_dossier_s": 6.286,
+   "jetons_entree": 1548,
+   "jetons_sortie": 181,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "cellule_fraude",
+    "motif": "Avis anti-fraude indisponible : contrôle anti-fraude manuel"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0405",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "depots/1-photo.png : L’image est schématique et ne montre pas clairement une baie vitrée fissurée, malgré la mention de bris de glace."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 3.641,
+   "duree_dossier_s": 7.485,
+   "jetons_entree": 1544,
+   "jetons_sortie": 183,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (depots/1-photo.png : L’image est présentée comme une photo de bris de glace, mais ne montre pas clairement une baie vitrée fissurée ni le lieu décrit.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0501",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 4.772,
+   "duree_dossier_s": 9.114,
+   "jetons_entree": 1541,
+   "jetons_sortie": 178,
+   "verdict_chaine": "coherent",
+   "fiche": {
+    "issue": "decision",
+    "decision": "acceptee",
+    "file": null,
+    "motif": "Demande acceptée"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0502",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-2-photo.png : L'image est schématique et ne montre pas clairement les dommages ni le lieu, malgré la mention de dégât des eaux."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 3.013,
+   "duree_dossier_s": 7.012,
+   "jetons_entree": 1548,
+   "jetons_sortie": 175,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-2-photo.png : Compatible avec la déclaration, mais l'image ne montre pas clairement des dommages identifiables ni le lieu.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0503",
+   "attendu": "coherent",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-1-facture.png : Facture de travaux après sinistre, mais sans mention explicite d’un incendie ni de la cuisine."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 3.971,
+   "duree_dossier_s": 7.156,
+   "jetons_entree": 1541,
+   "jetons_sortie": 167,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-2-photo.png : L'image est étiquetée incendie, mais son contenu ne permet pas de vérifier le lieu ni les biens décrits dans la déclaration.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": false
+  },
+  {
+   "reference": "KAL-26-0601",
+   "attendu": "coherent",
+   "verdict": "coherent",
+   "constats": [],
+   "raison": "coherent",
+   "duree_coherence_s": 1.911,
+   "duree_dossier_s": 1.389,
+   "jetons_entree": 1022,
+   "jetons_sortie": 89,
+   "verdict_chaine": "non_atteint",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Arrêt par la borne « etat_repete » : reprise manuelle"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0701",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-1-facture.png : évoque bris_de_glace, déclaré degat_des_eaux (Facture de dépose et pose de double vitrage)",
+    "piece-1-facture.png : La facture concerne un vitrage endommagé, ce qui évoque un bris de glace et non un dégât des eaux sur parquet/plinthes."
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 2.85,
+   "duree_dossier_s": 7.192,
+   "jetons_entree": 1548,
+   "jetons_sortie": 179,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-1-facture.png : évoque bris_de_glace, déclaré degat_des_eaux (Facture de dépose et pose d’un double vitrage) ; piece-1-facture.png : La facture concerne un vitrage endommagé, ce qui évoque un bris de glace et non un dégât des eaux sur parquet/plinthes.) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0702",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-1-facture.png : facture du 2026-07-25, antérieure au sinistre du 2026-08-14"
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 3.737,
+   "duree_dossier_s": 7.41,
+   "jetons_entree": 1548,
+   "jetons_sortie": 172,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-1-facture.png : facture du 2026-07-25, antérieure au sinistre du 2026-08-14) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0703",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-2-photo.png : évoque incendie, déclaré degat_des_eaux (Photo présentée comme un sinistre incendie)",
+    "piece-2-photo.png : L'image évoque explicitement un incendie, ce qui contredit la déclaration de dégât des eaux."
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 2.566,
+   "duree_dossier_s": 6.568,
+   "jetons_entree": 1548,
+   "jetons_sortie": 170,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-2-photo.png : évoque incendie, déclaré degat_des_eaux (Photo présentée comme sinistre incendie) ; piece-2-photo.png : Le document évoque explicitement un incendie, contraire au dégât des eaux déclaré.) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0704",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-1-facture.png : évoque degat_des_eaux, déclaré incendie (Facture de recherche et réparation de fuite et remplacement de parquet)",
+    "piece-1-facture.png : La facture mentionne une fuite et un parquet remplacé, ce qui évoque un dégât des eaux et non un incendie de cuisine."
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 3.981,
+   "duree_dossier_s": 6.048,
+   "jetons_entree": 1541,
+   "jetons_sortie": 190,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-1-facture.png : évoque degat_des_eaux, déclaré incendie (Facture de recherche et réparation de fuite et remplacement du parquet) ; piece-1-facture.png : La facture mentionne une fuite et du parquet, ce qui évoque un dégât des eaux, pas un incendie de cuisine.) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0705",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-2-depot_plainte.png : La plainte concerne un vol de véhicule sur la voie publique, pas un cambriolage d'habitation avec vol d'ordinateur et d'appareil photo."
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 3.164,
+   "duree_dossier_s": 7.922,
+   "jetons_entree": 1541,
+   "jetons_sortie": 192,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-2-depot_plainte.png : La plainte concerne un vol de véhicule, différent du cambriolage habitation déclaré.) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0706",
+   "attendu": "non_coherent",
+   "verdict": "contradiction",
+   "constats": [
+    "piece-1-facture.png : évoque degat_des_eaux, déclaré bris_de_glace (Facture de recherche et réparation de fuite, remplacement de parquet)",
+    "piece-1-facture.png : La facture mentionne une fuite et un parquet remplacé, ce qui évoque un dégât des eaux, pas un bris de glace."
+   ],
+   "raison": "contradiction",
+   "duree_coherence_s": 2.764,
+   "duree_dossier_s": 5.56,
+   "jetons_entree": 1543,
+   "jetons_sortie": 179,
+   "verdict_chaine": "contradiction",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Pièces incohérentes avec la déclaration (piece-1-facture.png : évoque degat_des_eaux, déclaré bris_de_glace (Facture de recherche et réparation de fuite, remplacement du parquet) ; piece-1-facture.png : La facture évoque une fuite d'eau et un parquet endommagé, pas un bris de glace de baie vitrée.) : examen par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0707",
+   "attendu": "ambigu",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-1-facture.png : facture du 2026-03-06, antérieure au vol (achat, pas remplacement)"
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 3.035,
+   "duree_dossier_s": 7.506,
+   "jetons_entree": 1541,
+   "jetons_sortie": 173,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-1-facture.png : facture du 2026-03-06, antérieure au vol (achat, pas remplacement)) : vérification par un gestionnaire"
+   },
+   "decision_attendue": true
+  },
+  {
+   "reference": "KAL-26-0708",
+   "attendu": "ambigu",
+   "verdict": "insuffisant",
+   "constats": [
+    "piece-1-facture.png : Facture datée après le sinistre, mais libellé trop vague ('fournitures diverses') pour relier clairement au dégât des eaux déclaré.",
+    "piece-2-photo.png : L'image porte la mention 'degat des eaux', compatible avec la déclaration, mais ne montre pas clairement les dommages décrits (parquet/plinthes/couloir)."
+   ],
+   "raison": "insuffisant",
+   "duree_coherence_s": 3.445,
+   "duree_dossier_s": 6.537,
+   "jetons_entree": 1548,
+   "jetons_sortie": 194,
+   "verdict_chaine": "insuffisant",
+   "fiche": {
+    "issue": "escalade",
+    "decision": null,
+    "file": "gestionnaire",
+    "motif": "Cohérence des pièces incertaine (piece-1-facture.png : C'est une facture datée après le sinistre, mais elle ne mentionne ni dégât des eaux ni parquet, plinthes ou salle de bains.) : vérification par un gestionnaire"
+   },
+   "decision_attendue": true
+  }
+ ]
+}
