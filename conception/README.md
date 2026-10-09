@@ -52,7 +52,7 @@ Pour entrer dans le dossier avant les deux chantiers : le pourquoi, le système 
 
 Le formateur a précisé le 08/10/2026 que les entrées réelles sont des pièces non structurées (contrat en PDF, factures en photo). Deux agents de lecture produisent le JSON de la spec § 3 avant la Coordination ; la chaîne de décision reste inchangée. Fichiers : [drawio](schemas/schema-E-lecture-des-pieces.drawio), [PNG](schemas/schema-E-lecture-des-pieces.png).
 
-L'équipe compte sept rôles internes : deux agents de lecture qui utilisent un modèle (lecteur de contrat, lecteur de pièces), quatre contrôles déterministes (Éligibilité, Pièces, Estimation, Anti-fraude) et la Coordination, qui applique les règles et produit seule l'issue. Le partenaire anti-fraude est un agent externe : il appartient à une autre entreprise.
+L'équipe compte huit rôles internes : trois qui utilisent un modèle (lecteur de contrat, lecteur de pièces, agent Documents et cohérence), quatre contrôles déterministes (Éligibilité, Pièces, Estimation, Anti-fraude) et la Coordination, qui applique les règles et produit seule l'issue. Le partenaire anti-fraude est un agent externe : il appartient à une autre entreprise. Où un modèle est utilisé, et pourquoi : dossier de conception, section 2.5.
 
 ![Lecture des pièces](schemas/schema-E-lecture-des-pieces.png)
 
@@ -88,6 +88,7 @@ L'équipe compte sept rôles internes : deux agents de lecture qui utilisent un 
 - [x] 08/10/2026 (soir) : schémas 4, 5, 6, N1, N2, 3 et A alignés sur le code du chantier 2 (délai du partenaire dans le temps restant, registre des appels, trace avec la raison, attendu et mesuré séparés) ; schéma 7 ajouté (budget de 10 s, deux replis)
 - [x] 08/10/2026 : schémas 0, 2 et A alignés (contrôles en séquence avec court-circuit, sept rôles, agents de lecture en amont) ; schéma E complété (contrôles avant toute lecture, mesure E5)
 - [x] Trois vues d'ensemble (N0 enjeux et exigences, N1 système complet, N2 épreuve du réel), à jour de la conception au 07/10/2026
+- [x] 09/10/2026 : agent Documents et cohérence dans le texte et les schémas (huit rôles) ; « le modèle interprète » dans les schémas 0, 1, 2, A, E et N1 ; dossier de conception régénéré (28 pages, section 2.5 : où un modèle est utilisé et pourquoi)
 - [ ] Dossier validé par le formateur, avant tout code
 
 ## Questions pour le formateur

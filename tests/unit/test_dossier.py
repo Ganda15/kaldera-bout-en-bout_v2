@@ -419,3 +419,24 @@ def test_un_modele_en_panne_pendant_la_coherence_donne_une_escalade_technique() 
     assert (fiche["issue"], fiche["file"], fiche["decision"]) == ("escalade", "gestionnaire", None)
     assert "Contrôle de cohérence impossible (modele_indisponible)" in fiche["motif"]
     assert resultat["lecture"][-1]["statut"] == "echec"
+
+
+def test_un_appel_de_coherence_non_termine_a_la_decision_garde_sa_duree_reelle() -> None:
+    """Le modèle répond après le budget : à la décision, l'appel tourne encore. La ligne de lecture le dit et garde le
+    temps écoulé depuis son départ, au lieu d'afficher 0 ms (constaté dans le poste le 09/10)."""
+    import time
+    from kaldera.bornes import Bornes
+    appeler = oracle()
+
+    def coherence_trop_lente(consigne: str, schema: type[BaseModel], images: Any = None, *,
+                             delai_s: float | None = None) -> Any:
+        if schema is Interpretation:
+            time.sleep(1.0)  # au-delà de la limite de 0,4 s
+        return appeler(consigne, schema, images)
+
+    resultat = traiter_dossier(DOSSIERS / "KAL-26-0101", coherence_trop_lente,
+                               bornes=Bornes(duree_max_s=0.5, reserve_fiche_s=0.1))
+    assert "Contrôle de cohérence impossible (delai_depasse)" in resultat["fiche"]["motif"]
+    ligne = resultat["lecture"][-1]
+    assert (ligne["agent"], ligne["statut"], ligne["termine"]) == ("coherence", "echec", False)
+    assert ligne["duree_ms"] >= 300, ligne["duree_ms"]  # le temps réellement écoulé, pas 0

@@ -63,12 +63,13 @@ Deux agents de lecture transforment ces pièces en données de la spec § 3, pui
 s'applique sans changement. Ils lisent et extraient, ils ne décident jamais. Schéma :
 [`conception/schemas/schema-E-lecture-des-pieces.png`](conception/schemas/schema-E-lecture-des-pieces.png).
 
-L'équipe compte sept rôles internes : deux agents de lecture qui utilisent un modèle (lecteur de contrat, lecteur de pièces), quatre contrôles déterministes (Éligibilité, Pièces, Estimation, Anti-fraude) et la Coordination, qui applique les règles et produit seule l'issue. Le partenaire anti-fraude est un agent externe : il appartient à une autre entreprise.
+L'équipe compte huit rôles internes : trois qui utilisent un modèle (lecteur de contrat, lecteur de pièces, agent Documents et cohérence), quatre contrôles déterministes (Éligibilité, Pièces, Estimation, Anti-fraude) et la Coordination, qui applique les règles et produit seule l'issue. Le partenaire anti-fraude est un agent externe : il appartient à une autre entreprise. Où un modèle est utilisé, et pourquoi : dossier de conception, section 2.5.
 
 | Agent | Reçoit | Ce qui est fait en code | Ce que fait le modèle |
 |---|---|---|---|
 | Lecteur de contrat (`lire_contrat`) | `contrat.pdf` | extraction du texte (PyMuPDF) | remplit le schéma strict `ContratLu` : numéro, formule, date, statut, cotisations |
 | Lecteur de pièces (`lire_piece`) | une image et son type | mesure de netteté : une image floue est illisible, sans appel au modèle ; photo et dépôt de plainte nets sont lisibles | lit le montant TTC d'une facture nette, schéma strict `FactureLue` |
+| Documents et cohérence (`agents/coherence.py`) | le sinistre déclaré et les images nettes, en un appel lancé dès l'arrivée du dossier | écarts explicites (autre sinistre, pièce datée avant le sinistre) et calcul du verdict ; contradiction, doute ou échec vont à un gestionnaire | interprète chaque pièce (nature, sinistre évoqué, date, concordance), schéma strict `Interpretation` |
 
 Règles : dans le doute, une facture est déclarée illisible, ce qui déclenche une demande de complément (jamais un
 montant inventé). Un modèle indisponible ou une réponse hors schéma rendent la lecture impossible : escalade motivée
@@ -99,15 +100,21 @@ escaladée par la borne `etat_repete` en 3,7 s, sans appel au modèle pour les i
 ```
 
 Résultat du 08/10/2026 ([`evaluation/extraction/rapport.md`](evaluation/extraction/rapport.md), généré depuis
-`resultats.json`, jamais écrit à la main) : 100 % sur chaque champ, 34 décisions sur 34 identiques au chemin JSON,
-aucune lecture impossible, 67 appels au modèle en 25,1 s. Limites : pièces de synthèse, nettes et dactylographiées ;
+`resultats.json`, jamais écrit à la main, commit `5cb2a4e`, agent Documents et cohérence compris) : verdict
+**échoué**. 100 % sur chaque champ (5 champs du contrat sur 34 dossiers, 33 montants, 68 lisibilités), aucune
+lecture impossible, mais 32 décisions sur 34 identiques au chemin JSON pour un seuil de 95 % : les deux écarts
+(KAL-26-0204, KAL-26-0503) viennent de la cohérence, qui juge deux factures d'incendie incertaines, pas de la
+lecture. 101 appels au modèle (34 contrats, 33 factures, 34 cohérences). La cohérence a sa propre évaluation, sur
+42 dossiers ([`evaluation/coherence/rapport.md`](evaluation/coherence/rapport.md)) : 6 contradictions sur 6,
+aucune fausse contradiction, 2 examens inutiles (seuil : 3 au plus), mais 1 échec technique (seuil : 0) :
+verdict **échoué**. Limites : pièces de synthèse, nettes et dactylographiées ;
 deux images illisibles seulement ; le contenu des photos n'est pas vérifié. Les tests unitaires remplacent le modèle
 par un faux : ils ne font aucun appel réseau.
 
 ## Layout
 
-- `src/kaldera/` : la Coordination (`coordination.py`), la mémoire de la demande (`etat.py`), les bornes (`bornes.py`), les métriques (`metriques.py`), les règles (`regles.py`), les quatre agents de contrôle (`agents/`), les agents de lecture (`extraction/`), l'espace assuré
-- `tests/unit/` : nos tests unitaires (123 au 08/10/2026)
+- `src/kaldera/` : la Coordination (`coordination.py`), la mémoire de la demande (`etat.py`), les bornes (`bornes.py`), les métriques (`metriques.py`), les règles (`regles.py`), les quatre agents de contrôle et l'agent Documents et cohérence (`agents/`), les agents de lecture (`extraction/`), l'espace assuré
+- `tests/unit/` : nos tests unitaires (323 au 09/10/2026) ; `tests/integration/` : 37 tests d'intégration (les 28 scénarios rejoués par toute l'équipe, et le chemin public vers le partenaire)
 - `dossiers/` : 34 dossiers de pièces non structurées et leur vérité ; `outils/` : générateur, essai du modèle, évaluation ; `evaluation/extraction/` : rapport généré
 - `conception/` : dossier de conception, schémas, journal des ajustements ; `livrable/` : le PDF
 - `docs/specs_metier.md` — spécifications fonctionnelles
@@ -134,10 +141,10 @@ Fichier : `.github/workflows/tests.yml`, exécuté par GitHub Actions.
 |---|---|
 | Déclencheurs | chaque push sur `main`, chaque pull request, et à la main (onglet Actions, « Run workflow ») |
 | Environnement | Ubuntu, Python 3.11 (version exigée par `pyproject.toml`), cache pip |
-| Étapes | 1. récupération du code ; 2. installation : `pip install -e . --group dev` ; 3. style : `ruff check .` ; 4. tests unitaires : `pytest tests/unit` ; 5. tests d'acceptance du chantier 1 : `pytest tests/acceptance/test_equipe_orchestration.py` |
+| Étapes | 1. récupération du code ; 2. installation : `pip install -e . --group dev` ; 3. style : `ruff check .` ; 4. tests unitaires : `pytest tests/unit` ; 5. tests d'acceptance des chantiers 1 et 2 : `pytest tests/acceptance` ; 6. tests d'intégration (partenaire simulé, réseau local) : `pytest tests/integration` |
 | Résultat | une coche verte ou une croix rouge sur chaque commit, détail dans l'onglet Actions du dépôt |
 
-Les tests du chantier 2 (`tests/acceptance/test_collaboration_a2a.py`) rejoindront la chaîne quand le client A2A sera branché : aujourd'hui ils échouent par construction, le partenaire étant un bouchon.
+Les 56 tests d'acceptance (chantiers 1 et 2) et les 37 tests d'intégration tournent à chaque push sur `main` et à chaque pull request. Les évaluations avec le modèle réel n'y tournent pas : elles coûtent des appels et demandent la clé ; elles se lancent à la main (`outils/evaluer_extraction.py`, `outils/evaluer_coherence.py`).
 
 Reproduire la chaîne en local (Windows, PowerShell, depuis la racine du dépôt) :
 
@@ -146,17 +153,21 @@ py -V:Astral/CPython3.11.15 -m venv .venv
 .venv\Scripts\python.exe -m pip install --upgrade pip
 .venv\Scripts\python.exe -m pip install -e . --group dev
 .venv\Scripts\python.exe -m ruff check .
-.venv\Scripts\python.exe -m pytest tests/unit tests/acceptance/test_equipe_orchestration.py -q
+.venv\Scripts\python.exe -m pytest tests/unit tests/acceptance tests/integration -q
 ```
 
-Tester la chaîne elle-même : pousser un commit sur `main`, ou lancer « Run workflow » dans l'onglet Actions, puis vérifier que les cinq étapes sont vertes.
+Tester la chaîne elle-même : pousser un commit sur `main`, ou lancer « Run workflow » dans l'onglet Actions, puis vérifier que les six étapes sont vertes.
 
 ## Known issues
 
-- Les échanges avec le service anti-fraude n'ont pas été revalidés depuis la
-  version 2.0 de son contrat.
-- Le comportement face à un partenaire lent ou indisponible n'a pas encore été
-  éprouvé en conditions réelles.
+- Le registre des appels au partenaire couvre une exécution (une demande ou un lot). Après un redémarrage, un
+  second appel pour le même dossier n'est pas bloqué en amont : le partenaire le refuse (`-32029`) et la demande
+  passe en mode dégradé. Un registre durable demanderait un stockage persistant (question posée au formateur).
+- Cohérence : une facture d'achat datée avant un incendie est signalée comme contradiction (seul le vol est
+  traité à part). La demande va à un gestionnaire, jamais à un refus. Correction prévue : le modèle rendra
+  l'objet de la facture (achat du bien ou réparation).
+- Les deux évaluations avec le modèle réel restent « échouées » selon leurs propres seuils (voir plus haut).
+- Le poste du gestionnaire (`src/kaldera/web/`) est un prototype local, sans connexion.
 
 ## License
 
