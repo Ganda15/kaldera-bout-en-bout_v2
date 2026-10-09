@@ -118,34 +118,39 @@ Les deux évaluations réelles restent « échouées » : pour la lecture, 32 is
 
 Le schéma est un **superviseur en séquence** : la Coordination délègue chaque contrôle dans l'ordre de la spécification, et s'arrête dès qu'une règle conclut. Les agents ne s'appellent jamais entre eux et ne choisissent pas l'étape suivante. Une étape est une délégation : l'appel, le résultat, son rangement, soit une ligne de trace.
 
-**Qui décide qu'une demande est terminée : la Coordination seule**, en écrivant la section `issue`. Elle applique les règles du § 10 dans l'ordre :
+**Qui décide qu'une demande est terminée : la Coordination seule**, en écrivant la section `issue`. Avant tout contrôle, une déclaration datée avant la survenance du sinistre part en escalade `gestionnaire` : la spécification ne prévoit pas ce cas, aucune règle n'est inventée (journal, entrée 9). Ensuite, la Coordination applique les règles du § 10 dans l'ordre :
 
 | Règle | Condition | Issue |
 |---|---|---|
 | 1 | demande non éligible | refusée, 0 € |
 | 2 | pièces manquantes | escalade `gestionnaire` |
+| 2 bis | chemin des pièces : pièces incohérentes avec la déclaration, cohérence incertaine, ou contrôle de cohérence impossible (§ 5) | escalade `gestionnaire`, avec trois motifs distincts et la pièce citée |
 | 3 | montant estimé nul (dommage inférieur ou égal à la franchise) | refusée, 0 € |
 | 4 | contrôle anti-fraude requis | `modere` : escalade `gestionnaire` ; `eleve` : escalade `cellule_fraude` ; indisponible : mode dégradé ; `faible` : la demande poursuit |
 | 5 | montant estimé supérieur à 10 000 € | escalade `gestionnaire` |
 | 6 | sinon | acceptée, montant estimé remboursé |
 
+**L'étape de cohérence.** Elle n'existe que sur le chemin des pièces : une demande JSON ne porte que le type et le montant de chaque pièce. La Coordination la délègue après un contrôle des pièces complet, pour qu'une pièce manquante suive d'abord la demande de complément, et avant l'Estimation. Le refus d'éligibilité reste prioritaire. L'appel au modèle part dès l'arrivée du dossier, en parallèle de la lecture du contrat et des factures, car l'interprétation ne dépend que du formulaire et des images (journal, entrée 12) : la Coordination n'attend que son résultat, sur le même budget. Aucun verdict de cohérence n'est une décision : contradiction, doute et échec technique vont à une personne. Un appel parti mais inutile, parce que la demande s'est conclue avant, reste noté avec son coût : 8 dossiers sur 42 dans l'évaluation.
+
 Il n'existe que deux issues : une décision (acceptée ou refusée) ou une escalade motivée, avec sa file et un motif lisible. Aucun état « en attente » sans qu'un humain en soit saisi. Un agent interne en échec n'est pas relancé (relancer du code déterministe redonnerait la même erreur) : escalade `gestionnaire`, motif « erreur interne », échec compté dans les métriques.
 
 Les lots sont traités **en concurrence**, chaque demande avec son propre état et sa propre durée : « le traitement d'une demande n'est jamais retardé par celui d'une autre » (§ 12).
 
-### 3.2 Les bornes provisoires
+### 3.2 Les bornes
 
-Les valeurs imposées par la spécification ou le contrat ne sont pas provisoires. Les autres sont des valeurs de départ, éprouvées par le plan d'épreuve (section 5).
+Les valeurs imposées par la spécification ou le contrat ne se discutent pas. Deux autres sont tirées de la mesure, par une règle écrite dans `bornes.py` ; les dernières sont des valeurs de départ, éprouvées par le plan d'épreuve (section 5).
 
 | Borne | Valeur | Base du choix | Scénario qui l'éprouve |
 |---|---|---|---|
-| Durée par demande (`duree_max_s`) | 10 s | engagement de service (§ 12) ; descendra à 8 s si produire la fiche d'une demande arrêtée dépasse l'engagement | PAN-02 |
-| Étapes par demande (`etapes_max`) | 8 | chemin nominal de 5 étapes, plus 2 compléments, plus 1 de marge ; la dernière étape est réservée à l'issue | BCL-01 |
+| Durée par demande (`duree_max_s`) | 10 s | engagement de service (§ 12). Le budget commence à l'arrivée du dossier et couvre la lecture des pièces ; chaque appel au modèle et au partenaire reçoit le temps restant ; la Coordination continue la même limite (journal, entrée 5) | PAN-02 |
+| Réserve de la fiche (`reserve_fiche_s`) | 0,4 s | tirée de la mesure : dix fois le plus grand dépassement mesuré après l'échéance (38 ms sur 70 essais), arrondi au dixième supérieur (journal, entrée 8) | `evaluation/bornes/rapport.md` |
+| Étapes par demande (`etapes_max`) | 8 | chemin nominal de 5 étapes, plus 2 compléments, plus 1 de marge ; sur le chemin des pièces, la cohérence ajoute une étape : 8 au plus, la borne tient sans marge. La dernière étape est réservée à l'issue | BCL-01 |
 | Demandes de complément | 2 | NOM-07 et PAN-01 en demandent une ; aucun scénario n'en justifie davantage | BCL-01 |
 | Même état vu deux fois | arrêt immédiat | un dépôt aussi illisible que la pièce d'origine ne fait pas avancer la demande | BCL-01 |
 | Appels au partenaire par dossier | 1 | contrat, § 6 | PAN-01, PAN-02, INV |
-| Délai d'un appel au partenaire | 3 s | contrat, § 5 | PAN-02 |
-| Délai par contrôle interne | 1 s | contrôles en code, sans réseau | nominaux |
+| Délai d'un appel au partenaire | 3 s, ou le temps restant s'il est plus court | contrat, § 5 ; un seul budget pour toute la demande (journal, entrée 7) | PAN-02 |
+| Délai minimal d'un appel au partenaire (`delai_partenaire_min_s`) | 0,15 s | tiré de la mesure : l'appel réussi le plus long (0,10 s sur 65 essais), arrondi au vingtième supérieur ; en dessous, aucun appel, pour ne pas gâcher le seul permis (journal, entrée 8) | `evaluation/bornes/rapport.md` |
+| Délai par contrôle interne | objectif 1 s, non imposé | contrôles en code, sans réseau, mesurés à 0,01 ms ; la limite de 10 s est vérifiée avant chaque étape | nominaux |
 
 Une borne atteinte ne produit jamais un arrêt silencieux : la demande est escaladée vers `gestionnaire` et sa fiche le signale dans `arret`, avec le nom de la borne. Le scénario BCL-01 l'illustre : facture illisible, puis un seul dépôt tout aussi illisible. La borne « même état vu deux fois » arrête la demande à la quatrième étape (éligibilité, pièces, complément, issue).
 
@@ -153,16 +158,17 @@ Une borne atteinte ne produit jamais un arrêt silencieux : la demande est escal
 
 ### 3.3 La mémoire partagée de la demande
 
-**Ce qu'elle contient.** La demande reçue, en lecture seule ; les cinq sections métier ; la trace, en ajout seul. Hors de l'état : l'échéance de la demande et le registre des appels (une exécution) ; `arret` est écrit dans la fiche.
+**Ce qu'elle contient.** La demande reçue, en lecture seule ; les cinq sections métier ; sur le chemin des pièces, la section de travail `coherence` ; la trace, en ajout seul. Hors de l'état : l'échéance de la demande et le registre des appels (une exécution) ; `arret` est écrit dans la fiche.
 
 **Où elle vit.** En mémoire, un objet par demande, créé au début du traitement et jamais partagé entre deux demandes. La fiche de décision est construite à partir de cet état à la fin du traitement.
 
-**Accès maîtrisé.** Seule la Coordination lit et écrit l'état. Une table fixe associe chaque agent à sa section ; la Coordination range le résultat d'un agent dans cette seule section et refuse tout autre rangement (erreur de droits). `pieces` est remplie à nouveau après chaque dépôt de l'assuré ; les autres sections ne le sont qu'une fois. Éligibilité et Pièces tournent en parallèle, mais un seul composant écrit : aucun conflit possible.
+**Accès maîtrisé.** Seule la Coordination lit et écrit l'état. Une table fixe associe chaque agent à sa section ; la Coordination range le résultat d'un agent dans cette seule section et refuse tout autre rangement (erreur de droits). `pieces` est remplie à nouveau après chaque dépôt de l'assuré ; les autres sections ne le sont qu'une fois. Les contrôles tournent en séquence. Seul l'appel au modèle de la cohérence tourne en parallèle de la lecture, et son résultat n'est rangé que par la Coordination : un seul composant écrit, aucun conflit possible. La section `coherence` est hors des cinq sections métier d'`interface.md` : `pieces` garde un seul propriétaire.
 
 | Section | Remplie par le résultat de | Contenu passé ensuite à |
 |---|---|---|
 | `eligibilite` | Éligibilité | Coordination (règle 1) |
 | `pieces` | Pièces, après chaque dépôt | Estimation (factures lisibles), Coordination (règle 2) |
+| `coherence` | Documents et cohérence, chemin des pièces | Coordination (règle 2 bis) |
 | `estimation` | Estimation | Anti-fraude (montant justifié), Coordination (règles 3 et 5) |
 | `avis_fraude` | Anti-fraude | Coordination (règle 4) |
 | `issue` | Coordination | fiche de décision |
