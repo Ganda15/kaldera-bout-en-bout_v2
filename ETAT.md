@@ -2,15 +2,17 @@
 
 ## ▶️ Prochaine action
 
-**État au 09/10/2026 (soir), vérifié avant fusion.**
+**État au 12/10/2026 (matin), vérifié sur `main` (`c5e0cc4`).**
 
-- PR #3 (`coherence` vers `main`) : l'agent Documents et cohérence ; CI success.
-- PR #4 (`ui-coherence` vers `coherence`) : le poste du gestionnaire avec la cohérence et le temps séparé par nature (modèle, partenaire, code) ; le dossier de conception aligné sur le système (28 pages, § 2.5 : où un modèle est utilisé et pourquoi) ; les 13 schémas à jour ; la preuve d'acceptance régénérée sur `c2ddda3` (56/56, `--verifier` conforme).
-- Mesuré le 09/10 : 417 tests, 56/56 en acceptance, 37/37 en intégration, ruff propre.
+- Version livrée le 09/10 : tag `livrable-kaldera-v2-v1` sur `b40faea`. Depuis, sur `main` : le dossier de conception daté du 12/10/2026, contenu inchangé (PR #6, commit `cf6e606`, fusion `c5e0cc4`).
+- Mesuré le 12/10 sur `main` : sur le PC, 409 passed et 8 failed : les 8 échecs, comme `--verifier`, viennent de Smart App Control qui bloque `pyexpat.pyd` (module XML du Python 3.11 de `uv`), pas du code ; ruff propre. Sur GitHub (CI Linux, run 38218479627, même commit) : ruff propre, 324 unitaires, 56 acceptance, 37 intégration, soit 417 passed.
+- Partenaire anti-fraude en ligne sur le serveur Hetzner (conteneur `kaldera-partenaire`, seuls `/a2a` et l'Agent Card ouverts).
 
-**Prochaine action** : Era fusionne la PR #3, puis la PR #4 (base passée à `main` si GitHub ne le fait pas). Ensuite, sur `main` : `.venv\Scripts\python.exe -m outils.preuve_acceptance --verifier`.
+**Prochaine action** : attendre les commentaires du formateur, annoncés ensemble après ce lundi 12/10. S'il demande des changements : une branche, une PR vers `main` (vérifier « into main »), puis le tag `livrable-kaldera-v2-v2`. S'il n'en demande pas : poser quand même `livrable-kaldera-v2-v2` sur `main`, car le tag v1 porte le PDF du 09/10. Era dépose ensuite le lien du tag sur Simplonline.
 
-**Restes** : la règle de date de la cohérence (une facture d'achat antérieure à un incendie est signalée comme contradiction) ; l'affichage « appel 0 ms » quand l'appel de cohérence n'est pas fini à la décision ; le partenaire hébergé sur le serveur, à retirer après l'évaluation ; le dépôt Simplonline (Era).
+**Restes** : la règle de date de la cohérence (une facture d'achat antérieure à un incendie est signalée comme contradiction), puis une nouvelle mesure ; la question 7 au formateur (portée du registre des appels) ; le partenaire à retirer du serveur après l'évaluation (`docker rm -f kaldera-partenaire`, restaurer `/etc/caddy/Caddyfile.avant-kaldera`, `systemctl reload caddy`) ; Smart App Control bloque depuis le 12/10 `pyexpat.pyd` (module XML du Python 3.11 de `uv`) : 8 tests de `test_preuve_acceptance.py` et `--verifier` ne tournent plus sur le PC, repli prévu : Docker `python:3.11`, jamais toucher au réglage ; le dépôt Simplonline (Era).
+
+**Prochaine action du 09/10 (faite le 09/10 au soir)** : PR #3 fusionnée (`15a52c0`) ; la PR #4, fusionnée par erreur dans `coherence`, rattrapée par la PR #5 (`b40faea`) ; « appel 0 ms » corrigé (`c2ddda3`, champ `termine`) ; `--verifier` conforme sur `main` ; tag `livrable-kaldera-v2-v1` posé.
 
 **Cohérence des pièces avec la déclaration, § 5 (08/10, nuit, branche `coherence`) : faite et mesurée.** Elle remplace la limite écrite plus bas (« une contradiction de contenu n'est pas détectée »). Règle 36 de `CLAUDE.md` corrigée avec l'accord d'Era (`eb65612`) : un LLM sert là où il faut interpréter, jamais pour une règle chiffrée. Nouvel agent Documents et cohérence (`src/kaldera/agents/coherence.py`) : le modèle interprète chaque pièce nette en un seul appel, le code vérifie les écarts explicites et calcule le verdict ; contradiction, doute et échec technique vont à un gestionnaire, chacun avec son motif ; le refus d'éligibilité reste prioritaire ; le chemin JSON ne change pas. L'appel part dès l'arrivée du dossier, en parallèle de la lecture. Journal, entrées 10 à 12 ; tableau des rôles et carte des agents mis à jour ; schémas 1, A, E et N1 alignés (dépôt de conception `b1b75a5`). Défaut de nos propres données trouvé en étiquetant : la facture de vol remplaçait un téléviseur jamais déclaré (corrigé, `313f2ea`). Évaluation sur 42 dossiers étiquetés (34 + 6 contradictions + 2 ambigus, `evaluation/coherence/`), quatre essais gardés. Essai 4, officiel (`5cb2a4e`) : 6/6 contradictions, 0 fausse alerte, 2 examens inutiles sur 34, **1 échec technique** (KAL-26-0403 : appel de plus de 9,6 s, escalade technique motivée), dossier complet 4,4 s en moyenne, 6,89 s au p95, 9,61 s au plus : verdict échoué sur cette seule porte. Essai 3, même code d'agent : toutes les portes passées. Extraction relancée (`5cb2a4e`) : 100 % par champ, 32/34 décisions identiques (KAL-26-0204 et KAL-26-0503, factures d'incendie jugées « incertaines » par la cohérence, nommées dans le rapport) : verdict échoué du rapport E4. 383 tests, acceptance 56/56, ruff propre.
 
@@ -44,6 +46,8 @@
 | 08/10/2026 | 3.11.15 | E5 : `pytest tests/unit` puis `-m outils.evaluer_extraction` (gpt-5.4, 13:05) | rouge d'abord (ImportError, `Reponse` absente) ; puis **130 passed**, chantier 1 40/40, ruff propre ; évaluation réelle : 100 % par champ, 34/34, 67 appels en 24,8 s, **32 180 jetons d'entrée et 2 480 de sortie** (contrat : 10 763 et 1 653 sur 34 lectures ; pièces : 21 417 et 827 sur 33 factures lues par le modèle) ; `--verifier` : conforme ; démo `KAL-26-0101` acceptée 1 700 € en 5,9 s (contrat 305 + 49 jetons, facture 649 + 27) |
 | 08/10/2026 | 3.11.15 | démo de la présentation, 4 commandes | `pytest tests/acceptance/test_equipe_orchestration.py` : **40 passed** ; `kaldera.cli` NOM-05 : acceptée 3 000 € ; `kaldera.extraction.dossier dossiers\KAL-26-0101` (gpt-5.4) : contrat 2,7 s, facture 4,8 s, photo sans appel, **acceptée 1 700 €**, 8,9 s en tout ; `dossiers\KAL-26-0601` : 3 images sans appel au modèle, **escalade, borne etat_repete**, 3,7 s ; unitaires 123 passed |
 | 08/10/2026 | 3.11.15 | cohérence § 5 : `pytest -q`, `outils.evaluer_coherence` (4 essais, gpt-5.4, 3 dossiers en parallèle), `outils.evaluer_extraction` | tests rouges d'abord à chaque étape ; **383 passed**, acceptance 56/56 ; essai 1 (`22c2c5b`) : 17 examens inutiles, 3 hors budget ; essai 2 (`6197868`, consigne) : 3 et 3 ; essai 3 (`928e8df`, appel en parallèle) : portes passées, 3,89 s en moyenne ; essai 4 (`5cb2a4e`) : 2 examens inutiles, 1 échec technique, 4,4 s en moyenne, 9,61 s au plus ; extraction : 100 % par champ, 32/34 décisions (cohérence), `--verifier` conforme pour les deux rapports |
+| 09/10/2026 | 3.11.15 | `pytest -q`, `ruff check .`, `outils.preuve_acceptance --verifier` sur `main` (`b40faea`) | 417 passed, ruff propre, preuve conforme ; tag `livrable-kaldera-v2-v1` |
+| 12/10/2026 | 3.11.15 | mêmes commandes sur `main` (`c5e0cc4`) | sur le PC, 409 passed et 8 failed : les 8 échecs, comme `--verifier`, viennent de Smart App Control qui bloque `pyexpat.pyd` (module XML du Python 3.11 de `uv`), pas du code ; ruff propre. Sur GitHub (CI Linux, run 38218479627, même commit) : ruff propre, 324 unitaires, 56 acceptance, 37 intégration, soit 417 passed ; PDF daté du 12/10 : texte comparé page par page avec celui du 09/10, seule la date change |
 
 `pyproject.toml` exige Python `>=3.11,<3.12` : seule une mesure sous 3.11 vaut preuve.
 
@@ -118,11 +122,11 @@ Points ouverts : les 10 s du § 12 couvrent-elles la lecture des pièces (propos
 
 ### Phase 4 : alignement et livrables (vendredi 09/10 après-midi)
 - [x] PDF unique du dossier de conception (07/10), validation formelle du formateur à obtenir
-- [ ] Alignement de la conception sur le code : schémas 0, 1, 2 et N1 régénérés (séquence au lieu du parallèle, scripts dans `kaldera_v2`) ; dossier 2.3 et 3.1 (séquence), 3.3 (reprise limitée au processus, journal n° 2) ; chantiers 1 et 2 (tests et pilote du partenaire désormais reçus) ; PDF régénéré. Phrase à garder partout : « contrôles en séquence dans une demande, demandes traitées en concurrence entre elles »
-- [ ] Preuve des tests d'acceptance et relevé de résultats dans `livrable/`
-- [ ] Journal des ajustements à jour : `conception/journal-ajustements.md`
-- [ ] Oral (hors dépôt) : le besoin du client, nos choix, ce qu'on a retiré et pourquoi, démo en direct
-- [ ] Journal Obsidian ; copie datée dans le dossier personnel, depuis un commit vérifié et cité
+- [x] (09/10, commits `d5dc7d1`, `9693608`, `e83f320`) Alignement de la conception sur le code : schémas 0, 1, 2 et N1 régénérés (séquence au lieu du parallèle, scripts dans `kaldera_v2`) ; dossier 2.3 et 3.1 (séquence), 3.3 (reprise limitée au processus, journal n° 2) ; chantiers 1 et 2 (tests et pilote du partenaire désormais reçus) ; PDF régénéré. Phrase à garder partout : « contrôles en séquence dans une demande, demandes traitées en concurrence entre elles »
+- [x] Preuve des tests d'acceptance et relevé de résultats : dans `evaluation/acceptance/preuve-execution.md` (pas dans `livrable/`), `--verifier` conforme le 09/10 sur `main`
+- [x] Journal des ajustements à jour : `conception/journal-ajustements.md` (12 entrées)
+- [x] (présenté le 09/10) Oral (hors dépôt) : le besoin du client, nos choix, ce qu'on a retiré et pourquoi, démo en direct
+- [x] Journal Obsidian (09/10 et 12/10) ; copie datée dans le dossier personnel, depuis un commit vérifié et cité (`06-Livrables/dossier-de-conception-2026-10-12.pdf`, `c5e0cc4`)
 
 ## Risques et replis
 
