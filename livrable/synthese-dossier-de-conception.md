@@ -1,6 +1,6 @@
 # Kaldera V2 : synthèse du dossier de conception
 
-> Version courte du dossier de conception (28 pages) : le besoin, l'équipe d'agents, l'échange A2A et ce qui est prouvé
+> Version courte du dossier de conception (28 pages) : le besoin, les livrables, l'équipe d'agents, l'échange A2A et ce qui est prouvé
 
 ## 1. Le besoin et les six exigences
 
@@ -17,7 +17,26 @@ La réponse est une équipe d'agents coordonnée, qui appelle le partenaire en A
 | [E5] Mode dégradé si le partenaire est indisponible | règle du § 9 : 1 500 € ou moins, décision marquée `mode_degrade` ; au-delà, escalade `cellule_fraude` | PAN-01 (panne) et PAN-02 (partenaire à 5 s : lot de trois traité en 3,02 à 3,04 s) |
 | [E6] Ni boucle, ni ajustement caché | bornes d'étapes, de compléments et de durée ; un appel au partenaire par dossier ; métriques calculées depuis la trace ; journal des ajustements | 18 appels, 0 doublon ; journal de 12 entrées |
 
-## 2. L'équipe : huit rôles internes, un seul qui conclut
+## 2. Les livrables demandés, et où les trouver
+
+Liens principaux :
+
+- Version remise (tag `livrable-kaldera-v2-v3`) : [github.com/Ganda15/kaldera-bout-en-bout_v2, tag livrable-kaldera-v2-v3](https://github.com/Ganda15/kaldera-bout-en-bout_v2/tree/livrable-kaldera-v2-v3)
+- Dossier de conception complet, 28 pages (téléchargement) : [livrable/dossier-de-conception.pdf](https://github.com/Ganda15/kaldera-bout-en-bout_v2/raw/livrable-kaldera-v2-v3/livrable/dossier-de-conception.pdf)
+- Cette synthèse (téléchargement) : [livrable/synthese-dossier-de-conception.pdf](https://github.com/Ganda15/kaldera-bout-en-bout_v2/raw/livrable-kaldera-v2-v3/livrable/synthese-dossier-de-conception.pdf)
+
+Le brief demande quatre livrables. Le troisième en regroupe trois (tests d'intégration, monitorage par agent, journal des ajustements), d'où six lignes. Chaque chemin est un lien vers la version remise.
+
+| Livrable demandé par le brief | Où il se trouve | Contenu |
+|---|---|---|
+| Dossier de conception : carte des agents, orchestration et mémoire partagée, A2A et mode dégradé, plan d'épreuve | [livrable/dossier-de-conception.pdf](https://github.com/Ganda15/kaldera-bout-en-bout_v2/raw/livrable-kaldera-v2-v3/livrable/dossier-de-conception.pdf) | 28 pages : carte des agents (section 2), orchestration et mémoire (section 3), A2A et mode dégradé (section 4), plan d'épreuve (section 5) |
+| L'équipe d'agents fonctionnelle, avec mémoire partagée et collaboration A2A | [src/kaldera/](https://github.com/Ganda15/kaldera-bout-en-bout_v2/tree/livrable-kaldera-v2-v3/src/kaldera) | la Coordination (`coordination.py`), les agents (`agents/`), la mémoire de la demande (`etat.py`), le client A2A avec son filtre et sa validation (`a2a/`) |
+| Les tests d'intégration multi-agents | [tests/integration/](https://github.com/Ganda15/kaldera-bout-en-bout_v2/tree/livrable-kaldera-v2-v3/tests/integration) | 37 tests : les 28 scénarios rejoués dans toute l'équipe contre le partenaire simulé, et le chemin public vers le partenaire |
+| Le monitorage par agent | [src/kaldera/metriques.py](https://github.com/Ganda15/kaldera-bout-en-bout_v2/blob/livrable-kaldera-v2-v3/src/kaldera/metriques.py) | appels, échecs, latence et appels externes de chaque agent, calculés depuis la trace ; le même tableau s'affiche sur le poste du gestionnaire |
+| Le journal des ajustements d'orchestration | [conception/journal-ajustements.md](https://github.com/Ganda15/kaldera-bout-en-bout_v2/blob/livrable-kaldera-v2-v3/conception/journal-ajustements.md) | 12 entrées : signal observé, valeur avant et après, résultat du rejeu, commit |
+| La preuve d'exécution des tests d'acceptance | [evaluation/acceptance/preuve-execution.md](https://github.com/Ganda15/kaldera-bout-en-bout_v2/blob/livrable-kaldera-v2-v3/evaluation/acceptance/preuve-execution.md) | 56 tests réussis sur 56, rapport généré par `outils/preuve_acceptance.py` ; l'épreuve sur les 28 scénarios est dans [evaluation/epreuve/rapport.md](https://github.com/Ganda15/kaldera-bout-en-bout_v2/blob/livrable-kaldera-v2-v3/evaluation/epreuve/rapport.md) |
+
+## 3. L'équipe : huit rôles internes, un seul qui conclut
 
 | Rôle | Réalisation | Ce qu'il fait |
 |---|---|---|
@@ -40,7 +59,7 @@ Point ambigu tranché : la spécification range le plafond dans l'éligibilité,
 
 La vue d'ensemble de l'équipe, de la liaison A2A et du partenaire est en figure 1, en fin de document.
 
-## 3. Orchestration, bornes et mémoire
+## 4. Orchestration, bornes et mémoire
 
 La Coordination est un superviseur en séquence. Les agents ne s'appellent jamais entre eux et ne choisissent pas l'étape suivante. Il n'existe que deux issues : une décision (acceptée ou refusée) ou une escalade, avec sa file et un motif lisible.
 
@@ -48,13 +67,13 @@ Les bornes : 10 s par demande, depuis l'arrivée du dossier ; 8 étapes au plus 
 
 La mémoire de la demande est un état par demande. Seule la Coordination le lit et l'écrit, et une table fixe associe chaque agent à sa section. Les demandes d'un lot sont traitées en concurrence : une panne du partenaire ne retarde pas les autres.
 
-## 4. L'échange A2A et le mode dégradé
+## 5. L'échange A2A et le mode dégradé
 
 Le partenaire n'est appelé que si un indicateur est présent (montant élevé, contrat récent, sinistres répétés, écart de plus de 20 % avec les factures). Le message est construit champ par champ depuis la liste blanche, jamais en retirant des champs de la demande complète. La réponse passe cinq niveaux dans l'ordre : transport, JSON et enveloppe JSON-RPC, forme A2A, schéma, cohérence avec le dossier envoyé. Aucune erreur ne déclenche de relance.
 
 Sans avis exploitable (délai dépassé, erreur ou réponse écartée), une seule règle s'applique, celle du § 9. La fiche porte `mode_degrade: true` pour un contrôle a posteriori.
 
-## 5. Ce qui est prouvé, et ce qui ne l'est pas
+## 6. Ce qui est prouvé, et ce qui ne l'est pas
 
 | Preuve | Résultat |
 |---|---|
@@ -66,7 +85,7 @@ Sans avis exploitable (délai dépassé, erreur ou réponse écartée), une seul
 
 Limites écrites : pas de test de charge ; un partenaire simulé ; des documents générés à partir des 34 demandes, pas de vrais scans ; aucune alerte automatique vers l'exploitation ; un registre des appels qui ne survit pas à un redémarrage. Trois points restent à trancher par le client : la file de l'escalade sur borne, les refus automatiques au regard de l'article 22 du RGPD, et la conservation des traces.
 
-## 6. Où trouver le détail
+## 7. Où trouver le détail
 
 | Sujet | Dossier complet |
 |---|---|

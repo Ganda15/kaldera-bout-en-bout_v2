@@ -4,11 +4,11 @@
 
 **État au 12/10/2026, vérifié sur `main` (`c5e0cc4`), puis synthèse ajoutée.**
 
-- Version livrée le 09/10 : tag `livrable-kaldera-v2-v1` sur `b40faea`. Depuis, sur `main` : le dossier de conception daté du 12/10/2026, contenu inchangé (PR #6, commit `cf6e606`, fusion `c5e0cc4`) ; une synthèse de 5 pages, `livrable/synthese-dossier-de-conception.pdf` (PR #8). Version à remettre : tag `livrable-kaldera-v2-v2`, posé sur la fusion de la PR #8.
+- Version livrée le 09/10 : tag `livrable-kaldera-v2-v1` sur `b40faea`. Depuis, sur `main` : le dossier de conception daté du 12/10/2026, contenu inchangé (PR #6, commit `cf6e606`, fusion `c5e0cc4`) ; une synthèse de 6 pages, `livrable/synthese-dossier-de-conception.pdf` (PR #8, puis PR #9 : section « Les livrables demandés, et où les trouver »). Version à remettre : tag `livrable-kaldera-v2-v3`, posé sur la fusion de la PR #9 (le tag v2, sans cette section, n'a pas été remis).
 - Mesuré le 12/10 sur `main` : sur le PC, 409 passed et 8 failed : les 8 échecs, comme `--verifier`, viennent de Smart App Control qui bloque `pyexpat.pyd` (module XML du Python 3.11 de `uv`), pas du code ; ruff propre. Sur GitHub (CI Linux, run 38218479627, même commit) : ruff propre, 324 unitaires, 56 acceptance, 37 intégration, soit 417 passed.
 - Partenaire anti-fraude en ligne sur le serveur Hetzner (conteneur `kaldera-partenaire`, seuls `/a2a` et l'Agent Card ouverts).
 
-**Prochaine action** : Era dépose sur Simplonline le lien du tag `livrable-kaldera-v2-v2` et le lien de téléchargement direct des PDF (l'aperçu PDF de GitHub ne s'affiche pas). Ensuite, les commentaires du formateur : s'il demande des changements, une branche, une PR vers `main` (vérifier « into main »), puis le tag `livrable-kaldera-v2-v3`.
+**Prochaine action** : Era dépose sur Simplonline le lien du tag `livrable-kaldera-v2-v3` et le lien de téléchargement direct des PDF (l'aperçu PDF de GitHub ne s'affiche pas). Ensuite, les commentaires du formateur : s'il demande des changements, une branche, une PR vers `main` (vérifier « into main »), puis le tag `livrable-kaldera-v2-v4`.
 
 **Restes** : la règle de date de la cohérence (une facture d'achat antérieure à un incendie est signalée comme contradiction), puis une nouvelle mesure ; la question 7 au formateur (portée du registre des appels) ; le partenaire à retirer du serveur après l'évaluation (`docker rm -f kaldera-partenaire`, restaurer `/etc/caddy/Caddyfile.avant-kaldera`, `systemctl reload caddy`) ; Smart App Control bloque depuis le 12/10 `pyexpat.pyd` (module XML du Python 3.11 de `uv`) : 8 tests de `test_preuve_acceptance.py` et `--verifier` ne tournent plus sur le PC, repli prévu : Docker `python:3.11`, jamais toucher au réglage ; le dépôt Simplonline (Era).
 
