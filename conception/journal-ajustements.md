@@ -19,7 +19,7 @@ Chaque ajustement de l'orchestration (borne, frontière ou routage) y est consig
 
 ## Effets sur le dossier de conception
 
-Le dossier (`livrable/dossier-de-conception.pdf`) et les schémas reflètent la conception présentée ; ce journal fait foi pour les écarts décidés depuis. Le PDF a été régénéré le 09/10/2026 avec toutes les entrées ci-dessous (`6ea2370`, `d5dc7d1`, `9693608`, `e83f320`). Suivi de l'alignement :
+Le dossier (`livrable/dossier-de-conception.pdf`) et les schémas reflètent la conception présentée ; ce journal fait foi pour les écarts décidés depuis. Le PDF a été régénéré le 09/10/2026 avec toutes les entrées ci-dessous (`6ea2370`, `d5dc7d1`, `9693608`, `e83f320`). Il a ensuite été daté du 12/10/2026, sans changement de contenu. Suivi de l'alignement :
 
 - entrée 1 : texte aligné le 08/10 (`6b4c2cc`) ; schémas 1 et N1 alignés le 08/10, schémas 0, 2 et A alignés le 08/10 (séquence avec court-circuit) ; PDF régénéré le 09/10 ;
 - entrées 2 et 3 : paragraphe « Reprise après incident » aligné le 08/10 dans la conception et dans le livrable (registre des appels, portée : une exécution ; limite après redémarrage écrite) ;
