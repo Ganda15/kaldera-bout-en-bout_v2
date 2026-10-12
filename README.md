@@ -114,7 +114,7 @@ par un faux : ils ne font aucun appel réseau.
 ## Layout
 
 - `src/kaldera/` : la Coordination (`coordination.py`), la mémoire de la demande (`etat.py`), les bornes (`bornes.py`), les métriques (`metriques.py`), les règles (`regles.py`), les quatre agents de contrôle et l'agent Documents et cohérence (`agents/`), les agents de lecture (`extraction/`), l'espace assuré
-- `tests/unit/` : nos tests unitaires (323 au 09/10/2026) ; `tests/integration/` : 37 tests d'intégration (les 28 scénarios rejoués par toute l'équipe, et le chemin public vers le partenaire)
+- `tests/unit/` : nos tests unitaires (324 au 12/10/2026, inchangés depuis le 09/10) ; `tests/integration/` : 37 tests d'intégration (les 28 scénarios rejoués par toute l'équipe, et le chemin public vers le partenaire)
 - `dossiers/` : 34 dossiers de pièces non structurées et leur vérité ; `outils/` : générateur, essai du modèle, évaluation ; `evaluation/extraction/` : rapport généré
 - `conception/` : dossier de conception, schémas, journal des ajustements ; `livrable/` : le PDF
 - `docs/specs_metier.md` — spécifications fonctionnelles
