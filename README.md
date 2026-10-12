@@ -11,7 +11,7 @@ Le dossier de conception (équipe d'agents, orchestration, mémoire partagée, l
 
 Schémas alignés sur le code le 08/10/2026 : carte des agents (contrôles dans l'ordre, avec court-circuit), système complet (N1) et lecture des pièces (schéma E), dans [`conception/schemas/`](conception/schemas/).
 
-Livrable de conception, en un seul document : [`livrable/dossier-de-conception.pdf`](livrable/dossier-de-conception.pdf) (source : [`livrable/dossier-de-conception.md`](livrable/dossier-de-conception.md)).
+Livrable de conception, en un seul document : [`livrable/dossier-de-conception.pdf`](livrable/dossier-de-conception.pdf) (source : [`livrable/dossier-de-conception.md`](livrable/dossier-de-conception.md)). Version courte de 5 pages, à lire en premier : [`livrable/synthese-dossier-de-conception.pdf`](livrable/synthese-dossier-de-conception.pdf).
 
 ## Features
 
@@ -116,7 +116,7 @@ par un faux : ils ne font aucun appel réseau.
 - `src/kaldera/` : la Coordination (`coordination.py`), la mémoire de la demande (`etat.py`), les bornes (`bornes.py`), les métriques (`metriques.py`), les règles (`regles.py`), les quatre agents de contrôle et l'agent Documents et cohérence (`agents/`), les agents de lecture (`extraction/`), l'espace assuré
 - `tests/unit/` : nos tests unitaires (324 au 12/10/2026, inchangés depuis le 09/10) ; `tests/integration/` : 37 tests d'intégration (les 28 scénarios rejoués par toute l'équipe, et le chemin public vers le partenaire)
 - `dossiers/` : 34 dossiers de pièces non structurées et leur vérité ; `outils/` : générateur, essai du modèle, évaluation ; `evaluation/extraction/` : rapport généré
-- `conception/` : dossier de conception, schémas, journal des ajustements ; `livrable/` : le PDF
+- `conception/` : dossier de conception, schémas, journal des ajustements ; `livrable/` : le dossier de conception en PDF et sa synthèse de 5 pages
 - `docs/specs_metier.md` — spécifications fonctionnelles
 - `docs/interface.md` — contrat d'intégration (points d'entrée, fiche de décision, trace, métriques)
 - `external_agent/` — service anti-fraude partenaire simulé et son contrat d'échange (`contrat.md`)
